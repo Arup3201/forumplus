@@ -6,23 +6,23 @@
 
 ---
 
-Following features are the ones I am currently working on. Any feature that I am currently working will have a **DONE** status, any feature I am working on will have **ONGOING** status. If feature has no status then it means I have not yet picked it.
+Following features are the ones I am currently working on. Any feature that I am currently working will have a **✅** status, any feature I am working on will have **🔧** status. If feature has no status then it means I have not yet picked it.
 
 ---
 
 ## 🥇 **Essential Core Features**
 
-| Feature                               | Description                                                                     |
-| ------------------------------------- | ------------------------------------------------------------------------------- |
-| **User Authentication (JWT + OAuth)** | Secure login system with support for Google/GitHub login to ease onboarding.    |
-| **Thread Creation & Replies**         | Users can post new threads and reply to existing ones—core forum functionality. |
-| **Nested Comments**                   | Enables threaded conversations by allowing replies to replies.                  |
-| **Voting System**                     | Users can upvote/downvote posts to surface valuable content.                    |
-| **Tags & Categories**                 | Organize threads into topics and help users discover relevant content.          |
-| **User Profiles**                     | Each user has a public profile with bio, avatar, and their activity.            |
-| **Role-Based Access Control (RBAC)**  | Controls user permissions (admin, mod, regular user) for managing content.      |
-| **Search Functionality**              | Enables users to find threads/posts by keywords or filters.                     |
-| **Admin Moderation Tools**            | Admins can manage users, delete content, and resolve reports.                   |
+| Feature                                 | Description                                                                     |
+| --------------------------------------- | ------------------------------------------------------------------------------- |
+| 🔧**User Authentication (JWT + OAuth)** | Secure login system with support for Google/GitHub login to ease onboarding.    |
+| **Thread Creation & Replies**           | Users can post new threads and reply to existing ones—core forum functionality. |
+| **Nested Comments**                     | Enables threaded conversations by allowing replies to replies.                  |
+| **Voting System**                       | Users can upvote/downvote posts to surface valuable content.                    |
+| **Tags & Categories**                   | Organize threads into topics and help users discover relevant content.          |
+| **User Profiles**                       | Each user has a public profile with bio, avatar, and their activity.            |
+| **Role-Based Access Control (RBAC)**    | Controls user permissions (admin, mod, regular user) for managing content.      |
+| **Search Functionality**                | Enables users to find threads/posts by keywords or filters.                     |
+| **Admin Moderation Tools**              | Admins can manage users, delete content, and resolve reports.                   |
 
 ---
 
