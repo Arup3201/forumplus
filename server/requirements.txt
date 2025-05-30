@@ -1,1 +1,2 @@
-fastapi[standard]
+Authlib==1.6.0
+fastapi==0.115.12
