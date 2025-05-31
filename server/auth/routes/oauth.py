@@ -1,7 +1,10 @@
 from fastapi import APIRouter, Request, HTTPException
 from authlib.integrations.starlette_client import OAuth
 import secrets
+from typing import Dict, Any
+from datetime import datetime, timezone, timedelta
 from env import settings
+from auth.schemas import OAuthState
 
 router = APIRouter()
 
@@ -23,6 +26,8 @@ oauth.register(
     client_kwargs={'scope': 'user:email'}
 )
 
+oauth_state_db: Dict[str, OAuthState] = {}
+
 def generate_state():
     """Get the security state for OAuth.
 
@@ -31,18 +36,41 @@ def generate_state():
     """
     return secrets.token_urlsafe(32)
 
-def verify_state(request: Request, state: str):
+def store_oauth_state(provider: str, state: str) -> None:
+    """stores the oauth state variable for CSRF protection
+
+    Args:
+        state (str): random url safe state value
+    """
+    oauth_state_db[state] = OAuthState(**{
+        'provider': provider, 
+        'created_at': datetime.now(tz=timezone.utc), 
+        'expires_at': datetime.now(tz=timezone.utc) + timedelta(minutes=10) # expires in 10 minutes
+    })
+
+def verify_and_consume_state(state: str, provider: str) -> bool:
     """Verify the state parameter against the session.
 
     Args:
-        request (Request): The request object.
+        provider (str): The provider of the authentication.
         state (str): The state parameter to verify.
 
     Raises:
         ValueError: If the state does not match the session state.
     """
-    session_state = request.session.get("oauth_state")
-    return session_state == state
+    if not state or state not in oauth_state_db:
+        return False
+    
+    oauth_state_info = oauth_state_db[state]
+    
+    if oauth_state_info.expires_at < datetime.now(tz=timezone.utc):
+        return False
+    
+    if oauth_state_info.provider != provider:
+        return False
+    
+    del oauth_state_db[state]
+    return True
 
 @router.get("/{provider}")
 async def oauth_login(provider: str, request: Request):
@@ -57,7 +85,7 @@ async def oauth_login(provider: str, request: Request):
 
     # Generate CSRF protection state
     state = generate_state()  # Creates secure random string
-    request.session["oauth_state"] = state  # Store in session
+    store_oauth_state(provider, state)  # Store in oauth db
 
     # Create OAuth client and redirect to provider
     client = oauth.create_client(provider)
@@ -78,7 +106,7 @@ async def oauth_callback(provider: str, request: Request):
 
     # verify the state parameter
     state = request.query_params.get("state")
-    if not state or not verify_state(request, state):
+    if not state or not verify_and_consume_state(state, provider):
         raise HTTPException(
             status_code=400,
             detail="Missing or invalid state parameter in callback."
@@ -87,13 +115,11 @@ async def oauth_callback(provider: str, request: Request):
     client = oauth.create_client(provider)
 
     try:
-        token = client.authorize_access_token(request)
+        token = await client.authorize_access_token(request)
         
         if provider == 'google':
-            user_info = token.get('userinfo')
-            if not user_info:
-                resp = await client.get('userinfo').json()
-                user_info = resp.json()
+            resp = await client.get('/userinfo', token=token).json()
+            user_info = resp.json()
 
             user_data = {
                 'provider_id': user_info['sub'],
