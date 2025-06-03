@@ -119,10 +119,10 @@ class OAuthService:
                 }
                 
             elif self.provider == 'github':
-                user_resp = await client.get('user')
+                user_resp = await client.get('user', token=token)
                 user_info = user_resp.json()
                 
-                emails_resp = await client.get('user/emails')
+                emails_resp = await client.get('user/emails', token=token)
                 emails = emails_resp.json()
                 primary_email = next((email for email in emails if email.get('primary')), None)
                 user_data = {
