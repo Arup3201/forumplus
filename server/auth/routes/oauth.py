@@ -1,10 +1,11 @@
 from fastapi import APIRouter, Request, HTTPException
+from auth.types import OAuthProvider
 from auth.services import OAuthService
 
 router = APIRouter()
 
 @router.get("/{provider}")
-async def oauth_login(provider: str, request: Request):
+async def oauth_login(provider: OAuthProvider, request: Request):
     """
     Initiates the OAuth login process for the specified provider.
     """
@@ -18,7 +19,7 @@ async def oauth_login(provider: str, request: Request):
     return await service.oauth_login(request)
 
 @router.get("/{provider}/callback")
-async def oauth_callback(provider: str, request: Request):
+async def oauth_callback(provider: OAuthProvider, request: Request):
     """
     Handles the OAuth callback from the specified provider.
     """
@@ -27,6 +28,7 @@ async def oauth_callback(provider: str, request: Request):
             status_code=400,
             detail=f"Unsupported provider: {provider}"
         )
+    
     state = request.query_params.get('state')
     try:
         service = OAuthService(provider)

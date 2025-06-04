@@ -66,3 +66,67 @@ Following features are the ones I am currently working on. Any feature that I am
 | **Custom Domain & Theming**     | Useful for companies or communities hosting their own forum instance. |
 
 ---
+
+# Microservice Architecture Structure
+
+The server follows a **microservice architecture** where each folder inside the `server` directory represents an independent service that can operate without dependencies on other services.
+
+## Service Structure
+
+Each service follows a standardized 5-layer architecture:
+
+### 🛣️ Routes
+**Purpose**: API endpoint definitions using FastAPI
+
+- Defines HTTP route handlers (`@router.get`, `@router.post`, etc.)
+- Handles dependency injection 
+- Specifies request/response models for payload validation
+- Contains minimal logic - delegates to service layer
+
+### 🏢 Services  
+**Purpose**: Business logic implementation
+
+- Contains core business rules and workflows
+- Orchestrates repository operations for CRUD functionality
+- Handles cross-cutting concerns (authentication, authorization, caching)
+- Coordinates between multiple repositories when needed
+
+### 📋 Schemas
+**Purpose**: Data validation and serialization contracts
+
+- Defines structure and validation rules using Pydantic
+- Used for data crossing boundaries (API requests/responses, database models, external APIs)
+- Provides runtime type checking and validation
+- Handles serialization/deserialization (JSON ↔ Python objects)
+
+### 🏷️ Types
+**Purpose**: Static type definitions for development
+
+- Provides compile-time type hints for IDEs and type checkers
+- Includes protocols, type aliases, generics, and unions
+- **No runtime validation** - purely for development-time type safety
+- Improves code organization and developer experience
+
+### 🗄️ Repositories
+**Purpose**: Data access abstraction layer
+
+- Implements database operations using SQLAlchemy ORM
+- Provides CRUD operations and custom queries
+- Uses **Repository Pattern** with:
+  - **Interface/Protocol**: Defines contract (what methods must exist)
+  - **Implementation**: Actual database interaction logic
+- Abstracts database concerns from business logic
+
+---
+
+## 📐 Rule of Thumb
+
+| **Use Schemas When** | **Use Types When** |
+|---------------------|-------------------|
+| Data crosses boundaries | Internal code structure |
+| Need runtime validation | Development-time hints only |
+| API requests/responses | Function signatures |
+| Database models | Protocols and interfaces |
+| External integrations | Type aliases and generics |
+
+**Key principle**: Schemas for **validation**, Types for **organization**.
