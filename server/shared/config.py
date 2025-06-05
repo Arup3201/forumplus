@@ -20,7 +20,7 @@ class Settings(BaseSettings):
     PG_DATABASE: str
     
     # SQLAlchemy
-    SQL_ECHO: bool = True
+    SQL_ECHO: bool
     
     model_config = SettingsConfigDict(env_file=".env")
     
