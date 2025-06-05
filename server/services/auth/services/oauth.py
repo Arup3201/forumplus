@@ -9,6 +9,11 @@ from shared.config import settings
 from fastapi import Request
 from services.auth.types import OAuthProvider, OAuthState, OAuthStates, OAuthAppWrapper
 
+# Database
+from shared.database.session import DatabaseSessionManager
+from services.auth.repositories.oauth import OAuthRepository
+from services.auth.schemas.oauth import UserCreate, OAuthProviderCreate, OAuthUserData, UserResponse
+
 def generate_state() -> str:
     """Get the security state for OAuth.
 
@@ -20,8 +25,10 @@ def generate_state() -> str:
 oauth_states: OAuthStates = {}
 
 class OAuthService:
-    def __init__(self, provider: OAuthProvider):
+    def __init__(self, db_manager: DatabaseSessionManager, provider: OAuthProvider):
+        self.db_manager = db_manager
         self.provider = provider.value
+        self.oauth_repo = OAuthRepository(db_manager)
         self.__init_oauth()
     
     def __init_oauth(self) -> None:
@@ -99,6 +106,38 @@ class OAuthService:
 
         return await client.authorize_redirect(request, redirect_uri, state)
     
+    async def _get_user_data(self, client: OAuthAppWrapper, token: dict) -> OAuthUserData:
+        """Extract user data from OAuth provider response."""
+        if self.provider == OAuthProvider.GOOGLE:
+            user_info = token.get('userinfo')
+            if not user_info:
+                resp = await client.get('userinfo', token=token)
+                user_info = resp.json()
+
+            return OAuthUserData(
+                provider_id=user_info['sub'],
+                email=user_info['email'],
+                name=user_info['name'],
+                avatar_url=user_info.get('picture'),
+                provider=OAuthProvider.GOOGLE
+            )
+            
+        elif self.provider == OAuthProvider.GITHUB:
+            user_resp = await client.get('user', token=token)
+            user_info = user_resp.json()
+            
+            emails_resp = await client.get('user/emails', token=token)
+            emails = emails_resp.json()
+            primary_email = next((email for email in emails if email.get('primary')), None)
+            
+            return OAuthUserData(
+                provider_id=str(user_info['id']),
+                email=primary_email['email'] if primary_email else None,
+                name=user_info['name'] or user_info['login'],
+                avatar_url=user_info['avatar_url'],
+                provider=OAuthProvider.GITHUB
+            )
+
     async def oauth_callback(self, state: str, request: Request):
         # verify the state parameter
         if not state or not self.verify_and_consume_oauth_state(state):
@@ -108,35 +147,60 @@ class OAuthService:
 
         try:
             token = await client.authorize_access_token(request)
-            if self.provider == OAuthProvider.GOOGLE:
-                user_info = token.get('userinfo')
-                if not user_info:
-                    resp = await client.get('userinfo', token=token)
-                    user_info = resp.json()
-
-                user_data = {
-                    'provider_id': user_info['sub'],
-                    'email': user_info['email'],
-                    'name': user_info['name'],
-                    'avatar_url': user_info.get('picture'),
-                    'provider': OAuthProvider.GOOGLE
-                }
+            user_data = await self._get_user_data(client, token)
+            
+            # Check if user exists by provider ID
+            print("Checking if user exists by provider ID")
+            user = self.oauth_repo.get_user_by_provider_id(
+                OAuthProvider(self.provider),
+                user_data.provider_id
+            )
+            
+            if not user:
+                # Check if user exists by email
+                print("Checking if user exists by email")
+                user = self.oauth_repo.get_user_by_email(user_data.email)
                 
-            elif self.provider == OAuthProvider.GITHUB:
-                user_resp = await client.get('user', token=token)
-                user_info = user_resp.json()
+                if not user:
+                    # Create new user
+                    print("Creating new user")
+                    user = self.oauth_repo.create_user(
+                        UserCreate(email=user_data.email)
+                    )
                 
-                emails_resp = await client.get('user/emails', token=token)
-                emails = emails_resp.json()
-                primary_email = next((email for email in emails if email.get('primary')), None)
-                user_data = {
-                    'provider_id': user_info['id'],
-                    'email': primary_email['email'] if primary_email else None,
-                    'name': user_info['name'] or user_info['login'],
-                    'avatar_url': user_info['avatar_url'],
-                    'provider': OAuthProvider.GITHUB
-                }
+                # Create OAuth provider connection
+                print("Creating OAuth provider connection")
+                self.oauth_repo.create_oauth_provider(
+                    OAuthProviderCreate(
+                        user_id=user.id,
+                        provider=user_data.provider,
+                        provider_user_id=user_data.provider_id,
+                        provider_payload=user_data.dict()
+                    )
+                )
+            else:
+                # Update existing OAuth provider
+                print("Updating existing OAuth provider")
+                oauth_provider = self.oauth_repo.get_oauth_provider(
+                    user.id,
+                    OAuthProvider(self.provider)
+                )
+                if oauth_provider:
+                    self.oauth_repo.update_oauth_provider(
+                        oauth_provider,
+                        user_data.dict()
+                    )
+            
+            updated_user = self.oauth_repo.get_user_by_id(user.id)
+            return UserResponse(
+                id=updated_user.id,
+                email=updated_user.email,
+                is_active=updated_user.is_active,
+                is_deleted=updated_user.is_deleted,
+                created_at=updated_user.created_at,
+                updated_at=updated_user.updated_at,
+                deleted_at=updated_user.deleted_at
+            )
 
-            return user_data        
         except Exception as e:
             raise ValueError(f"In OAuth callback {str(e)}")
