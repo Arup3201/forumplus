@@ -21,8 +21,9 @@ class DatabaseSessionManager:
         if self._initialized:
             return
         
+        database_url = f"postgresql://{settings.PG_USER}:{settings.PG_PASSWORD}@{settings.PG_HOST}:{settings.PG_PORT}/{settings.PG_DATABASE}"
         self.engine = create_engine(
-            settings.DATABASE_URL,
+            database_url,
             pool_size=5,
             max_overflow=10,
             pool_timeout=30,

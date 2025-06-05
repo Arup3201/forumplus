@@ -3,11 +3,11 @@ import secrets
 from datetime import datetime, timezone, timedelta
 
 # Environment variables
-from env import settings
+from shared.config import settings
 
 # Types
 from fastapi import Request
-from auth.types import OAuthProvider, OAuthState, OAuthStates, OAuthAppWrapper
+from services.auth.types import OAuthProvider, OAuthState, OAuthStates, OAuthAppWrapper
 
 def generate_state() -> str:
     """Get the security state for OAuth.

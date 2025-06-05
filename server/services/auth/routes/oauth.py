@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Request, HTTPException
-from auth.types import OAuthProvider
-from auth.services import OAuthService
+from services.auth.types import OAuthProvider
+from services.auth.services import OAuthService
 
 router = APIRouter()
 
