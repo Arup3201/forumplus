@@ -144,34 +144,15 @@ class OAuthService:
 
         client = OAuthAppWrapper(self.oauth.create_client(self.provider))
 
-        # try:
-        token = await client.authorize_access_token(request)
-        user_data = await self._get_user_data_from_oauth_provider(client, token)
-        
-        user_entity = self.oauth_repo.get_user_by_email(user_data.email)
-        
-        # if user does not exist, create a new user and add the oauth provider
-        if not user_entity:
-            user_entity = self.oauth_repo.create_user(user_data.model_dump())
-            oauth_provider_entity = self.oauth_repo.create_oauth_provider(user_entity.id, user_data.model_dump())
-            self.oauth_repo.add_oauth_provider(user_entity.id, oauth_provider_entity.id)
+        try:
+            token = await client.authorize_access_token(request)
+            user_data = await self._get_user_data_from_oauth_provider(client, token)
             
-            return {
-                "id": user_entity.id,
-                "email": user_entity.email,
-                "is_active": user_entity.is_active,
-                "is_deleted": user_entity.is_deleted,
-                "created_at": user_entity.created_at,
-                "updated_at": user_entity.updated_at,
-                "deleted_at": user_entity.deleted_at,
-                "provider_id": oauth_provider_entity.provider_id,
-                "provider": oauth_provider_entity.provider,
-                "provider_payload": oauth_provider_entity.provider_payload,
-            }
-        else:
-            oauth_providers = self.oauth_repo.get_oauth_providers_by_user_id(user_entity.id)
-            if self.provider not in [oauth_provider.provider for oauth_provider in oauth_providers]:
-                # if user exists but user never used this oauth provider before, add the oauth provider to the user
+            user_entity = self.oauth_repo.get_user_by_email(user_data.email)
+            
+            # if user does not exist, create a new user and add the oauth provider
+            if not user_entity:
+                user_entity = self.oauth_repo.create_user(user_data.model_dump())
                 oauth_provider_entity = self.oauth_repo.create_oauth_provider(user_entity.id, user_data.model_dump())
                 self.oauth_repo.add_oauth_provider(user_entity.id, oauth_provider_entity.id)
                 
@@ -188,20 +169,39 @@ class OAuthService:
                     "provider_payload": oauth_provider_entity.provider_payload,
                 }
             else:
-                # if user exists and user already used this oauth provider before, return the user
-                oauth_provider_entity = next(filter(lambda x: x.provider == self.provider, oauth_providers))
-                return {
-                    "id": user_entity.id,
-                    "email": user_entity.email,
-                    "is_active": user_entity.is_active,
-                    "is_deleted": user_entity.is_deleted,
-                    "created_at": user_entity.created_at,
-                    "updated_at": user_entity.updated_at,
-                    "deleted_at": user_entity.deleted_at,
-                    "provider_id": oauth_provider_entity.provider_id,
-                    "provider": oauth_provider_entity.provider,
-                    "provider_payload": oauth_provider_entity.provider_payload,
-                }
+                oauth_providers = self.oauth_repo.get_oauth_providers_by_user_id(user_entity.id)
+                if self.provider not in [oauth_provider.provider for oauth_provider in oauth_providers]:
+                    # if user exists but user never used this oauth provider before, add the oauth provider to the user
+                    oauth_provider_entity = self.oauth_repo.create_oauth_provider(user_entity.id, user_data.model_dump())
+                    self.oauth_repo.add_oauth_provider(user_entity.id, oauth_provider_entity.id)
+                    
+                    return {
+                        "id": user_entity.id,
+                        "email": user_entity.email,
+                        "is_active": user_entity.is_active,
+                        "is_deleted": user_entity.is_deleted,
+                        "created_at": user_entity.created_at,
+                        "updated_at": user_entity.updated_at,
+                        "deleted_at": user_entity.deleted_at,
+                        "provider_id": oauth_provider_entity.provider_id,
+                        "provider": oauth_provider_entity.provider,
+                        "provider_payload": oauth_provider_entity.provider_payload,
+                    }
+                else:
+                    # if user exists and user already used this oauth provider before, return the user
+                    oauth_provider_entity = next(filter(lambda x: x.provider == self.provider, oauth_providers))
+                    return {
+                        "id": user_entity.id,
+                        "email": user_entity.email,
+                        "is_active": user_entity.is_active,
+                        "is_deleted": user_entity.is_deleted,
+                        "created_at": user_entity.created_at,
+                        "updated_at": user_entity.updated_at,
+                        "deleted_at": user_entity.deleted_at,
+                        "provider_id": oauth_provider_entity.provider_id,
+                        "provider": oauth_provider_entity.provider,
+                        "provider_payload": oauth_provider_entity.provider_payload,
+                    }
 
-        # except Exception as e:
-        #     raise ValueError(f"In OAuth callback {str(e)}")
+        except Exception as e:
+            raise ValueError(f"In OAuth callback {str(e)}")

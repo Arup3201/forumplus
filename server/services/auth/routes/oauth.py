@@ -42,13 +42,13 @@ async def oauth_callback(provider: OAuthProvider,
         )
     
     state = request.query_params.get('state')
-    # try:
-    service = OAuthService(db_manager, provider)
-    user_dict = await service.oauth_callback(state, request)
-    print(user_dict)
-    return OAuthUserResponse(**user_dict)
-    # except Exception as e:
-    #     raise HTTPException(
-    #         status_code=400, 
-    #         detail=f"Error in oauth_callback: {str(e)}"
-    #     )
+    try:
+        service = OAuthService(db_manager, provider)
+        user_dict = await service.oauth_callback(state, request)
+        print(user_dict)
+        return OAuthUserResponse(**user_dict)
+    except Exception as e:
+        raise HTTPException(
+            status_code=400, 
+            detail=f"Error in oauth_callback: {str(e)}"
+        )
