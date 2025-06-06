@@ -1,5 +1,5 @@
-from shared.database.session import get_db_manager
-from shared.database.base import Base
+from shared.session import get_db_manager
+from shared.model import Base
 from services.auth.models import User, OAuthProvider
 
 def init_db():

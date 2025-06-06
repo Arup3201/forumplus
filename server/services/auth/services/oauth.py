@@ -5,14 +5,15 @@ from datetime import datetime, timezone, timedelta
 # Environment variables
 from shared.config import settings
 
-# Types
+# Types and Schemas
 from fastapi import Request
+from typing import Dict
 from services.auth.types import OAuthProvider, OAuthState, OAuthStates, OAuthAppWrapper
+from services.auth.schemas.oauth import OAuthClientResponse
 
 # Database
-from shared.database.session import DatabaseSessionManager
+from shared.session import DatabaseSessionManager
 from services.auth.repositories.oauth import OAuthRepository
-from services.auth.schemas.oauth import UserCreate, OAuthProviderCreate, OAuthUserData, UserResponse
 
 def generate_state() -> str:
     """Get the security state for OAuth.
@@ -27,8 +28,8 @@ oauth_states: OAuthStates = {}
 class OAuthService:
     def __init__(self, db_manager: DatabaseSessionManager, provider: OAuthProvider):
         self.db_manager = db_manager
-        self.provider = provider.value
         self.oauth_repo = OAuthRepository(db_manager)
+        self.provider = provider.value
         self.__init_oauth()
     
     def __init_oauth(self) -> None:
@@ -58,7 +59,7 @@ class OAuthService:
                 client_kwargs={'scope': 'user:email'}
             )
     
-    def store_oauth_state(self, state: str) -> None:
+    def _store_oauth_state(self, state: str) -> None:
         """store the oauth state into global variable `oauth_states`
 
         Args:
@@ -71,11 +72,10 @@ class OAuthService:
             'expires_at': datetime.now(tz=timezone.utc) + timedelta(minutes=10) # expires in 10 minutes
         })
 
-    def verify_and_consume_oauth_state(self, state: str) -> bool:
-        """Verify the state parameter against the database.
+    def _verify_oauth_state(self, state: str) -> bool:
+        """Verify the state parameter against the global variable `oauth_states`.
 
         Args:
-            provider (str): The provider of the authentication.
             state (str): The state parameter to verify.
 
         Raises:
@@ -98,7 +98,7 @@ class OAuthService:
     async def oauth_login(self, request: Request):
         # Generate CSRF protection state
         state = generate_state()  # Creates secure random string
-        self.store_oauth_state(state)  # Store in oauth states dict
+        self._store_oauth_state(state)  # Store in oauth states dict
 
         # Create OAuth client and redirect to provider
         client = OAuthAppWrapper(self.oauth.create_client(self.provider))
@@ -106,15 +106,14 @@ class OAuthService:
 
         return await client.authorize_redirect(request, redirect_uri, state)
     
-    async def _get_user_data(self, client: OAuthAppWrapper, token: dict) -> OAuthUserData:
+    async def _get_user_data_from_oauth_provider(self, client: OAuthAppWrapper, token: Dict) -> OAuthClientResponse:
         """Extract user data from OAuth provider response."""
+        
         if self.provider == OAuthProvider.GOOGLE:
-            user_info = token.get('userinfo')
-            if not user_info:
-                resp = await client.get('userinfo', token=token)
-                user_info = resp.json()
+            resp = await client.get('https://www.googleapis.com/oauth2/v3/userinfo', token=token)
+            user_info = resp.json()
 
-            return OAuthUserData(
+            return OAuthClientResponse(
                 provider_id=user_info['sub'],
                 email=user_info['email'],
                 name=user_info['name'],
@@ -130,9 +129,9 @@ class OAuthService:
             emails = emails_resp.json()
             primary_email = next((email for email in emails if email.get('primary')), None)
             
-            return OAuthUserData(
+            return OAuthClientResponse(
                 provider_id=str(user_info['id']),
-                email=primary_email['email'] if primary_email else None,
+                email=primary_email['email'],
                 name=user_info['name'] or user_info['login'],
                 avatar_url=user_info['avatar_url'],
                 provider=OAuthProvider.GITHUB
@@ -140,67 +139,69 @@ class OAuthService:
 
     async def oauth_callback(self, state: str, request: Request):
         # verify the state parameter
-        if not state or not self.verify_and_consume_oauth_state(state):
+        if not state or not self._verify_oauth_state(state):
             raise ValueError("Missing or invalid state parameter in callback.")
 
         client = OAuthAppWrapper(self.oauth.create_client(self.provider))
 
-        try:
-            token = await client.authorize_access_token(request)
-            user_data = await self._get_user_data(client, token)
+        # try:
+        token = await client.authorize_access_token(request)
+        user_data = await self._get_user_data_from_oauth_provider(client, token)
+        
+        user_entity = self.oauth_repo.get_user_by_email(user_data.email)
+        
+        # if user does not exist, create a new user and add the oauth provider
+        if not user_entity:
+            user_entity = self.oauth_repo.create_user(user_data.model_dump())
+            oauth_provider_entity = self.oauth_repo.create_oauth_provider(user_entity.id, user_data.model_dump())
+            self.oauth_repo.add_oauth_provider(user_entity.id, oauth_provider_entity.id)
             
-            # Check if user exists by provider ID
-            print("Checking if user exists by provider ID")
-            user = self.oauth_repo.get_user_by_provider_id(
-                OAuthProvider(self.provider),
-                user_data.provider_id
-            )
-            
-            if not user:
-                # Check if user exists by email
-                print("Checking if user exists by email")
-                user = self.oauth_repo.get_user_by_email(user_data.email)
+            return {
+                "id": user_entity.id,
+                "email": user_entity.email,
+                "is_active": user_entity.is_active,
+                "is_deleted": user_entity.is_deleted,
+                "created_at": user_entity.created_at,
+                "updated_at": user_entity.updated_at,
+                "deleted_at": user_entity.deleted_at,
+                "provider_id": oauth_provider_entity.provider_id,
+                "provider": oauth_provider_entity.provider,
+                "provider_payload": oauth_provider_entity.provider_payload,
+            }
+        else:
+            oauth_providers = self.oauth_repo.get_oauth_providers_by_user_id(user_entity.id)
+            if self.provider not in [oauth_provider.provider for oauth_provider in oauth_providers]:
+                # if user exists but user never used this oauth provider before, add the oauth provider to the user
+                oauth_provider_entity = self.oauth_repo.create_oauth_provider(user_entity.id, user_data.model_dump())
+                self.oauth_repo.add_oauth_provider(user_entity.id, oauth_provider_entity.id)
                 
-                if not user:
-                    # Create new user
-                    print("Creating new user")
-                    user = self.oauth_repo.create_user(
-                        UserCreate(email=user_data.email)
-                    )
-                
-                # Create OAuth provider connection
-                print("Creating OAuth provider connection")
-                self.oauth_repo.create_oauth_provider(
-                    OAuthProviderCreate(
-                        user_id=user.id,
-                        provider=user_data.provider,
-                        provider_user_id=user_data.provider_id,
-                        provider_payload=user_data.dict()
-                    )
-                )
+                return {
+                    "id": user_entity.id,
+                    "email": user_entity.email,
+                    "is_active": user_entity.is_active,
+                    "is_deleted": user_entity.is_deleted,
+                    "created_at": user_entity.created_at,
+                    "updated_at": user_entity.updated_at,
+                    "deleted_at": user_entity.deleted_at,
+                    "provider_id": oauth_provider_entity.provider_id,
+                    "provider": oauth_provider_entity.provider,
+                    "provider_payload": oauth_provider_entity.provider_payload,
+                }
             else:
-                # Update existing OAuth provider
-                print("Updating existing OAuth provider")
-                oauth_provider = self.oauth_repo.get_oauth_provider(
-                    user.id,
-                    OAuthProvider(self.provider)
-                )
-                if oauth_provider:
-                    self.oauth_repo.update_oauth_provider(
-                        oauth_provider,
-                        user_data.dict()
-                    )
-            
-            updated_user = self.oauth_repo.get_user_by_id(user.id)
-            return UserResponse(
-                id=updated_user.id,
-                email=updated_user.email,
-                is_active=updated_user.is_active,
-                is_deleted=updated_user.is_deleted,
-                created_at=updated_user.created_at,
-                updated_at=updated_user.updated_at,
-                deleted_at=updated_user.deleted_at
-            )
+                # if user exists and user already used this oauth provider before, return the user
+                oauth_provider_entity = next(filter(lambda x: x.provider == self.provider, oauth_providers))
+                return {
+                    "id": user_entity.id,
+                    "email": user_entity.email,
+                    "is_active": user_entity.is_active,
+                    "is_deleted": user_entity.is_deleted,
+                    "created_at": user_entity.created_at,
+                    "updated_at": user_entity.updated_at,
+                    "deleted_at": user_entity.deleted_at,
+                    "provider_id": oauth_provider_entity.provider_id,
+                    "provider": oauth_provider_entity.provider,
+                    "provider_payload": oauth_provider_entity.provider_payload,
+                }
 
-        except Exception as e:
-            raise ValueError(f"In OAuth callback {str(e)}")
+        # except Exception as e:
+        #     raise ValueError(f"In OAuth callback {str(e)}")

@@ -1,7 +1,8 @@
 from fastapi import APIRouter, Request, HTTPException, Depends
-from shared.database.session import DatabaseSessionManager, get_db_manager
+from shared.session import DatabaseSessionManager, get_db_manager
 from services.auth.types import OAuthProvider
 from services.auth.services import OAuthService
+from services.auth.schemas.oauth import OAuthUserResponse
 
 router = APIRouter()
 
@@ -18,10 +19,16 @@ async def oauth_login(provider: OAuthProvider,
             detail=f"Unsupported provider: {provider}"
         )
 
-    service = OAuthService(db_manager, provider)
-    return await service.oauth_login(request)
+    try:
+        service = OAuthService(db_manager, provider)
+        return await service.oauth_login(request)
+    except Exception as e:
+        raise HTTPException(
+            status_code=400, 
+            detail=f"Error in oauth_login: {str(e)}"
+        )
 
-@router.get("/{provider}/callback")
+@router.get("/{provider}/callback", response_model=OAuthUserResponse)
 async def oauth_callback(provider: OAuthProvider, 
                          request: Request,
                          db_manager: DatabaseSessionManager = Depends(get_db_manager)):
@@ -35,12 +42,13 @@ async def oauth_callback(provider: OAuthProvider,
         )
     
     state = request.query_params.get('state')
-    try:
-        service = OAuthService(db_manager, provider)
-        user = await service.oauth_callback(state, request)
-        return user
-    except Exception as e:
-        return HTTPException(
-            status_code=400, 
-            detail=str(e)
-        )
+    # try:
+    service = OAuthService(db_manager, provider)
+    user_dict = await service.oauth_callback(state, request)
+    print(user_dict)
+    return OAuthUserResponse(**user_dict)
+    # except Exception as e:
+    #     raise HTTPException(
+    #         status_code=400, 
+    #         detail=f"Error in oauth_callback: {str(e)}"
+    #     )

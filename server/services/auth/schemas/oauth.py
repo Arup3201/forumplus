@@ -1,45 +1,44 @@
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, Field
 from datetime import datetime
-from typing import Optional, Dict
+from typing import Optional
 from services.auth.types import OAuthProvider
 
-class UserBase(BaseModel):
-    email: EmailStr
-    is_active: bool = True
-    is_deleted: bool = False
-
-class UserCreate(UserBase):
-    pass
-
-class UserResponse(UserBase):
+# schemas for database entities
+class UserEntity(BaseModel):
     id: str
+    email: str
+    is_active: bool
+    is_deleted: bool
     created_at: datetime
     updated_at: datetime
-    deleted_at: Optional[datetime] = None
-
-    class Config:
-        from_attributes = True
-
-class OAuthProviderBase(BaseModel):
-    provider: OAuthProvider
-    provider_user_id: str
-    provider_payload: Dict
-
-class OAuthProviderCreate(OAuthProviderBase):
-    user_id: str
-
-class OAuthProviderResponse(OAuthProviderBase):
+    deleted_at: Optional[datetime]
+    
+class OAuthProviderEntity(BaseModel):
     id: str
     user_id: str
+    provider: str
+    provider_id: str
+    provider_payload: dict
     created_at: datetime
     updated_at: datetime
 
-    class Config:
-        from_attributes = True
-
-class OAuthUserData(BaseModel):
+# schemas for OAuth client response
+class OAuthClientResponse(BaseModel):
     provider_id: str
     email: str
     name: str
-    avatar_url: Optional[str] = None
+    avatar_url: str
     provider: OAuthProvider
+
+# schemas for API responses
+class OAuthUserResponse(BaseModel):
+    id: str
+    email: str
+    is_active: bool
+    is_deleted: bool
+    deleted_at: Optional[datetime]
+    provider_id: str
+    provider: str
+    provider_payload: dict
+    created_at: datetime
+    updated_at: datetime

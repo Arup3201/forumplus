@@ -1,103 +1,113 @@
-from shared.database.session import DatabaseSessionManager
+from shared.session import DatabaseSessionManager
+from shared.repository import BaseRepository
+from typing import Dict, List
 from services.auth.models.oauth import User, OAuthProvider
-from services.auth.schemas.oauth import UserCreate, OAuthProviderCreate, OAuthUserData
-from services.auth.types import OAuthProvider as OAuthProviderType
-from sqlalchemy import select
-from datetime import datetime, timezone
-import uuid
+from services.auth.schemas.oauth import OAuthProviderEntity, UserEntity
 
-class OAuthRepository:
+class OAuthRepository(BaseRepository):
     def __init__(self, db_manager: DatabaseSessionManager):
-        self.db_manager = db_manager
-
-    def get_user_by_id(self, user_id: str) -> User | None:
-        """Get a user by their ID."""
+        super().__init__(db_manager)
+    
+    def create_oauth_provider(self, user_id: str, provider_data: Dict) -> OAuthProviderEntity:
         with self.db_manager.get_session() as session:
-            result = session.execute(
-                select(User).where(User.id == user_id)
-            )
-            return result.scalar_one_or_none()
-
-    def get_user_by_email(self, email: str) -> User | None:
-        """Get a user by their email address."""
-        with self.db_manager.get_session() as session:
-            result = session.execute(
-                select(User).where(User.email == email)
-            )
-            return result.scalar_one_or_none()
-
-    def get_user_by_provider_id(self, provider: OAuthProviderType, provider_id: str) -> User | None:
-        """Get a user by their OAuth provider ID."""
-        with self.db_manager.get_session() as session:
-            result = session.execute(
-                select(User)
-                .join(OAuthProvider)
-                .where(
-                    OAuthProvider.provider == provider.value,
-                    OAuthProvider.provider_user_id == provider_id
-                )
-            )
-            return result.scalar_one_or_none()
-
-    def create_user(self, user_data: UserCreate) -> User:
-        """Create a new user."""
-        with self.db_manager.get_session() as session:
-            user = User(
-                id=str(uuid.uuid4()),
-                email=user_data.email,
-                is_active=user_data.is_active,
-                is_deleted=user_data.is_deleted,
-                created_at=datetime.now(timezone.utc),
-                updated_at=datetime.now(timezone.utc)
-            )
-            session.add(user)
-            session.commit()
-            session.refresh(user)
-            return user
-
-    def create_oauth_provider(self, oauth_data: OAuthProviderCreate) -> OAuthProvider:
-        """Create a new OAuth provider connection for a user."""
-        with self.db_manager.get_session() as session:
-            oauth_provider = OAuthProvider(
-                id=str(uuid.uuid4()),
-                user_id=oauth_data.user_id,
-                provider=oauth_data.provider.value,
-                provider_user_id=oauth_data.provider_user_id,
-                provider_payload=oauth_data.provider_payload,
-                created_at=datetime.now(timezone.utc),
-                updated_at=datetime.now(timezone.utc)
-            )
+            oauth_provider = OAuthProvider(**{
+                **self._get_base_payload(),
+                'user_id': user_id,
+                'provider': provider_data['provider'],
+                'provider_user_id': provider_data['provider_id'],
+                'provider_payload': provider_data,
+            })
             session.add(oauth_provider)
-            session.commit()
-            session.refresh(oauth_provider)
-            return oauth_provider
-
-    def get_oauth_provider(
-        self,
-        user_id: str,
-        provider: OAuthProviderType
-    ) -> OAuthProvider | None:
-        """Get a user's OAuth provider connection."""
+            session.flush()
+            provider_dict = {
+                'id': oauth_provider.id,
+                'user_id': oauth_provider.user_id,
+                'provider': oauth_provider.provider,
+                'provider_id': oauth_provider.provider_user_id,
+                'provider_payload': oauth_provider.provider_payload,
+                'created_at': oauth_provider.created_at,
+                'updated_at': oauth_provider.updated_at
+            }
+            return OAuthProviderEntity(**provider_dict)
+    
+    def create_user(self, user_data: Dict) -> UserEntity:
         with self.db_manager.get_session() as session:
-            result = session.execute(
-                select(OAuthProvider)
-                .where(
-                    OAuthProvider.user_id == user_id,
-                    OAuthProvider.provider == provider.value
-                )
-            )
-            return result.scalar_one_or_none()
-
-    def update_oauth_provider(
-        self,
-        oauth_provider: OAuthProvider,
-        provider_payload: dict
-    ) -> OAuthProvider:
-        """Update an existing OAuth provider connection."""
+            user = User(**{
+                **self._get_base_payload(),
+                'email': user_data['email'], 
+                'is_active': True, 
+                'is_deleted': False,
+                'deleted_at': None
+            })
+            session.add(user)
+            session.flush()
+            user_dict = {
+                'id': user.id,
+                'email': user.email,
+                'is_active': user.is_active,
+                'is_deleted': user.is_deleted,
+                'created_at': user.created_at,
+                'updated_at': user.updated_at,
+                'deleted_at': user.deleted_at
+            }
+            return UserEntity(**user_dict)
+    
+    def add_oauth_provider(self, user_id: str, oauth_provider_id: str) -> None:
         with self.db_manager.get_session() as session:
-            oauth_provider.provider_payload = provider_payload
-            oauth_provider.updated_at = datetime.now(timezone.utc)
-            
-            session.commit()
-            session.refresh(oauth_provider)
-            return oauth_provider
+            oauth_provider = session.query(OAuthProvider).filter(OAuthProvider.id == oauth_provider_id).first()
+            if not oauth_provider:
+                raise ValueError(f"OAuth provider with id {oauth_provider_id} not found")
+            user = session.query(User).filter(User.id == user_id).first()
+            if not user:
+                raise ValueError(f"User with id {user_id} not found")
+            user.oauth_providers.append(oauth_provider)
+            session.flush()
+    
+    def get_user(self, user_id: str) -> UserEntity | None:
+        with self.db_manager.get_session() as session:
+            user = session.query(User).filter(User.id == user_id).first()
+            if not user:
+                return None
+            user_dict = {
+                'id': user.id,
+                'email': user.email,
+                'is_active': user.is_active,
+                'is_deleted': user.is_deleted,
+                'created_at': user.created_at,
+                'updated_at': user.updated_at,
+                'deleted_at': user.deleted_at
+            }
+            return UserEntity(**user_dict)
+    
+    def get_user_by_email(self, email: str) -> UserEntity | None:
+        with self.db_manager.get_session() as session:
+            user = session.query(User).filter(User.email == email).first()
+            if not user:
+                return None
+            user_dict = {
+                'id': user.id,
+                'email': user.email,
+                'is_active': user.is_active,
+                'is_deleted': user.is_deleted,
+                'created_at': user.created_at,
+                'updated_at': user.updated_at,
+                'deleted_at': user.deleted_at
+            }
+            return UserEntity(**user_dict)
+        
+    def get_oauth_providers_by_user_id(self, user_id: str) -> List[OAuthProviderEntity]:
+        with self.db_manager.get_session() as session:
+            oauth_providers = session.query(User).filter(User.id == user_id).first().oauth_providers
+            oauth_providers_list = []
+            for oauth_provider in oauth_providers:
+                oauth_provider_dict = {
+                    'id': oauth_provider.id,
+                    'user_id': oauth_provider.user_id,
+                    'provider': oauth_provider.provider,
+                    'provider_id': oauth_provider.provider_user_id,
+                    'provider_payload': oauth_provider.provider_payload,
+                    'created_at': oauth_provider.created_at,
+                    'updated_at': oauth_provider.updated_at
+                }
+                oauth_providers_list.append(OAuthProviderEntity(**oauth_provider_dict))
+            return oauth_providers_list
