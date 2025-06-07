@@ -29,16 +29,3 @@ class OAuthClientResponse(BaseModel):
     name: str
     avatar_url: str
     provider: OAuthProvider
-
-# schemas for API responses
-class OAuthUserResponse(BaseModel):
-    id: str
-    email: str
-    is_active: bool
-    is_deleted: bool
-    deleted_at: Optional[datetime]
-    provider_id: str
-    provider: str
-    provider_payload: dict
-    created_at: datetime
-    updated_at: datetime

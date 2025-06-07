@@ -1,4 +1,4 @@
-from server.shared.database import DatabaseManager
+from shared.database import DatabaseManager
 from shared.repository import BaseRepository
 from typing import Dict, List
 from services.auth.models.oauth import User, OAuthProvider

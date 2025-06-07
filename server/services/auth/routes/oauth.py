@@ -1,8 +1,7 @@
 from fastapi import APIRouter, Request, HTTPException, Depends
-from server.shared.database import DatabaseManager, get_db_manager
+from shared.database import DatabaseManager, get_db_manager
 from services.auth.types import OAuthProvider
 from services.auth.services import OAuthService
-from services.auth.schemas.oauth import OAuthUserResponse
 
 router = APIRouter()
 
@@ -28,7 +27,7 @@ async def oauth_login(provider: OAuthProvider,
             detail=f"Error in oauth_login: {str(e)}"
         )
 
-@router.get("/{provider}/callback", response_model=OAuthUserResponse)
+@router.get("/{provider}/callback")
 async def oauth_callback(provider: OAuthProvider, 
                          request: Request,
                          db_manager: DatabaseManager = Depends(get_db_manager)):
@@ -44,9 +43,8 @@ async def oauth_callback(provider: OAuthProvider,
     state = request.query_params.get('state')
     try:
         service = OAuthService(db_manager, provider)
-        user_dict = await service.oauth_callback(state, request)
-        print(user_dict)
-        return OAuthUserResponse(**user_dict)
+        session_id = await service.oauth_callback(state, request)
+        return session_id
     except Exception as e:
         raise HTTPException(
             status_code=400, 

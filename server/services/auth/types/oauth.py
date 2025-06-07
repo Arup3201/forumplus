@@ -9,11 +9,17 @@ class OAuthProvider(str, Enum):
     GITHUB = 'github'
 
 class OAuthState:
+    ip_address: str
+    user_agent: str
+    device_info: Dict
     provider: OAuthProvider
     created_at: datetime
     expires_at: datetime
     
-    def __init__(self, provider: OAuthProvider, expires_at: datetime, created_at: Optional[datetime]=datetime.now(tz=timezone.utc)):
+    def __init__(self, ip_address: str, user_agent: str, device_info: Dict, provider: OAuthProvider, expires_at: datetime, created_at: Optional[datetime]=datetime.now(tz=timezone.utc)):
+        self.ip_address = ip_address
+        self.user_agent = user_agent
+        self.device_info = device_info
         self.provider = provider
         self.created_at = created_at
         self.expires_at = expires_at

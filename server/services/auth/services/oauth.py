@@ -12,16 +12,26 @@ from services.auth.types import OAuthProvider, OAuthState, OAuthStates, OAuthApp
 from services.auth.schemas.oauth import OAuthClientResponse
 
 # Database
-from server.shared.database import DatabaseManager
+from shared.database import DatabaseManager
+from shared.session import SessionManager
 from services.auth.repositories.oauth import OAuthRepository
 
-def generate_state() -> str:
+# Constants
+SESSION_EXPIRATION_TIME = 10
+SESSION_EXPIRATION_UNIT = "seconds"
+
+def generate_state(ip_address: str, user_agent: str, device_info: Dict) -> Dict:
     """Get the security state for OAuth.
 
     Returns:
         str: The security state.
     """
-    return secrets.token_urlsafe(32)
+    return {
+        "ip_address": ip_address,
+        "user_agent": user_agent,
+        "device_info": device_info, 
+        "state": secrets.token_urlsafe(32)
+    }
 
 oauth_states: OAuthStates = {}
 
@@ -29,6 +39,7 @@ class OAuthService:
     def __init__(self, db_manager: DatabaseManager, provider: OAuthProvider):
         self.db_manager = db_manager
         self.oauth_repo = OAuthRepository(db_manager)
+        self.session_manager = SessionManager(db_manager)
         self.provider = provider.value
         self.__init_oauth()
     
@@ -59,20 +70,23 @@ class OAuthService:
                 client_kwargs={'scope': 'user:email'}
             )
     
-    def _store_oauth_state(self, state: str) -> None:
+    def _store_oauth_state(self, state_info: Dict) -> None:
         """store the oauth state into global variable `oauth_states`
 
         Args:
             provider (str): The provider of the authentication.
             state (str): The state parameter to verify.
         """
-        oauth_states[state] = OAuthState(**{
+        oauth_states[state_info['state']] = OAuthState(**{
+            'ip_address': state_info['ip_address'],
+            'user_agent': state_info['user_agent'],
+            'device_info': state_info['device_info'],
             'provider': self.provider, 
             'created_at': datetime.now(tz=timezone.utc), 
             'expires_at': datetime.now(tz=timezone.utc) + timedelta(minutes=10) # expires in 10 minutes
         })
 
-    def _verify_oauth_state(self, state: str) -> bool:
+    def _verify_oauth_state(self, state: str) -> bool | OAuthState:
         """Verify the state parameter against the global variable `oauth_states`.
 
         Args:
@@ -92,19 +106,37 @@ class OAuthService:
         if oauth_state_info.provider != self.provider:
             return False
         
+        return oauth_state_info
+    
+    def _consume_oauth_state(self, state: str) -> OAuthState:
+        """Consume the oauth state from the global variable `oauth_states`"""
+        if not state or state not in oauth_states:
+            raise ValueError("Missing or invalid state parameter in callback.")
+        
+        oauth_state_info = oauth_states[state]
         del oauth_states[state]
-        return True
+        return oauth_state_info
     
     async def oauth_login(self, request: Request):
+        # get user ip address, user agent, and device info
+        ip_address = request.client.host
+        user_agent = request.headers.get('User-Agent')
+        device_name = request.headers.get('Sec-Ch-Ua').split(";")[0].strip()
+        device_version = request.headers.get('Sec-Ch-Ua').split(";")[1].strip()
+        device_info = {
+            "name": device_name,
+            "version": device_version
+        }
+        
         # Generate CSRF protection state
-        state = generate_state()  # Creates secure random string
-        self._store_oauth_state(state)  # Store in oauth states dict
+        state_info = generate_state(ip_address, user_agent, device_info)  # Creates secure random string
+        self._store_oauth_state(state_info)  # Store in oauth states dict
 
         # Create OAuth client and redirect to provider
         client = OAuthAppWrapper(self.oauth.create_client(self.provider))
         redirect_uri = f"http://localhost:8000/oauth/{self.provider}/callback"
 
-        return await client.authorize_redirect(request, redirect_uri, state)
+        return await client.authorize_redirect(request, redirect_uri, state_info['state'])
     
     async def _get_user_data_from_oauth_provider(self, client: OAuthAppWrapper, token: Dict) -> OAuthClientResponse:
         """Extract user data from OAuth provider response."""
@@ -136,11 +168,38 @@ class OAuthService:
                 avatar_url=user_info['avatar_url'],
                 provider=OAuthProvider.GITHUB
             )
-
-    async def oauth_callback(self, state: str, request: Request):
+            
+    def _create_session(self, user_id: str, ip_address: str, user_agent: str, device_info: str) -> str:
+        """Check if the user has an active session, if not create a new session otherwise delete the old session and create a new one"""
+        
+        session = self.session_manager.get_session_by_user_id(user_id)
+        if session:
+            self.session_manager.delete_session(session.session_id)
+        
+        session_id = self.session_manager.create_session({
+            "session_id": secrets.token_urlsafe(32),
+            "user_id": user_id,
+            "ip_address": ip_address,
+            "user_agent": user_agent,
+            "device_info": device_info,
+            "expires_at": datetime.now(tz=timezone.utc) + timedelta(**{
+                SESSION_EXPIRATION_UNIT: SESSION_EXPIRATION_TIME
+            }),
+            "is_active": True
+        })
+        
+        return session_id
+    
+    async def oauth_callback(self, state: str, request: Request) -> str:
         # verify the state parameter
         if not state or not self._verify_oauth_state(state):
             raise ValueError("Missing or invalid state parameter in callback.")
+
+        # get user ip address, user agent, and device info
+        state_info = self._consume_oauth_state(state)
+        ip_address = state_info.ip_address
+        user_agent = state_info.user_agent
+        device_info = state_info.device_info
 
         client = OAuthAppWrapper(self.oauth.create_client(self.provider))
 
@@ -156,52 +215,29 @@ class OAuthService:
                 oauth_provider_entity = self.oauth_repo.create_oauth_provider(user_entity.id, user_data.model_dump())
                 self.oauth_repo.add_oauth_provider(user_entity.id, oauth_provider_entity.id)
                 
-                return {
-                    "id": user_entity.id,
-                    "email": user_entity.email,
-                    "is_active": user_entity.is_active,
-                    "is_deleted": user_entity.is_deleted,
-                    "created_at": user_entity.created_at,
-                    "updated_at": user_entity.updated_at,
-                    "deleted_at": user_entity.deleted_at,
-                    "provider_id": oauth_provider_entity.provider_id,
-                    "provider": oauth_provider_entity.provider,
-                    "provider_payload": oauth_provider_entity.provider_payload,
-                }
+                # create session
+                session_id = self.session_manager.create_session({
+                    "session_id": secrets.token_urlsafe(32),
+                    "user_id": user_entity.id,
+                    "ip_address": ip_address,
+                    "user_agent": user_agent,
+                    "device_info": device_info,
+                    "expires_at": datetime.now(tz=timezone.utc) + timedelta(**{
+                        SESSION_EXPIRATION_UNIT: SESSION_EXPIRATION_TIME
+                    }),
+                    "is_active": True
+                })
+                
+                return session_id
             else:
                 oauth_providers = self.oauth_repo.get_oauth_providers_by_user_id(user_entity.id)
                 if self.provider not in [oauth_provider.provider for oauth_provider in oauth_providers]:
                     # if user exists but user never used this oauth provider before, add the oauth provider to the user
                     oauth_provider_entity = self.oauth_repo.create_oauth_provider(user_entity.id, user_data.model_dump())
                     self.oauth_repo.add_oauth_provider(user_entity.id, oauth_provider_entity.id)
-                    
-                    return {
-                        "id": user_entity.id,
-                        "email": user_entity.email,
-                        "is_active": user_entity.is_active,
-                        "is_deleted": user_entity.is_deleted,
-                        "created_at": user_entity.created_at,
-                        "updated_at": user_entity.updated_at,
-                        "deleted_at": user_entity.deleted_at,
-                        "provider_id": oauth_provider_entity.provider_id,
-                        "provider": oauth_provider_entity.provider,
-                        "provider_payload": oauth_provider_entity.provider_payload,
-                    }
-                else:
-                    # if user exists and user already used this oauth provider before, return the user
-                    oauth_provider_entity = next(filter(lambda x: x.provider == self.provider, oauth_providers))
-                    return {
-                        "id": user_entity.id,
-                        "email": user_entity.email,
-                        "is_active": user_entity.is_active,
-                        "is_deleted": user_entity.is_deleted,
-                        "created_at": user_entity.created_at,
-                        "updated_at": user_entity.updated_at,
-                        "deleted_at": user_entity.deleted_at,
-                        "provider_id": oauth_provider_entity.provider_id,
-                        "provider": oauth_provider_entity.provider,
-                        "provider_payload": oauth_provider_entity.provider_payload,
-                    }
+                
+                session_id = self._create_session(user_entity.id, ip_address, user_agent, device_info)
+                return session_id
 
         except Exception as e:
             raise ValueError(f"In OAuth callback {str(e)}")
