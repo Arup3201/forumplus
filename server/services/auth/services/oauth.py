@@ -12,7 +12,7 @@ from services.auth.types import OAuthProvider, OAuthState, OAuthStates, OAuthApp
 from services.auth.schemas.oauth import OAuthClientResponse
 
 # Database
-from shared.session import DatabaseSessionManager
+from server.shared.database import DatabaseManager
 from services.auth.repositories.oauth import OAuthRepository
 
 def generate_state() -> str:
@@ -26,7 +26,7 @@ def generate_state() -> str:
 oauth_states: OAuthStates = {}
 
 class OAuthService:
-    def __init__(self, db_manager: DatabaseSessionManager, provider: OAuthProvider):
+    def __init__(self, db_manager: DatabaseManager, provider: OAuthProvider):
         self.db_manager = db_manager
         self.oauth_repo = OAuthRepository(db_manager)
         self.provider = provider.value

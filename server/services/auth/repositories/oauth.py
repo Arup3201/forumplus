@@ -1,11 +1,11 @@
-from shared.session import DatabaseSessionManager
+from server.shared.database import DatabaseManager
 from shared.repository import BaseRepository
 from typing import Dict, List
 from services.auth.models.oauth import User, OAuthProvider
 from services.auth.schemas.oauth import OAuthProviderEntity, UserEntity
 
 class OAuthRepository(BaseRepository):
-    def __init__(self, db_manager: DatabaseSessionManager):
+    def __init__(self, db_manager: DatabaseManager):
         super().__init__(db_manager)
     
     def create_oauth_provider(self, user_id: str, provider_data: Dict) -> OAuthProviderEntity:

@@ -1,4 +1,4 @@
-from shared.session import get_db_manager
+from server.shared.database import get_db_manager
 from shared.model import Base
 from services.auth.models import User, OAuthProvider
 

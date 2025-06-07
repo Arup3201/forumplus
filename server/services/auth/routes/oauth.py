@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Request, HTTPException, Depends
-from shared.session import DatabaseSessionManager, get_db_manager
+from server.shared.database import DatabaseManager, get_db_manager
 from services.auth.types import OAuthProvider
 from services.auth.services import OAuthService
 from services.auth.schemas.oauth import OAuthUserResponse
@@ -9,7 +9,7 @@ router = APIRouter()
 @router.get("/{provider}")
 async def oauth_login(provider: OAuthProvider, 
                       request: Request,
-                      db_manager: DatabaseSessionManager = Depends(get_db_manager)):
+                      db_manager: DatabaseManager = Depends(get_db_manager)):
     """
     Initiates the OAuth login process for the specified provider.
     """
@@ -31,7 +31,7 @@ async def oauth_login(provider: OAuthProvider,
 @router.get("/{provider}/callback", response_model=OAuthUserResponse)
 async def oauth_callback(provider: OAuthProvider, 
                          request: Request,
-                         db_manager: DatabaseSessionManager = Depends(get_db_manager)):
+                         db_manager: DatabaseManager = Depends(get_db_manager)):
     """
     Handles the OAuth callback from the specified provider.
     """
