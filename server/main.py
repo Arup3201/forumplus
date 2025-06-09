@@ -18,4 +18,4 @@ def read_root():
     return {"message": "Running!"}
 
 from services.auth.routes import oauth_router
-app.include_router(oauth_router, prefix="/oauth", tags=["oauth"])
+app.include_router(oauth_router, prefix="/auth", tags=["auth"])
