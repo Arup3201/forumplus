@@ -1,57 +1,54 @@
-import { createContext, useContext, useState } from 'react';
-
-type User = {
-  id: string;
-  name: string;
-  email: string;
-  photoURL: string;
-};
+import { createContext, useMemo, useState } from "react";
+import useFetch from "@/hooks/useFetch";
 
 interface AuthContextType {
-  user: User | null;
-  loading: boolean;
-  signInWithGoogle: () => Promise<void>;
-  signInWithGithub: () => Promise<void>;
-  logout: () => Promise<void>;
-}
+  isAuthenticated: boolean;
+  googleSignIn: () => void;
+  githubSignIn: () => void;
+  logout: () => void;
+};
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
-export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error('useAuth must be used within an AuthProvider');
-  }
-  return context;
-};
-
-export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  const signInWithGoogle = async () => {
-    console.log('signInWithGoogle');
-  };
-
-  const signInWithGithub = async () => {
-    console.log('signInWithGithub');
-  };
-
-  const logout = async () => {
-    console.log('logout');
-  };
-
-  const value = {
-    user,
-    loading,
-    signInWithGoogle,
-    signInWithGithub,
-    logout,
-  };
+const AuthProvider = ({ children }: { children: React.ReactNode }) => {
+  const { postRequest, deleteRequest } = useFetch();
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  
+  const authContextValue = useMemo(() => ({
+    isAuthenticated,
+    googleSignIn: async () => {
+      try {
+        const response = await postRequest('/auth/google', {});
+        console.log('Google sign in response:', response);
+        setIsAuthenticated(true);
+      } catch (error) {
+        console.error('Error in googleSignIn:', error);
+      }
+    },
+    githubSignIn: async () => {
+      try {
+        const response = await postRequest('/auth/github', {});
+        console.log('Github sign in response:', response);
+      } catch (error) {
+        console.error('Error in githubSignIn:', error);
+      }
+    },
+    logout: async () => {
+      try {
+        const response = await deleteRequest('/auth/logout');
+        console.log('Logout response:', response);
+      } catch (error) {
+        console.error('Error in logout:', error);
+      }
+    },
+  }), []);
 
   return (
-    <AuthContext.Provider value={value}>
+    <AuthContext.Provider value={authContextValue}>
       {children}
     </AuthContext.Provider>
-  );
-}; 
+  )
+};
+
+export { AuthContext };
+export default AuthProvider;
