@@ -134,7 +134,7 @@ class OAuthService:
 
         # Create OAuth client and redirect to provider
         client = OAuthAppWrapper(self.oauth.create_client(self.provider))
-        redirect_uri = f"http://localhost:8000/oauth/{self.provider}/callback"
+        redirect_uri = f"http://localhost:8000/api/auth/{self.provider}/callback"
 
         return await client.authorize_redirect(request, redirect_uri, state_info['state'])
     

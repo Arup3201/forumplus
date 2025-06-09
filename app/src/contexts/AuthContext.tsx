@@ -18,17 +18,14 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     isAuthenticated,
     googleSignIn: async () => {
       try {
-        const response = await postRequest('/api/auth/google', {});
-        console.log('Google sign in response:', response);
-        setIsAuthenticated(true);
+        window.location.href = '/api/auth/google';
       } catch (error) {
         console.error('Error in googleSignIn:', error);
       }
     },
     githubSignIn: async () => {
       try {
-        const response = await postRequest('/api/auth/github', {});
-        console.log('Github sign in response:', response);
+        window.location.href = '/api/auth/github';
       } catch (error) {
         console.error('Error in githubSignIn:', error);
       }
