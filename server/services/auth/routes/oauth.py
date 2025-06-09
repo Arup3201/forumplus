@@ -5,7 +5,7 @@ from services.auth.services import OAuthService
 
 router = APIRouter()
 
-@router.get("/{provider}")
+@router.post("/{provider}")
 async def oauth_login(provider: OAuthProvider, 
                       request: Request,
                       db_manager: DatabaseManager = Depends(get_db_manager)):
@@ -27,7 +27,7 @@ async def oauth_login(provider: OAuthProvider,
             detail=f"Error in oauth_login: {str(e)}"
         )
 
-@router.get("/{provider}/callback")
+@router.post("/{provider}/callback")
 async def oauth_callback(provider: OAuthProvider, 
                          request: Request,
                          db_manager: DatabaseManager = Depends(get_db_manager)):

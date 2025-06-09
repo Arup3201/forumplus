@@ -18,7 +18,7 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     isAuthenticated,
     googleSignIn: async () => {
       try {
-        const response = await postRequest('/auth/google', {});
+        const response = await postRequest('/api/auth/google', {});
         console.log('Google sign in response:', response);
         setIsAuthenticated(true);
       } catch (error) {
@@ -27,7 +27,7 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     },
     githubSignIn: async () => {
       try {
-        const response = await postRequest('/auth/github', {});
+        const response = await postRequest('/api/auth/github', {});
         console.log('Github sign in response:', response);
       } catch (error) {
         console.error('Error in githubSignIn:', error);
@@ -35,7 +35,7 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     },
     logout: async () => {
       try {
-        const response = await deleteRequest('/auth/logout');
+        const response = await deleteRequest('/api/auth/logout');
         console.log('Logout response:', response);
       } catch (error) {
         console.error('Error in logout:', error);
