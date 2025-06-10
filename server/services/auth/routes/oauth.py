@@ -1,7 +1,9 @@
 from fastapi import APIRouter, Request, HTTPException, Depends
+from fastapi.responses import RedirectResponse
 from shared.database import DatabaseManager, get_db_manager
 from services.auth.types import OAuthProvider
 from services.auth.services import OAuthService
+from shared.constant import SESSION_COOKIE_NAME, SESSION_EXPIRATION_TIME
 
 router = APIRouter()
 
@@ -44,7 +46,16 @@ async def oauth_callback(provider: OAuthProvider,
     try:
         service = OAuthService(db_manager, provider)
         session_id = await service.oauth_callback(state, request)
-        return session_id
+        
+        response = RedirectResponse(url="http://localhost")
+        response.set_cookie(
+            key=SESSION_COOKIE_NAME,
+            value=session_id,
+            httponly=True,
+            secure=True,
+            max_age=SESSION_EXPIRATION_TIME
+        )
+        return response
     except Exception as e:
         raise HTTPException(
             status_code=400, 

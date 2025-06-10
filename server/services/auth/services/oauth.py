@@ -17,8 +17,7 @@ from shared.session import SessionManager
 from services.auth.repositories.oauth import OAuthRepository
 
 # Constants
-SESSION_EXPIRATION_TIME = 10
-SESSION_EXPIRATION_UNIT = "seconds"
+from shared.constant import SESSION_EXPIRATION_TIME, SESSION_EXPIRATION_UNIT
 
 def generate_state(ip_address: str, user_agent: str, device_info: Dict) -> Dict:
     """Get the security state for OAuth.
