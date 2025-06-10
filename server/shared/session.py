@@ -19,7 +19,7 @@ class SessionManager:
             str: Session ID
         """
         session = self.session_repository.create_session(user_data)
-        return session.id
+        return session.session_id
     
     def validate_session(self, session_id: str) -> bool:
         """

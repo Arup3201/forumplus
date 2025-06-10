@@ -1,26 +1,40 @@
-import { createContext, useMemo, useState } from "react";
 import useFetch from "@/hooks/useFetch";
+import { createContext, useEffect, useMemo, useState } from "react";
 
 interface AuthContextType {
   isAuthenticated: boolean;
+  loading: boolean;
   googleSignIn: () => void;
   githubSignIn: () => void;
-  logout: () => void;
 };
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
 const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-  const { deleteRequest } = useFetch();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const { loading, getRequest } = useFetch();
+
+  async function checkAuth() {
+    try {
+      await getRequest('/api/auth/check');
+      setIsAuthenticated(true);
+    } catch (error) {
+      setIsAuthenticated(false);
+      console.error('Error in checkAuth:', error);
+    }
+  }
   
+  useEffect(() => {
+    checkAuth();
+  }, []);
+
   const authContextValue = useMemo(() => ({
     isAuthenticated,
+    loading,
     googleSignIn: async () => {
       setIsAuthenticated(false);
       try {
         window.location.href = '/api/auth/google';
-        setIsAuthenticated(true);
       } catch (error) {
         console.error('Error in googleSignIn:', error);
       }
@@ -29,21 +43,11 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       setIsAuthenticated(false);
       try {
         window.location.href = '/api/auth/github';
-        setIsAuthenticated(true);
       } catch (error) {
         console.error('Error in githubSignIn:', error);
       }
     },
-    logout: async () => {
-      try {
-        const response = await deleteRequest('/api/auth/logout');
-        console.log('Logout response:', response);
-        setIsAuthenticated(false);
-      } catch (error) {
-        console.error('Error in logout:', error);
-      }
-    },
-  }), []);
+  }), [isAuthenticated, loading]);
 
   return (
     <AuthContext.Provider value={authContextValue}>

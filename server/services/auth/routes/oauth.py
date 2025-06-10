@@ -1,11 +1,33 @@
 from fastapi import APIRouter, Request, HTTPException, Depends
 from fastapi.responses import RedirectResponse
 from shared.database import DatabaseManager, get_db_manager
+from shared.session import SessionManager
 from services.auth.types import OAuthProvider
 from services.auth.services import OAuthService
 from shared.constant import SESSION_COOKIE_NAME, SESSION_EXPIRATION_TIME
 
 router = APIRouter()
+
+@router.get("/check")
+async def check_auth(request: Request, db_manager: DatabaseManager = Depends(get_db_manager)):
+    """
+    Checks if the user is authenticated.
+    """
+    session_id = request.cookies.get(SESSION_COOKIE_NAME)
+    if not session_id:
+        raise HTTPException(
+            status_code=401,
+            detail="Unauthorized"
+        )
+    
+    session_manager = SessionManager(db_manager)
+    if not session_manager.validate_session(session_id):
+        raise HTTPException(
+            status_code=401,
+            detail="Unauthorized"
+        )
+    
+    return {"authenticated": True}
 
 @router.get("/{provider}")
 async def oauth_login(provider: OAuthProvider, 
@@ -47,7 +69,7 @@ async def oauth_callback(provider: OAuthProvider,
         service = OAuthService(db_manager, provider)
         session_id = await service.oauth_callback(state, request)
         
-        response = RedirectResponse(url="http://localhost")
+        response = RedirectResponse(url="http://localhost/")
         response.set_cookie(
             key=SESSION_COOKIE_NAME,
             value=session_id,
