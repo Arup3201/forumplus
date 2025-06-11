@@ -5,12 +5,10 @@ import { Avatar } from "@/components/ui/avatar";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { DropdownMenu } from "@/components/ui/dropdown-menu";
-import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
-import { BellIcon } from "lucide-react";
 
 export const Home = () => {
-  const { loading, error, getRequest, data } = useFetch();
+  const { loading, error, getRequest } = useFetch();
 
   useEffect(() => {
     getRequest("/api/content");
@@ -25,26 +23,6 @@ export const Home = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4 md:p-8 flex flex-col gap-6">
-      {/* Header */}
-      <header className="flex items-center justify-between gap-4 py-2 px-2 bg-white rounded-lg shadow-sm">
-        <div className="flex items-center gap-4">
-          <div className="w-10 h-10 bg-primary rounded flex items-center justify-center">
-            {/* Logo Placeholder */}
-            <span className="text-white font-bold text-xl">F+</span>
-          </div>
-          <Input placeholder="Search the forum" className="w-64" />
-        </div>
-        <div className="flex items-center gap-4">
-          <Button variant="ghost" size="icon">
-            <BellIcon className="w-5 h-5" />
-          </Button>
-          <Avatar>
-            <img src="https://github.com/favicon.ico" alt="Profile" className="rounded-full w-8 h-8" />
-          </Avatar>
-        </div>
-      </header>
-
       <main className="flex gap-8">
         {/* Main Content */}
         <section className="flex-1 flex flex-col gap-4">
@@ -112,6 +90,5 @@ export const Home = () => {
           </div>
         </aside>
       </main>
-    </div>
   );
 }; 
