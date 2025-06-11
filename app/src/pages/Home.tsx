@@ -9,7 +9,8 @@ import {
   HelpCircle,
   Lightbulb,
   Code,
-  Clock
+  Clock,
+  Plus
 } from "lucide-react";
 
 export const Home = () => {
@@ -83,7 +84,15 @@ export const Home = () => {
   ];
 
   return (
-    <div className="max-w-7xl mx-auto px-6 py-12 space-y-12">
+    <div className="max-w-7xl mx-auto px-6 py-12 space-y-12 relative">
+      {/* Floating Action Button */}
+      <div className="fixed bottom-1 right-8 z-50">
+        <Button size="lg" className="rounded-full shadow-lg hover:shadow-xl transition-shadow">
+          <Plus className="w-5 h-5 mr-2" />
+          New Discussion
+        </Button>
+      </div>
+
       {/* Site Identity */}
       <div className="text-center space-y-6">
         <div className="flex items-center justify-center gap-4">
