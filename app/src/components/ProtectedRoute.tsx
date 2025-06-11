@@ -1,6 +1,7 @@
 import { Navigate } from 'react-router-dom';
 import useAuth from '@/hooks/useAuth';
 import { Navbar } from './Navbar';
+import { Footer } from './Footer';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -21,6 +22,7 @@ export const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
     <div className="min-h-screen bg-gray-50 p-4 md:p-8 flex flex-col gap-6">
       <Navbar />
       {children}
+      <Footer />
     </div>
   )
 }; 
