@@ -12,17 +12,17 @@ Following features are the ones I am currently working on. Any feature that I am
 
 ## 🥇 **Essential Core Features**
 
-| Feature                                 | Description                                                                     |
-| --------------------------------------- | ------------------------------------------------------------------------------- |
-| 🔧**User Authentication (JWT + OAuth)** | Secure login system with support for Google/GitHub login to ease onboarding.    |
-| **Thread Creation & Replies**           | Users can post new threads and reply to existing ones—core forum functionality. |
-| **Nested Comments**                     | Enables threaded conversations by allowing replies to replies.                  |
-| **Voting System**                       | Users can upvote/downvote posts to surface valuable content.                    |
-| **Tags & Categories**                   | Organize threads into topics and help users discover relevant content.          |
-| **User Profiles**                       | Each user has a public profile with bio, avatar, and their activity.            |
-| **Role-Based Access Control (RBAC)**    | Controls user permissions (admin, mod, regular user) for managing content.      |
-| **Search Functionality**                | Enables users to find threads/posts by keywords or filters.                     |
-| **Admin Moderation Tools**              | Admins can manage users, delete content, and resolve reports.                   |
+| Feature                                   | Description                                                                                             |
+| ----------------------------------------- | ------------------------------------------------------------------------------------------------------- |
+| ✅**User Authentication (Session-based)** | Secure login system with session-based authentication for enhanced security and better user experience. |
+| **🔧Thread Creation & Replies**           | Users can post new threads and reply to existing ones—core forum functionality.                         |
+| **Nested Comments**                       | Enables threaded conversations by allowing replies to replies.                                          |
+| **Voting System**                         | Users can upvote/downvote posts to surface valuable content.                                            |
+| **Tags & Categories**                     | Organize threads into topics and help users discover relevant content.                                  |
+| **User Profiles**                         | Each user has a public profile with bio, avatar, and their activity.                                    |
+| **Role-Based Access Control (RBAC)**      | Controls user permissions (admin, mod, regular user) for managing content.                              |
+| **Search Functionality**                  | Enables users to find threads/posts by keywords or filters.                                             |
+| **Admin Moderation Tools**                | Admins can manage users, delete content, and resolve reports.                                           |
 
 ---
 
@@ -76,14 +76,16 @@ The server follows a **microservice architecture** where each folder inside the 
 Each service follows a standardized 5-layer architecture:
 
 ### 🛣️ Routes
+
 **Purpose**: API endpoint definitions using FastAPI
 
 - Defines HTTP route handlers (`@router.get`, `@router.post`, etc.)
-- Handles dependency injection 
+- Handles dependency injection
 - Specifies request/response models for payload validation
 - Contains minimal logic - delegates to service layer
 
-### 🏢 Services  
+### 🏢 Services
+
 **Purpose**: Business logic implementation
 
 - Contains core business rules and workflows
@@ -92,6 +94,7 @@ Each service follows a standardized 5-layer architecture:
 - Coordinates between multiple repositories when needed
 
 ### 📋 Schemas
+
 **Purpose**: Data validation and serialization contracts
 
 - Defines structure and validation rules using Pydantic
@@ -100,6 +103,7 @@ Each service follows a standardized 5-layer architecture:
 - Handles serialization/deserialization (JSON ↔ Python objects)
 
 ### 🏷️ Types
+
 **Purpose**: Static type definitions for development
 
 - Provides compile-time type hints for IDEs and type checkers
@@ -108,6 +112,7 @@ Each service follows a standardized 5-layer architecture:
 - Improves code organization and developer experience
 
 ### 🗄️ Repositories
+
 **Purpose**: Data access abstraction layer
 
 - Implements database operations using SQLAlchemy ORM
@@ -121,12 +126,12 @@ Each service follows a standardized 5-layer architecture:
 
 ## 📐 Rule of Thumb
 
-| **Use Schemas When** | **Use Types When** |
-|---------------------|-------------------|
-| Data crosses boundaries | Internal code structure |
+| **Use Schemas When**    | **Use Types When**          |
+| ----------------------- | --------------------------- |
+| Data crosses boundaries | Internal code structure     |
 | Need runtime validation | Development-time hints only |
-| API requests/responses | Function signatures |
-| Database models | Protocols and interfaces |
-| External integrations | Type aliases and generics |
+| API requests/responses  | Function signatures         |
+| Database models         | Protocols and interfaces    |
+| External integrations   | Type aliases and generics   |
 
 **Key principle**: Schemas for **validation**, Types for **organization**.
