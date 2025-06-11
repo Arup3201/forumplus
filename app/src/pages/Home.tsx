@@ -1,8 +1,9 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import useFetch from "@/hooks/useFetch";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import CreateThread from "./CreateThread";
 import { 
   MessageSquare, 
   Users,
@@ -15,6 +16,7 @@ import {
 
 export const Home = () => {
   const { loading, error, getRequest } = useFetch();
+  const [isCreateThreadOpen, setIsCreateThreadOpen] = useState(false);
 
   useEffect(() => {
     getRequest("/api/thread/");
@@ -87,11 +89,21 @@ export const Home = () => {
     <div className="max-w-7xl mx-auto px-6 py-12 space-y-12 relative">
       {/* Floating Action Button */}
       <div className="fixed bottom-1 right-8 z-50">
-        <Button size="lg" className="rounded-full shadow-lg hover:shadow-xl transition-shadow">
+        <Button 
+          size="lg" 
+          className="rounded-full shadow-lg hover:shadow-xl transition-shadow"
+          onClick={() => setIsCreateThreadOpen(true)}
+        >
           <Plus className="w-5 h-5 mr-2" />
           New Discussion
         </Button>
       </div>
+
+      {/* CreateThread Modal */}
+      <CreateThread 
+        isOpen={isCreateThreadOpen} 
+        onClose={() => setIsCreateThreadOpen(false)} 
+      />
 
       {/* Site Identity */}
       <div className="text-center space-y-6">
