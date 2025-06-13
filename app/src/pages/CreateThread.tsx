@@ -6,6 +6,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import { X } from "lucide-react";
+import {z} from 'zod/v4';
+import { useForm } from 'react-hook-form';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { zodResolver } from '@hookform/resolvers/zod';
 
 interface CreateThreadProps {
   isOpen: boolean;
@@ -20,24 +24,30 @@ const categories = [
   'Announcements'
 ];
 
+const ThreadSchema = z.object({
+  title: z.string().min(1, {message: 'Title is required'}),
+  category: z.enum(categories as [string, ...string[]], {message: 'Category is required'}),
+  content: z.string().min(1, {message: 'Content is required'}),
+})
+
+type Thread = z.infer<typeof ThreadSchema>;
+
 const CreateThread: React.FC<CreateThreadProps> = ({ isOpen, onClose }) => {
-  const [title, setTitle] = useState('');
-  const [category, setCategory] = useState(categories[0]);
-  const [content, setContent] = useState('');
+  const { register, handleSubmit, formState: { errors } } = useForm<Thread>({
+    resolver: zodResolver(ThreadSchema),
+    defaultValues: {
+      title: '',
+      category: categories[0],
+      content: '',
+    },
+  });
   const [showPreview, setShowPreview] = useState(false);
-  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const modalRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (modalRef.current && !modalRef.current.contains(event.target as Node)) {
-        if (hasUnsavedChanges) {
-          if (window.confirm('You have unsaved changes. Are you sure you want to close?')) {
-            onClose();
-          }
-        } else {
-          onClose();
-        }
+        onClose();
       }
     };
 
@@ -48,14 +58,12 @@ const CreateThread: React.FC<CreateThreadProps> = ({ isOpen, onClose }) => {
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [isOpen, onClose, hasUnsavedChanges]);
+  }, [isOpen, onClose]);
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    // TODO: Implement thread creation logic
-    console.log({ title, category, content });
+  const onSubmit = (data: Thread) => {
+    console.log(data);
     onClose();
-  };
+  }
 
   return (
     <AnimatePresence>
@@ -89,39 +97,36 @@ const CreateThread: React.FC<CreateThreadProps> = ({ isOpen, onClose }) => {
               </CardHeader>
 
               <CardContent>
-                <form onSubmit={handleSubmit} className="space-y-6">
+                <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                   <div className="space-y-2">
                     <Label htmlFor="title">Title</Label>
                     <Input
                       id="title"
                       type="text"
-                      value={title}
-                      onChange={(e) => {
-                        setTitle(e.target.value);
-                        setHasUnsavedChanges(true);
-                      }}
+                      {...register('title')}
                       placeholder="Enter thread title"
-                      required
                     />
+                    {errors.title && (
+                      <p className="text-sm text-red-500">{errors.title.message}</p>
+                    )}
                   </div>
 
                   <div className="space-y-2">
                     <Label htmlFor="category">Category</Label>
-                    <select
-                      id="category"
-                      value={category}
-                      onChange={(e) => {
-                        setCategory(e.target.value);
-                        setHasUnsavedChanges(true);
-                      }}
-                      className="w-full h-9 rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+                    <Select
+                      {...register('category')}
                     >
-                      {categories.map((cat) => (
-                        <option key={cat} value={cat}>
+                      <SelectTrigger className="w-full h-9 rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50">
+                        <SelectValue placeholder="Select a category" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {categories.map((cat) => (
+                          <SelectItem key={cat} value={cat}>
                           {cat}
-                        </option>
-                      ))}
-                    </select>
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </div>
 
                   <div className="space-y-2">
@@ -140,11 +145,11 @@ const CreateThread: React.FC<CreateThreadProps> = ({ isOpen, onClose }) => {
                             'alignright alignjustify | bullist numlist outdent indent | ' +
                             'removeformat | help',
                         }}
-                        onEditorChange={(content: string) => {
-                          setContent(content);
-                          setHasUnsavedChanges(true);
-                        }}
+                        {...register('content')}
                       />
+                      {errors.content && (
+                        <p className="text-sm text-red-500">{errors.content.message}</p>
+                      )}
                   </div>
 
                   <div className="flex justify-between items-center">
