@@ -5,7 +5,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -21,7 +20,6 @@ import {
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
@@ -179,7 +177,8 @@ const CreateThread: React.FC<CreateThreadProps> = ({ isOpen, onClose }) => {
                               "alignright alignjustify | bullist numlist outdent indent | " +
                               "removeformat | help",
                           }}
-                          {...field}
+                          onEditorChange={(content) => field.onChange(content)}
+                          value={field.value}
                         />
                       </FormControl>
                       <FormMessage />
