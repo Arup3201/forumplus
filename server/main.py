@@ -14,7 +14,7 @@ def read_root():
     return {"message": "Running!"}
 
 from services.auth.routes import oauth_router
-from services.content.routes import content_router
+from services.core.routes import thread_router
 
 app.include_router(oauth_router, prefix="/api/auth", tags=["auth"])
-app.include_router(content_router, prefix="/api/content", tags=["content"])
+app.include_router(thread_router, prefix="/api/threads", tags=["threads"])
