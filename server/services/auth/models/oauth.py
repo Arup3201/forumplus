@@ -13,7 +13,7 @@ class User(Base, TimestampMixin):
     deleted_at = Column(DateTime(timezone=True), nullable=True)
 
     # Relationship with OAuth providers
-    oauth_providers = relationship("OAuthProvider", back_populates="user")
+    oauth_providers = relationship("OAuthProvider", back_populates="users")
 
 class OAuthProvider(Base, TimestampMixin):
     __tablename__ = 'oauth_providers'
