@@ -122,7 +122,7 @@ const CreateThread: React.FC<CreateThreadProps> = ({ isOpen, onClose }) => {
                       <FormLabel>Category</FormLabel>
                       <FormControl>
                         <Select {...field}>
-                          <SelectTrigger>
+                          <SelectTrigger className="w-full">
                             <SelectValue placeholder="Select a category" />
                           </SelectTrigger>
                           <SelectContent>
