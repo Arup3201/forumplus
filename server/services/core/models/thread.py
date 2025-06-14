@@ -1,0 +1,36 @@
+from sqlalchemy import Column, String, Text, DateTime, ForeignKey
+from sqlalchemy.orm import relationship
+from sqlalchemy.sql import func
+
+from shared.model import Base, TimestampMixin
+
+class ThreadCategory(Base, TimestampMixin):
+    __tablename__ = "thread_categories"
+
+    id = Column(String(36), primary_key=True)
+    name = Column(String(255), nullable=False)
+
+
+class Thread(Base, TimestampMixin):
+    __tablename__ = "threads"
+
+    # Basic Thread Information
+    id = Column(String(36), primary_key=True)
+    title = Column(String(255), nullable=False)
+    content = Column(Text, nullable=False)
+
+    # User Association
+    author_id = Column(String(36), ForeignKey("users.id"), nullable=False)
+    last_edited_by_id = Column(String(36), ForeignKey("users.id"), nullable=True)
+    
+    # Organization & Discovery
+    category_id = Column(String(36), ForeignKey("thread_categories.id"), nullable=False)
+
+    # Metadata
+    last_activity_at = Column(DateTime(timezone=True), server_default=func.now())
+
+    # Relationships
+    author = relationship("User", foreign_keys=[author_id], back_populates="threads")
+    last_edited_by = relationship("User", foreign_keys=[last_edited_by_id])
+    category = relationship("ThreadCategory", back_populates="threads")
+    
