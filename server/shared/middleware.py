@@ -2,8 +2,8 @@ from typing import Callable
 from fastapi import Request, HTTPException
 from fastapi.responses import JSONResponse
 from shared.session import SessionManager
-from shared.database import get_db_manager
 from shared.constant import SESSION_COOKIE_NAME
+from shared.database import get_db_manager
 
 async def auth_middleware(request: Request, call_next: Callable):
     """Middleware to protect private routes by validating session cookie"""
@@ -18,12 +18,12 @@ async def auth_middleware(request: Request, call_next: Callable):
         if not session_id:
             raise HTTPException(status_code=401, detail="Unauthorized - No session found")
 
-        # Get DB connection and validate session
+        # Validate session
         db_manager = get_db_manager()
-        session_manager = SessionManager(db_manager)
-        
-        if not session_manager.validate_session(session_id):
-            raise HTTPException(status_code=401, detail="Unauthorized - Invalid session")
+        with db_manager.get_session() as db_session:
+            session_manager = SessionManager(db_session)
+            if not session_manager.validate_session(session_id):
+                raise HTTPException(status_code=401, detail="Unauthorized - Invalid session")
 
         # Proceed with request if session is valid
         response = await call_next(request)

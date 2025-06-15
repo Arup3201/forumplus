@@ -20,8 +20,7 @@ async def check_auth(request: Request, db_manager: DatabaseManager = Depends(get
             detail="Unauthorized"
         )
     
-    session_manager = SessionManager(db_manager)
-    if not session_manager.validate_session(session_id):
+    if not OAuthService.is_authenticated(db_manager, session_id):
         raise HTTPException(
             status_code=401,
             detail="Unauthorized"

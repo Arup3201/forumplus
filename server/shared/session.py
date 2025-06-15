@@ -1,12 +1,11 @@
-from shared.database import get_db_manager
+from sqlalchemy.orm import Session
 from typing import Dict
 from shared.repository import SessionRepository
 from datetime import datetime, timezone
 
 class SessionManager:
-    def __init__(self, db_manager: get_db_manager):
-        self.db_manager = db_manager
-        self.session_repository = SessionRepository(db_manager)
+    def __init__(self, db_session: Session):
+        self.session_repository = SessionRepository(db_session)
 
     def create_session(self, user_data: Dict) -> str:
         """
@@ -57,7 +56,8 @@ class SessionManager:
             session_id (str): Session ID
         """
         session = self.session_repository.get_session(session_id)
-        if not session.is_active:
+            
+        if not session or not session.is_active:
             print("Session is already logged out")
             return
         

@@ -37,10 +37,17 @@ oauth_states: OAuthStates = {}
 class OAuthService:
     def __init__(self, db_manager: DatabaseManager, provider: OAuthProvider):
         self.db_manager = db_manager
-        self.oauth_repo = OAuthRepository(db_manager)
-        self.session_manager = SessionManager(db_manager)
         self.provider = provider.value
         self.__init_oauth()
+    
+    @staticmethod
+    def is_authenticated(db_manager: DatabaseManager, session_id: str) -> bool:
+        with db_manager.get_session() as db_session:
+            session_manager = SessionManager(db_session)
+            if not session_manager.validate_session(session_id):
+                return False
+            
+            return True
     
     def __init_oauth(self) -> None:
         self.oauth = OAuth()
@@ -168,14 +175,14 @@ class OAuthService:
                 provider=OAuthProvider.GITHUB
             )
             
-    def _create_session(self, user_id: str, ip_address: str, user_agent: str, device_info: str) -> str:
+    def _create_session(self, session_manager: SessionManager, user_id: str, ip_address: str, user_agent: str, device_info: str) -> str:
         """Check if the user has an active session, if not create a new session otherwise delete the old session and create a new one"""
         
-        session = self.session_manager.get_session_by_user_id(user_id)
+        session = session_manager.get_session_by_user_id(user_id)
         if session:
-            self.session_manager.delete_session(session.session_id)
+            session_manager.delete_session(session.session_id)
         
-        session_id = self.session_manager.create_session({
+        session_id = session_manager.create_session({
             "session_id": secrets.token_urlsafe(32),
             "user_id": user_id,
             "ip_address": ip_address,
@@ -206,37 +213,42 @@ class OAuthService:
             token = await client.authorize_access_token(request)
             user_data = await self._get_user_data_from_oauth_provider(client, token)
             
-            user_entity = self.oauth_repo.get_user_by_email(user_data.email)
+            with self.db_manager.get_session() as db_session:
+                session_manager = SessionManager(db_session)
+                oauth_repo = OAuthRepository(db_session)
+                
+                user_entity = oauth_repo.get_user_by_email(user_data.email)
             
-            # if user does not exist, create a new user and add the oauth provider
-            if not user_entity:
-                user_entity = self.oauth_repo.create_user(user_data.model_dump())
-                oauth_provider_entity = self.oauth_repo.create_oauth_provider(user_entity.id, user_data.model_dump())
-                self.oauth_repo.add_oauth_provider(user_entity.id, oauth_provider_entity.id)
+                # if user does not exist, create a new user and add the oauth provider
+                if not user_entity:
+                    user_entity = oauth_repo.create_user(user_data.model_dump())
+                    oauth_provider_entity = oauth_repo.create_oauth_provider(user_entity.id, user_data.model_dump())
+                    oauth_repo.add_oauth_provider(user_entity.id, oauth_provider_entity.id)
+                    
+                    # create session
+                    session_id = session_manager.create_session({
+                        "session_id": secrets.token_urlsafe(32),
+                        "user_id": user_entity.id,
+                        "ip_address": ip_address,
+                        "user_agent": user_agent,
+                        "device_info": device_info,
+                        "expires_at": datetime.now(tz=timezone.utc) + timedelta(**{
+                            SESSION_EXPIRATION_UNIT: SESSION_EXPIRATION_TIME
+                        }),
+                        "is_active": True
+                    })
+                    
+                    return session_id
                 
-                # create session
-                session_id = self.session_manager.create_session({
-                    "session_id": secrets.token_urlsafe(32),
-                    "user_id": user_entity.id,
-                    "ip_address": ip_address,
-                    "user_agent": user_agent,
-                    "device_info": device_info,
-                    "expires_at": datetime.now(tz=timezone.utc) + timedelta(**{
-                        SESSION_EXPIRATION_UNIT: SESSION_EXPIRATION_TIME
-                    }),
-                    "is_active": True
-                })
-                
-                return session_id
-            else:
-                oauth_providers = self.oauth_repo.get_oauth_providers_by_user_id(user_entity.id)
-                if self.provider not in [oauth_provider.provider for oauth_provider in oauth_providers]:
-                    # if user exists but user never used this oauth provider before, add the oauth provider to the user
-                    oauth_provider_entity = self.oauth_repo.create_oauth_provider(user_entity.id, user_data.model_dump())
-                    self.oauth_repo.add_oauth_provider(user_entity.id, oauth_provider_entity.id)
-                
-                session_id = self._create_session(user_entity.id, ip_address, user_agent, device_info)
-                return session_id
+                else:
+                    oauth_providers = oauth_repo.get_oauth_providers_by_user_id(user_entity.id)
+                    if self.provider not in [oauth_provider.provider for oauth_provider in oauth_providers]:
+                        # if user exists but user never used this oauth provider before, add the oauth provider to the user
+                        oauth_provider_entity = oauth_repo.create_oauth_provider(user_entity.id, user_data.model_dump())
+                        oauth_repo.add_oauth_provider(user_entity.id, oauth_provider_entity.id)
+                    
+                    session_id = self._create_session(session_manager, user_entity.id, ip_address, user_agent, device_info)
+                    return session_id
 
         except Exception as e:
             raise ValueError(f"In OAuth callback {str(e)}")
