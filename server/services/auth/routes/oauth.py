@@ -1,7 +1,6 @@
 from fastapi import APIRouter, Request, HTTPException, Depends
 from fastapi.responses import RedirectResponse
 from shared.database import DatabaseManager, get_db_manager
-from shared.session import SessionManager
 from services.auth.types import OAuthProvider
 from services.auth.services import OAuthService
 from shared.constant import SESSION_COOKIE_NAME, SESSION_EXPIRATION_TIME
