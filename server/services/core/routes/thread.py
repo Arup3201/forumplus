@@ -1,4 +1,6 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException
+from services.core.schemas import ThreadCategory, ThreadRequest
+from services.core.services.thread import ThreadService
 
 router = APIRouter()
 
@@ -19,5 +21,12 @@ def get_thread(thread_id: str):
     return {"message": "Thread fetched successfully"}
 
 @router.post("/")
-def create_thread(thread: Thread):
-    return {"message": "Thread created successfully"}
+def create_thread(thread: ThreadRequest):
+    thread_service = ThreadService()
+    
+    try:
+        thread_service.create_thread(thread.title, thread.content, thread.category_id, thread.user_id)
+        return {"message": "Thread created successfully"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    
