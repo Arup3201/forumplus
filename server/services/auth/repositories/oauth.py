@@ -1,8 +1,8 @@
 from sqlalchemy.orm import Session
 from shared.repository import BaseRepository
 from typing import Dict, List
-from services.auth.models.oauth import User, OAuthProvider
-from services.auth.schemas.oauth import OAuthProviderEntity, UserEntity
+from services.auth.models import User, OAuthProvider
+from services.auth.schemas import OAuthProviderEntity, UserEntity
 
 class OAuthRepository(BaseRepository):
     def __init__(self, db_session: Session):
