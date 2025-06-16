@@ -1,4 +1,5 @@
-from bleach import clean, CSSSanitizer
+from bleach import clean
+from bleach.css_sanitizer import CSSSanitizer
 from html.parser import HTMLParser
 from typing import Dict
 from shared.database import DatabaseManager

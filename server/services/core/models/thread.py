@@ -10,6 +10,9 @@ class ThreadCategory(Base, TimestampMixin):
     id = Column(String(36), primary_key=True)
     name = Column(String(255), nullable=False)
     description = Column(Text, nullable=False)
+    
+    # Relationships
+    threads = relationship("Thread", back_populates="category")
 
 class Thread(Base, TimestampMixin):
     __tablename__ = "threads"
@@ -34,7 +37,5 @@ class Thread(Base, TimestampMixin):
     last_activity_at = Column(DateTime(timezone=True), server_default=func.now())
 
     # Relationships
-    author = relationship("User", foreign_keys=[author_id], back_populates="threads")
-    last_edited_by = relationship("User", foreign_keys=[last_edited_by_id])
     category = relationship("ThreadCategory", back_populates="threads")
     
