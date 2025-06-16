@@ -1,1 +1,2 @@
-from .oauth import User, OAuthProvider
+from .oauth import OAuthProvider
+from .user import User
