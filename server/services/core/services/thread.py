@@ -99,7 +99,7 @@ class ThreadService:
     def __init__(self, db_manager: DatabaseManager):
         self.db_manager = db_manager
     
-    def create_thread(self, thread_title: str, thread_content: str, thread_category_id: str, user_id: str) -> str:
+    def create_thread(self, thread_title: str, thread_content: str, thread_category_id: str, user_id: str) -> Dict:
         html_content = HTMLContentProcessor.process_html_content(thread_content)
         with self.db_manager.get_session() as db_session:
             thread_repo = ThreadRepository(db_session)
@@ -111,4 +111,15 @@ class ThreadService:
                 "category_id": thread_category_id,
                 "author_id": user_id
             })
-            return thread
+            return {
+                "id": thread.id,
+                "title": thread.title,
+                "content": thread.content,
+                "content_plain": thread.content_plain,
+                "content_type": thread.content_type,
+                "is_edited": thread.is_edited,
+                "edit_count": thread.edit_count,
+                "category_id": thread.category_id,
+                "author_id": thread.author_id,
+                "last_edited_by_id": thread.last_edited_by_id
+            }

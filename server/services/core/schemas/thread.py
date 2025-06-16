@@ -29,3 +29,18 @@ class ThreadEntity(BaseModel):
     last_activity_at: datetime
     created_at: datetime
     updated_at: datetime
+    
+
+## schemas for responses
+
+class ThreadResponse(BaseModel):
+    id: str
+    title: str
+    content: str
+    content_plain: str
+    content_type: str
+    is_edited: bool
+    edit_count: int
+    category_id: str
+    author_id: str
+    last_edited_by_id: str
