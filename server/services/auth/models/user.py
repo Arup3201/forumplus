@@ -14,4 +14,3 @@ class User(Base, TimestampMixin):
 
     # Relationships
     oauth_providers = relationship("OAuthProvider", back_populates="user")
-    threads = relationship("Thread", back_populates="author")
