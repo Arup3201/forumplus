@@ -45,10 +45,10 @@ const useFetch = (): FetchResponse => {
             }
             const responseData = await response.json();
             setData(responseData);
-            onSuccess(responseData);
+            onSuccess && onSuccess(responseData);
         } catch (error) {
             setError(error instanceof Error ? error.message : 'An unknown error occurred');
-            onError(error instanceof Error ? error.message : 'An unknown error occurred');
+            onError && onError(error instanceof Error ? error.message : 'An unknown error occurred');
         } finally {
             setLoading(false);
         }
