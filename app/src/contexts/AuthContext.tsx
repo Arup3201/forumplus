@@ -15,13 +15,12 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const { loading, getRequest } = useFetch();
 
   async function checkAuth() {
-    try {
-      await getRequest('/api/auth/check');
+    await getRequest('/api/auth/check', () => {
       setIsAuthenticated(true);
-    } catch (error) {
+    }, (error) => {
       setIsAuthenticated(false);
       console.error('Error in checkAuth:', error);
-    }
+    });
   }
   
   useEffect(() => {
