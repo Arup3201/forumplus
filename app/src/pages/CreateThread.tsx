@@ -28,6 +28,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Editor } from "@tinymce/tinymce-react";
+import useFetch from "@/hooks/useFetch";
 
 interface CreateThreadProps {
   isOpen: boolean;
@@ -53,6 +54,8 @@ const ThreadSchema = z.object({
 type Thread = z.infer<typeof ThreadSchema>;
 
 const CreateThread: React.FC<CreateThreadProps> = ({ isOpen, onClose }) => {
+  const { loading, postRequest } = useFetch();
+
   const form = useForm<Thread>({
     resolver: zodResolver(ThreadSchema),
     defaultValues: {
@@ -82,9 +85,12 @@ const CreateThread: React.FC<CreateThreadProps> = ({ isOpen, onClose }) => {
     };
   }, [isOpen, onClose]);
 
-  const onSubmit = (data: Thread) => {
-    console.log(data);
-    onClose();
+  const onSubmit = async (data: Thread) => {
+      await postRequest("/api/threads/", data, () => {
+        onClose();
+      }, (error) => {
+        console.error(error);
+      });
   };
 
   return (
@@ -188,7 +194,7 @@ const CreateThread: React.FC<CreateThreadProps> = ({ isOpen, onClose }) => {
 
                 <div className="flex justify-end items-center">
                   <div className="flex gap-3">
-                    <Button type="submit">Create Thread</Button>
+                    <Button type="submit" disabled={loading}>{loading ? "Creating..." : "Create Thread"}</Button>
                     <Button type="button" variant="outline" onClick={onClose}>
                       Cancel
                     </Button>
