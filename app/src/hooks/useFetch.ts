@@ -5,10 +5,10 @@ interface FetchResponse {
     data: any;
     loading: boolean;
     error: string | null;
-    getRequest: (url: string) => Promise<void>;
-    postRequest: (url: string, data: any) => Promise<void>;
-    putRequest: (url: string, data: any) => Promise<void>;
-    deleteRequest: (url: string) => Promise<void>;
+    getRequest: (url: string, onSuccess: (data: any) => void, onError: (error: string) => void) => Promise<void>;
+    postRequest: (url: string, data: any, onSuccess: (data: any) => void, onError: (error: string) => void) => Promise<void>;
+    putRequest: (url: string, data: any, onSuccess: (data: any) => void, onError: (error: string) => void) => Promise<void>;
+    deleteRequest: (url: string, onSuccess: (data: any) => void, onError: (error: string) => void) => Promise<void>;
 }
 
 const BASE_URL = window.location.origin;
@@ -19,7 +19,7 @@ const useFetch = (): FetchResponse => {
     const [error, setError] = useState<string | null>(null);
     const navigate = useNavigate();
 
-    const fetchData = async (url: string, method: string, data: any) => {
+    const fetchData = async (url: string, method: string, data: any, onSuccess: (data: any) => void, onError: (error: string) => void) => {
         setLoading(true);
         try {
             let response;
@@ -45,27 +45,29 @@ const useFetch = (): FetchResponse => {
             }
             const responseData = await response.json();
             setData(responseData);
+            onSuccess(responseData);
         } catch (error) {
             setError(error instanceof Error ? error.message : 'An unknown error occurred');
+            onError(error instanceof Error ? error.message : 'An unknown error occurred');
         } finally {
             setLoading(false);
         }
     }
 
-    const getRequest = async (url: string) => {
-        return await fetchData(url, 'GET', null);
+    const getRequest = async (url: string, onSuccess: (data: any) => void, onError: (error: string) => void) => {
+        await fetchData(url, 'GET', null, onSuccess, onError);
     }
     
-    const postRequest = async (url: string, data: any) => {
-        return await fetchData(url, 'POST', data);
+    const postRequest = async (url: string, data: any, onSuccess: (data: any) => void, onError: (error: string) => void) => {
+        await fetchData(url, 'POST', data, onSuccess, onError);
     }
 
-    const putRequest = async (url: string, data: any) => {
-        return await fetchData(url, 'PUT', data);
+    const putRequest = async (url: string, data: any, onSuccess: (data: any) => void, onError: (error: string) => void) => {
+        await fetchData(url, 'PUT', data, onSuccess, onError);
     }
     
-    const deleteRequest = async (url: string) => {
-        return await fetchData(url, 'DELETE', null);
+    const deleteRequest = async (url: string, onSuccess: (data: any) => void, onError: (error: string) => void) => {
+        await fetchData(url, 'DELETE', null, onSuccess, onError);
     }
 
     return { data, loading, error, getRequest, postRequest, putRequest, deleteRequest };
