@@ -1,5 +1,6 @@
 import { Navigate } from 'react-router-dom';
 import useAuth from '@/hooks/useAuth';
+import useFetch from '@/hooks/useFetch';
 import { Navbar } from './Navbar';
 import { Footer } from './Footer';
 
@@ -8,7 +9,8 @@ interface ProtectedRouteProps {
 }
 
 export const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
-  const { isAuthenticated, loading } = useAuth();
+  const { isAuthenticated } = useAuth();
+  const { loading } = useFetch();
 
   if (loading) {
     return <div>Loading...</div>;
