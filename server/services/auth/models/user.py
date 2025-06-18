@@ -14,3 +14,4 @@ class User(Base, TimestampMixin):
 
     # Relationships
     oauth_providers = relationship("OAuthProvider", back_populates="user")
+    profile = relationship("UserProfile", back_populates="auth_user", uselist=False)
