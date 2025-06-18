@@ -15,11 +15,11 @@ Following features are the ones I am currently working on. Any feature that I am
 | Feature                                   | Description                                                                                             |
 | ----------------------------------------- | ------------------------------------------------------------------------------------------------------- |
 | ✅**User Authentication (Session-based)** | Secure login system with session-based authentication for enhanced security and better user experience. |
-| **🔧Thread Creation & Replies**           | Users can post new threads and reply to existing ones—core forum functionality.                         |
+| **Thread Creation & Replies**             | Users can post new threads and reply to existing ones—core forum functionality.                         |
 | **Nested Comments**                       | Enables threaded conversations by allowing replies to replies.                                          |
 | **Voting System**                         | Users can upvote/downvote posts to surface valuable content.                                            |
 | **Tags & Categories**                     | Organize threads into topics and help users discover relevant content.                                  |
-| **User Profiles**                         | Each user has a public profile with bio, avatar, and their activity.                                    |
+| **🔧User Profiles**                       | Each user has a public profile with bio, avatar, and their activity.                                    |
 | **Role-Based Access Control (RBAC)**      | Controls user permissions (admin, mod, regular user) for managing content.                              |
 | **Search Functionality**                  | Enables users to find threads/posts by keywords or filters.                                             |
 | **Admin Moderation Tools**                | Admins can manage users, delete content, and resolve reports.                                           |
