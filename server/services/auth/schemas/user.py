@@ -1,0 +1,30 @@
+from pydantic import BaseModel
+from datetime import datetime
+from typing import Optional
+
+## schemas for database entities
+
+class UserEntity(BaseModel):
+    id: str
+    email: str
+    is_active: bool
+    is_deleted: bool
+    created_at: datetime
+    updated_at: datetime
+    deleted_at: Optional[datetime]
+
+class UserProfileEntity(BaseModel):
+    id: str
+    user_id: str
+    username: str
+    display_name: Optional[str]
+    bio: Optional[str]
+    avatar_url: Optional[str]
+    website: Optional[str]
+    location: Optional[str]
+    role: str
+    last_seen_at: Optional[datetime]
+    post_count: int
+    reputation: int
+    created_at: datetime
+    updated_at: datetime

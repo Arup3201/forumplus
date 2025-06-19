@@ -9,12 +9,12 @@ from shared.config import settings
 from fastapi import Request
 from typing import Dict
 from services.auth.types import OAuthProvider, OAuthState, OAuthStates, OAuthAppWrapper
-from services.auth.schemas.oauth import OAuthClientResponse
+from services.auth.schemas import OAuthClientResponse
 
 # Database
 from shared.database import DatabaseManager
 from shared.session import SessionManager
-from services.auth.repositories.oauth import OAuthRepository
+from services.auth.repositories import OAuthRepository, UserRepository
 
 # Constants
 from shared.constant import SESSION_EXPIRATION_TIME, SESSION_EXPIRATION_UNIT
@@ -140,7 +140,7 @@ class OAuthService:
 
         # Create OAuth client and redirect to provider
         client = OAuthAppWrapper(self.oauth.create_client(self.provider))
-        redirect_uri = f"http://localhost:8000/api/auth/{self.provider}/callback"
+        redirect_uri = f"http://localhost:8000/api/auth/oauth/{self.provider}/callback"
 
         return await client.authorize_redirect(request, redirect_uri, state_info['state'])
     
@@ -216,12 +216,21 @@ class OAuthService:
             with self.db_manager.get_session() as db_session:
                 session_manager = SessionManager(db_session)
                 oauth_repo = OAuthRepository(db_session)
-                
-                user_entity = oauth_repo.get_user_by_email(user_data.email)
+                user_repo = UserRepository(db_session)
+                user_entity = user_repo.get_user_by_email(user_data.email)
             
                 # if user does not exist, create a new user and add the oauth provider
                 if not user_entity:
-                    user_entity = oauth_repo.create_user(user_data.model_dump())
+                    # create user
+                    user_entity = user_repo.create_user(user_data.model_dump())
+                    user_profile_entity = user_repo.create_user_profile(user_entity.id, {
+                        'username': user_data['email'].split('@')[0],
+                        'display_name': user_data['name'],
+                        'avatar_url': user_data['avatar_url'],
+                    })
+                    user_repo.add_user_profile(user_entity.id, user_profile_entity.id)
+                    
+                    # create oauth provider
                     oauth_provider_entity = oauth_repo.create_oauth_provider(user_entity.id, user_data.model_dump())
                     oauth_repo.add_oauth_provider(user_entity.id, oauth_provider_entity.id)
                     

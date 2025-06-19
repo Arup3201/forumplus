@@ -4,15 +4,6 @@ from typing import Optional
 from services.auth.types import OAuthProvider
 
 # schemas for database entities
-class UserEntity(BaseModel):
-    id: str
-    email: str
-    is_active: bool
-    is_deleted: bool
-    created_at: datetime
-    updated_at: datetime
-    deleted_at: Optional[datetime]
-    
 class OAuthProviderEntity(BaseModel):
     id: str
     user_id: str

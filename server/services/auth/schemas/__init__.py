@@ -1,1 +1,2 @@
-from .oauth import OAuthProviderEntity, UserEntity
+from .oauth import OAuthProviderEntity, OAuthClientResponse
+from .user import UserEntity, UserProfileEntity

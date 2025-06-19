@@ -13,8 +13,9 @@ app.middleware("http")(auth_middleware)
 def read_root():
     return {"message": "Running!"}
 
-from services.auth.routes import oauth_router
+from services.auth.routes import oauth_router, user_router
 from services.core.routes import thread_router
 
-app.include_router(oauth_router, prefix="/api/auth", tags=["auth"])
-app.include_router(thread_router, prefix="/api/threads", tags=["threads"])
+app.include_router(oauth_router, prefix="/api/auth", tags=["Authentication System"])
+app.include_router(user_router, prefix="/api/auth", tags=["User System"])
+app.include_router(thread_router, prefix="/api/threads", tags=["Thread System"])

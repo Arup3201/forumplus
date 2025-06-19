@@ -20,18 +20,6 @@ class OAuthRepository(BaseRepository):
         }
         return OAuthProviderEntity(**provider_dict)
     
-    def _to_user_entity(self, user: User) -> UserEntity:
-        user_dict = {
-            'id': user.id,
-            'email': user.email,
-            'is_active': user.is_active,
-            'is_deleted': user.is_deleted,
-            'created_at': user.created_at,
-            'updated_at': user.updated_at,
-            'deleted_at': user.deleted_at
-        }
-        return UserEntity(**user_dict)
-    
     def create_oauth_provider(self, user_id: str, provider_data: Dict) -> OAuthProviderEntity:
         oauth_provider = OAuthProvider(**{
             **self._get_base_payload(),
@@ -44,18 +32,6 @@ class OAuthRepository(BaseRepository):
         self.db_session.flush()
         return self._to_oauth_provider_entity(oauth_provider)
     
-    def create_user(self, user_data: Dict) -> UserEntity:
-        user = User(**{
-            **self._get_base_payload(),
-            'email': user_data['email'], 
-            'is_active': True, 
-            'is_deleted': False,
-            'deleted_at': None
-        })
-        self.db_session.add(user)
-        self.db_session.flush()
-        return self._to_user_entity(user)
-    
     def add_oauth_provider(self, user_id: str, oauth_provider_id: str) -> None:
         oauth_provider = self.db_session.query(OAuthProvider).filter(OAuthProvider.id == oauth_provider_id).first()
         if not oauth_provider:
@@ -67,18 +43,6 @@ class OAuthRepository(BaseRepository):
         
         user.oauth_providers.append(oauth_provider)
         self.db_session.flush()
-    
-    def get_user(self, user_id: str) -> UserEntity | None:
-        user = self.db_session.query(User).filter(User.id == user_id).first()
-        if not user:
-            return None
-        return self._to_user_entity(user)
-    
-    def get_user_by_email(self, email: str) -> UserEntity | None:
-        user = self.db_session.query(User).filter(User.email == email).first()
-        if not user:
-            return None
-        return self._to_user_entity(user)
         
     def get_oauth_providers_by_user_id(self, user_id: str) -> List[OAuthProviderEntity]:
         oauth_providers = self.db_session.query(User).filter(User.id == user_id).first().oauth_providers

@@ -9,7 +9,7 @@ async def auth_middleware(request: Request, call_next: Callable):
     """Middleware to protect private routes by validating session cookie"""
     
     # Skip auth check for public routes
-    if request.url.path.startswith(('/api/auth/google', '/api/auth/github')):
+    if request.url.path.startswith(('/api/auth/oauth/google', '/api/auth/oauth/github')):
         return await call_next(request)
 
     try:

@@ -15,7 +15,7 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const { getRequest } = useFetch();
 
   async function checkAuth() {
-    await getRequest('/api/auth/check', () => {
+    await getRequest('/api/auth/me', () => {
       setIsAuthenticated(true);
     }, (error) => {
       setIsAuthenticated(false);
@@ -31,11 +31,11 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     isAuthenticated,
     googleSignIn: async () => {
       setLoading(true);
-      window.location.href = '/api/auth/google';
+      window.location.href = '/api/auth/oauth/google';
     },
     githubSignIn: async () => {
       setLoading(true);
-      window.location.href = '/api/auth/github';
+      window.location.href = '/api/auth/oauth/github';
     },
   }), [isAuthenticated, loading]);
 

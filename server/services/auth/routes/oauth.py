@@ -7,27 +7,7 @@ from shared.constant import SESSION_COOKIE_NAME, SESSION_EXPIRATION_TIME
 
 router = APIRouter()
 
-@router.get("/check")
-async def check_auth(request: Request, db_manager: DatabaseManager = Depends(get_db_manager)):
-    """
-    Checks if the user is authenticated.
-    """
-    session_id = request.cookies.get(SESSION_COOKIE_NAME)
-    if not session_id:
-        raise HTTPException(
-            status_code=401,
-            detail="Unauthorized"
-        )
-    
-    if not OAuthService.is_authenticated(db_manager, session_id):
-        raise HTTPException(
-            status_code=401,
-            detail="Unauthorized"
-        )
-    
-    return {"authenticated": True}
-
-@router.get("/{provider}")
+@router.get("/oauth/{provider}")
 async def oauth_login(provider: OAuthProvider, 
                       request: Request,
                       db_manager: DatabaseManager = Depends(get_db_manager)):
@@ -49,7 +29,7 @@ async def oauth_login(provider: OAuthProvider,
             detail=f"Error in oauth_login: {str(e)}"
         )
 
-@router.get("/{provider}/callback")
+@router.get("/oauth/{provider}/callback")
 async def oauth_callback(provider: OAuthProvider, 
                          request: Request,
                          db_manager: DatabaseManager = Depends(get_db_manager)):
