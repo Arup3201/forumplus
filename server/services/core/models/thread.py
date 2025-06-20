@@ -2,7 +2,8 @@ from sqlalchemy import Column, String, Text, DateTime, ForeignKey, Boolean, Inte
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 
-from shared.model import Base, TimestampMixin
+from shared.model import Base
+from shared.mixins import TimestampMixin
 
 class ThreadCategory(Base, TimestampMixin):
     __tablename__ = "thread_categories"

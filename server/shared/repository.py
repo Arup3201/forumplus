@@ -2,8 +2,8 @@ from sqlalchemy.orm import Session
 from datetime import datetime, timezone
 from typing import Dict
 import uuid
-from shared.model import Session
-from shared.schema import SessionEntity
+from services.auth.models import Session
+from services.auth.schemas import SessionEntity
 
 class BaseRepository:
     def __init__(self, db_session: Session):

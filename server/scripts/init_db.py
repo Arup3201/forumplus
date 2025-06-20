@@ -1,8 +1,7 @@
 from shared.database import get_db_manager
 from shared.model import Base
-from services.auth.models import User, OAuthProvider
+from services.auth.models import User, OAuthProvider, Session, UserProfile
 from services.core.models import Thread, ThreadCategory
-from shared.model import Session
 
 def init_db():
     db_manager = get_db_manager()

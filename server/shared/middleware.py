@@ -1,7 +1,7 @@
 from typing import Callable
 from fastapi import Request, HTTPException
 from fastapi.responses import JSONResponse
-from shared.session import SessionManager
+from services.auth.services import SessionManager
 from shared.constant import SESSION_COOKIE_NAME
 from shared.database import get_db_manager
 
