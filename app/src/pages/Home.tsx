@@ -86,7 +86,7 @@ export const Home = () => {
   ];
 
   return (
-    <div className="max-w-7xl mx-auto px-6 py-12 space-y-12 relative">
+    <div className="max-w-7xl mx-auto px-6 space-y-6 relative">
       {/* Floating Action Button */}
       <div className="fixed bottom-1 right-8 z-50">
         <Button 

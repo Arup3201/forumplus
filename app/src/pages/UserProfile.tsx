@@ -4,11 +4,14 @@ import {
   CardContent, 
   CardHeader, 
   CardTitle,
-  CardDescription,
+  CardDescription
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
 import { 
   Camera, 
   Edit3, 
@@ -83,7 +86,7 @@ const UserProfile = () => {
   };
 
   return (
-    <div className="max-w-6xl mx-auto px-6 py-8 space-y-8">
+    <div className="max-w-7xl mx-auto px-6 space-y-6">
       {/* Profile Header */}
       <Card>
         <CardContent className="p-8">
@@ -137,9 +140,9 @@ const UserProfile = () => {
             </CardHeader>
             <CardContent className="space-y-6">
               {/* Bio */}
-              <div>
-                <div className="flex items-center justify-between mb-2">
-                  <label className="text-sm font-medium">Bio</label>
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <Label htmlFor="bio">Bio</Label>
                   <Button 
                     variant="ghost" 
                     size="sm" 
@@ -152,10 +155,10 @@ const UserProfile = () => {
                 </div>
                 {isEditingBio ? (
                   <div className="space-y-2">
-                    <textarea
+                    <Textarea
+                      id="bio"
                       value={tempBio}
                       onChange={(e) => setTempBio(e.target.value)}
-                      className="w-full p-3 border rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-primary"
                       rows={3}
                       maxLength={200}
                       placeholder="Tell us about yourself..."
@@ -182,8 +185,8 @@ const UserProfile = () => {
               </div>
 
               {/* Location */}
-              <div>
-                <label className="text-sm font-medium mb-2 block">Location</label>
+              <div className="space-y-2">
+                <Label>Location</Label>
                 <div className="flex items-center gap-2 text-sm text-muted-foreground">
                   <MapPin className="w-4 h-4" />
                   <span>{userData.location}</span>
@@ -191,9 +194,9 @@ const UserProfile = () => {
               </div>
 
               {/* Interests */}
-              <div>
-                <div className="flex items-center justify-between mb-2">
-                  <label className="text-sm font-medium">Interests & Topics</label>
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <Label htmlFor="interests">Interests & Topics</Label>
                   <Button 
                     variant="ghost" 
                     size="sm" 
@@ -206,11 +209,11 @@ const UserProfile = () => {
                 </div>
                 {isEditingInterests ? (
                   <div className="space-y-2">
-                    <input
+                    <Input
+                      id="interests"
                       type="text"
                       value={tempInterests}
                       onChange={(e) => setTempInterests(e.target.value)}
-                      className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
                       placeholder="Enter interests separated by commas"
                     />
                     <div className="flex justify-end gap-2">
@@ -385,4 +388,4 @@ const UserProfile = () => {
   );
 };
 
-export default UserProfile;
+export { UserProfile };
