@@ -12,6 +12,7 @@ import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from '@/components/ui/tooltip';
 import { 
   Camera, 
   Edit3, 
@@ -32,10 +33,13 @@ import {
 const UserProfile = () => {
   const [isEditingBio, setIsEditingBio] = useState(false);
   const [isEditingInterests, setIsEditingInterests] = useState(false);
+  const [isEditingLocation, setIsEditingLocation] = useState(false);
   const [bio, setBio] = useState("Passionate developer with 5+ years of experience in React and TypeScript. Love building scalable web applications and contributing to open source projects.");
   const [interests, setInterests] = useState(['React', 'TypeScript', 'Node.js', 'GraphQL', 'Open Source']);
+  const [location, setLocation] = useState("San Francisco, CA");
   const [tempBio, setTempBio] = useState(bio);
   const [tempInterests, setTempInterests] = useState(interests.join(', '));
+  const [tempLocation, setTempLocation] = useState(location);
 
   // Mock user data
   const userData = {
@@ -44,7 +48,7 @@ const UserProfile = () => {
     email: "alex.johnson@example.com",
     avatar: "/api/placeholder/120/120",
     reputation: 1247,
-    location: "San Francisco, CA",
+    location: location,
     joinDate: "Mar 2023",
     stats: {
       postsCreated: 156,
@@ -85,11 +89,21 @@ const UserProfile = () => {
     setIsEditingInterests(false);
   };
 
+  const handleLocationSave = () => {
+    setLocation(tempLocation);
+    setIsEditingLocation(false);
+  };
+
+  const handleLocationCancel = () => {
+    setTempLocation(location);
+    setIsEditingLocation(false);
+  };
+
   return (
     <div className="max-w-7xl mx-auto px-6 space-y-6">
       {/* Profile Header */}
       <Card>
-        <CardContent className="p-8">
+        <CardContent className="p-6">
           <div className="flex flex-col md:flex-row gap-6 items-start">
             {/* Profile Picture */}
             <div className="relative group">
@@ -124,6 +138,53 @@ const UserProfile = () => {
                   </Button>
                 </div>
               </div>
+              
+              {/* Activity Summary Icons */}
+              <TooltipProvider>
+                <div className="flex items-center gap-6 pt-2 border-t border-muted/30">
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <div className="flex items-center gap-2 text-sm cursor-help">
+                        <div className="w-8 h-8 bg-blue-100 dark:bg-blue-900/20 rounded-lg flex items-center justify-center">
+                          <MessageSquare className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+                        </div>
+                        <span className="font-medium">{userData.stats.postsCreated}</span>
+                      </div>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Posts Created</p>
+                    </TooltipContent>
+                  </Tooltip>
+                  
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <div className="flex items-center gap-2 text-sm cursor-help">
+                        <div className="w-8 h-8 bg-green-100 dark:bg-green-900/20 rounded-lg flex items-center justify-center">
+                          <Reply className="w-4 h-4 text-green-600 dark:text-green-400" />
+                        </div>
+                        <span className="font-medium">{userData.stats.repliesMade}</span>
+                      </div>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Replies Made</p>
+                    </TooltipContent>
+                  </Tooltip>
+                  
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <div className="flex items-center gap-2 text-sm cursor-help">
+                        <div className="w-8 h-8 bg-purple-100 dark:bg-purple-900/20 rounded-lg flex items-center justify-center">
+                          <Calendar className="w-4 h-4 text-purple-600 dark:text-purple-400" />
+                        </div>
+                        <span className="font-medium text-xs">{userData.joinDate}</span>
+                      </div>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Member Since</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </div>
+              </TooltipProvider>
             </div>
           </div>
         </CardContent>
@@ -186,11 +247,42 @@ const UserProfile = () => {
 
               {/* Location */}
               <div className="space-y-2">
-                <Label>Location</Label>
-                <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <MapPin className="w-4 h-4" />
-                  <span>{userData.location}</span>
+                <div className="flex items-center justify-between">
+                  <Label htmlFor="location">Location</Label>
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    onClick={() => setIsEditingLocation(true)}
+                    className="text-xs"
+                  >
+                    <Edit3 className="w-3 h-3 mr-1" />
+                    Edit
+                  </Button>
                 </div>
+                {isEditingLocation ? (
+                  <div className="space-y-2">
+                    <Input
+                      id="location"
+                      type="text"
+                      value={tempLocation}
+                      onChange={(e) => setTempLocation(e.target.value)}
+                      placeholder="Enter your location"
+                    />
+                    <div className="flex justify-end gap-2">
+                      <Button size="sm" variant="outline" onClick={handleLocationCancel}>
+                        Cancel
+                      </Button>
+                      <Button size="sm" onClick={handleLocationSave}>
+                        Save
+                      </Button>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                    <MapPin className="w-4 h-4" />
+                    <span>{userData.location}</span>
+                  </div>
+                )}
               </div>
 
               {/* Interests */}
@@ -227,8 +319,8 @@ const UserProfile = () => {
                   </div>
                 ) : (
                   <div className="flex flex-wrap gap-2">
-                    {interests.map((interest, index) => (
-                      <Badge key={index} variant="secondary" className="text-xs">
+                    {interests.map((interest) => (
+                      <Badge key={interest} variant="secondary" className="text-xs">
                         <Hash className="w-3 h-3 mr-1" />
                         {interest}
                       </Badge>
@@ -239,45 +331,7 @@ const UserProfile = () => {
             </CardContent>
           </Card>
 
-          {/* Activity Summary */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Activity Summary</CardTitle>
-              <CardDescription>Your contribution statistics</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-                <div className="text-center">
-                  <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900/20 rounded-lg flex items-center justify-center mx-auto mb-2">
-                    <MessageSquare className="w-6 h-6 text-blue-600 dark:text-blue-400" />
-                  </div>
-                  <div className="text-2xl font-bold">{userData.stats.postsCreated}</div>
-                  <div className="text-xs text-muted-foreground">Posts Created</div>
-                </div>
-                <div className="text-center">
-                  <div className="w-12 h-12 bg-green-100 dark:bg-green-900/20 rounded-lg flex items-center justify-center mx-auto mb-2">
-                    <Reply className="w-6 h-6 text-green-600 dark:text-green-400" />
-                  </div>
-                  <div className="text-2xl font-bold">{userData.stats.repliesMade}</div>
-                  <div className="text-xs text-muted-foreground">Replies Made</div>
-                </div>
-                <div className="text-center">
-                  <div className="w-12 h-12 bg-yellow-100 dark:bg-yellow-900/20 rounded-lg flex items-center justify-center mx-auto mb-2">
-                    <Star className="w-6 h-6 text-yellow-600 dark:text-yellow-400" />
-                  </div>
-                  <div className="text-2xl font-bold">{userData.stats.reputation.toLocaleString()}</div>
-                  <div className="text-xs text-muted-foreground">Reputation</div>
-                </div>
-                <div className="text-center">
-                  <div className="w-12 h-12 bg-purple-100 dark:bg-purple-900/20 rounded-lg flex items-center justify-center mx-auto mb-2">
-                    <Calendar className="w-6 h-6 text-purple-600 dark:text-purple-400" />
-                  </div>
-                  <div className="text-2xl font-bold">{userData.joinDate}</div>
-                  <div className="text-xs text-muted-foreground">Member Since</div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+
 
           {/* Recent Activity */}
           <Card>
@@ -295,8 +349,8 @@ const UserProfile = () => {
             </CardHeader>
             <CardContent className="p-0">
               <div className="divide-y">
-                {userData.recentPosts.map((post, index) => (
-                  <div key={index} className="p-4 hover:bg-muted/50 transition-colors">
+                {userData.recentPosts.map((post) => (
+                  <div key={post.title} className="p-4 hover:bg-muted/50 transition-colors">
                     <div className="flex items-start justify-between gap-4">
                       <div className="flex-1 min-w-0">
                         <h4 className="font-medium text-sm truncate">{post.title}</h4>
