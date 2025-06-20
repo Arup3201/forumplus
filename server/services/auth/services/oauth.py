@@ -13,7 +13,7 @@ from services.auth.schemas import OAuthClientResponse
 
 # Database
 from shared.database import DatabaseManager
-from services.auth.services import SessionManager
+from .session import SessionManager
 from services.auth.repositories import OAuthRepository, UserRepository
 
 # Constants

@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 from typing import Dict
-from shared.repository import SessionRepository
+from services.auth.repositories import SessionRepository
 from datetime import datetime, timezone
 
 class SessionManager:
