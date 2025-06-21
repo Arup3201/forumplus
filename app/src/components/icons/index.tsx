@@ -1,0 +1,48 @@
+import {
+    Camera,
+    Edit3,
+    MapPin,
+    Calendar,
+    MessageSquare,
+    Reply,
+    Star,
+    Plus,
+    Mail,
+    Bell,
+    ExternalLink,
+    User,
+    Hash,
+    Users,
+    HelpCircle,
+    Lightbulb,
+    Code,
+    Clock,
+    SearchIcon,
+} from "lucide-react";
+
+import GoogleIcon from "./custom/Google";
+import LogoIcon from "./custom/Logo";
+
+export const Icons = {
+    Camera: Camera,
+    Edit: Edit3,
+    MapPin: MapPin,
+    Calendar: Calendar,
+    MessageSquare: MessageSquare,
+    Reply: Reply,
+    Star: Star,
+    Plus: Plus,
+    Mail: Mail,
+    Bell: Bell,
+    ExternalLink: ExternalLink,
+    User: User,
+    Hash: Hash,
+    Users: Users,
+    HelpCircle: HelpCircle,
+    Lightbulb: Lightbulb,
+    Code: Code,
+    Clock: Clock,
+    Search: SearchIcon,
+    Google: GoogleIcon,
+    Logo: LogoIcon,
+};
