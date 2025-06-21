@@ -30,7 +30,6 @@ import {
   Plus,
   Mail,
   Bell,
-  Settings,
   ExternalLink,
   User,
   Hash,
