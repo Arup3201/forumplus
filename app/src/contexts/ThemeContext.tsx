@@ -1,11 +1,7 @@
 import { createContext, useMemo, useState } from "react";
+import type { ThemeContextType } from "@/types/contexts/theme";
 
 const ThemeContext = createContext<ThemeContextType | null>(null);
-
-interface ThemeContextType {
-    theme: "light" | "dark";
-    setTheme: (theme: "light" | "dark") => void;
-}
 
 const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
     const [theme, setTheme] = useState<"light" | "dark">("dark");

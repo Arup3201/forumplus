@@ -1,15 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-
-interface FetchResponse {
-    data: any;
-    loading: boolean;
-    error: string | null;
-    getRequest: (url: string, onSuccess: (data: any) => void, onError: (error: string) => void) => Promise<void>;
-    postRequest: (url: string, data: any, onSuccess: (data: any) => void, onError: (error: string) => void) => Promise<void>;
-    putRequest: (url: string, data: any, onSuccess: (data: any) => void, onError: (error: string) => void) => Promise<void>;
-    deleteRequest: (url: string, onSuccess: (data: any) => void, onError: (error: string) => void) => Promise<void>;
-}
+import type { FetchResponse } from "@/types/hooks/fetch";
 
 const BASE_URL = window.location.origin;
 

@@ -29,11 +29,7 @@ import {
 } from "@/components/ui/select";
 import { Editor } from "@tinymce/tinymce-react";
 import useFetch from "@/hooks/useFetch";
-
-interface CreateThreadProps {
-  isOpen: boolean;
-  onClose: () => void;
-}
+import type { CreateThreadProps } from "@/types/components/create_thread";
 
 const categories = [
   "General Discussion",

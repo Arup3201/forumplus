@@ -3,10 +3,7 @@ import useAuth from '@/hooks/useAuth';
 import useFetch from '@/hooks/useFetch';
 import { Navbar } from './Navbar';
 import { Footer } from './Footer';
-
-interface ProtectedRouteProps {
-  children: React.ReactNode;
-}
+import type { ProtectedRouteProps } from '@/types/components/protected_component';
 
 export const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
   const { isAuthenticated } = useAuth();

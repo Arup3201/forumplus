@@ -1,11 +1,6 @@
 import useFetch from "@/hooks/useFetch";
 import { createContext, useEffect, useMemo, useState } from "react";
-
-interface AuthContextType {
-  isAuthenticated: boolean;
-  googleSignIn: () => void;
-  githubSignIn: () => void;
-};
+import type { AuthContextType } from "@/types/contexts/auth";
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
