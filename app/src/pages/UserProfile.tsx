@@ -96,10 +96,6 @@ const UserProfile = () => {
         date: "3 weeks ago",
       },
     ],
-    notifications: {
-      messages: 3,
-      notifications: 7,
-    },
   };
 
   const handleBioSave = () => {
@@ -144,30 +140,6 @@ const UserProfile = () => {
             <TabsTrigger value="profile" className="relative">
               <User className="w-4 h-4 mr-2" />
               Profile
-            </TabsTrigger>
-            <TabsTrigger value="messages" className="relative">
-              <Mail className="w-4 h-4 mr-2" />
-              Messages
-              {userData.notifications.messages > 0 && (
-                <Badge
-                  variant="destructive"
-                  className="absolute -top-1 -right-1 text-xs px-1.5 py-0 min-w-[18px] h-[18px] rounded-full"
-                >
-                  {userData.notifications.messages}
-                </Badge>
-              )}
-            </TabsTrigger>
-            <TabsTrigger value="notifications" className="relative">
-              <Bell className="w-4 h-4 mr-2" />
-              Notifications
-              {userData.notifications.notifications > 0 && (
-                <Badge
-                  variant="destructive"
-                  className="absolute -top-1 -right-1 text-xs px-1.5 py-0 min-w-[18px] h-[18px] rounded-full"
-                >
-                  {userData.notifications.notifications}
-                </Badge>
-              )}
             </TabsTrigger>
           </TabsList>
           <Button size="sm" className="gap-2">
@@ -476,28 +448,6 @@ const UserProfile = () => {
                 </div>
               </CardContent>
             </Card>
-          </div>
-        </TabsContent>
-
-        <TabsContent value="messages" className="mt-0">
-          <div className="space-y-4">
-            <div className="text-center py-8 text-muted-foreground">
-              <Mail className="w-12 h-12 mx-auto mb-4 opacity-50" />
-              <p className="text-sm">No messages yet</p>
-              <p className="text-xs mt-1">
-                Your conversations will appear here
-              </p>
-            </div>
-          </div>
-        </TabsContent>
-
-        <TabsContent value="notifications" className="mt-0">
-          <div className="space-y-4">
-            <div className="text-center py-8 text-muted-foreground">
-              <Bell className="w-12 h-12 mx-auto mb-4 opacity-50" />
-              <p className="text-sm">No notifications yet</p>
-              <p className="text-xs mt-1">Activity updates will appear here</p>
-            </div>
           </div>
         </TabsContent>
       </Tabs>
