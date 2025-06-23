@@ -24,7 +24,13 @@ async def auth_middleware(request: Request, call_next: Callable):
             session_manager = SessionManager(db_session)
             if not session_manager.validate_session(session_id):
                 raise HTTPException(status_code=401, detail="Unauthorized - Invalid session")
-
+        
+        # Get user id from session
+        user_id = session_manager.get_user_id(session_id)
+        
+        # Add user id to request
+        request.state.user_id = user_id
+        
         # Proceed with request if session is valid
         response = await call_next(request)
         return response

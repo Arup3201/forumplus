@@ -92,3 +92,9 @@ class UserRepository(BaseRepository):
         if not user:
             return None
         return self._to_user_entity(user)
+    
+    def get_user_profile(self, user_id: str) -> UserProfileEntity | None:
+        user_profile = self.db_session.query(UserProfile).filter(UserProfile.user_id == user_id).first()
+        if not user_profile:
+            return None
+        return self._to_user_profile_entity(user_profile)

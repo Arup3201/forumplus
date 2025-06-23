@@ -74,3 +74,13 @@ class SessionManager:
             user_id (str): User ID
         """
         return self.session_repository.get_last_active_session_by_user_id(user_id)
+    
+    def get_user_id(self, session_id: str) -> str | None:
+        """
+        Get the user id from the session
+
+        Args:
+            session_id (str): Session ID
+        """
+        session = self.session_repository.get_session(session_id)
+        return session.user_id
