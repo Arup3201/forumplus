@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Card,
   CardContent,
@@ -29,74 +29,45 @@ import {
   Star,
   Plus,
   Mail,
-  Bell,
   ExternalLink,
   User,
   Hash,
 } from "lucide-react";
+import useAuth from "@/hooks/useAuth";
+import useFetch from "@/hooks/useFetch";
+import type { UserProfile } from "@/types/user";
 
-const UserProfile = () => {
+const UserProfilePage = () => {
+  const { user } = useAuth();
+  const { loading, error, getRequest } = useFetch();
+
+  const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [isEditingBio, setIsEditingBio] = useState(false);
   const [isEditingInterests, setIsEditingInterests] = useState(false);
   const [isEditingLocation, setIsEditingLocation] = useState(false);
   // Remove activeTab state as shadcn tabs manages its own state
-  const [bio, setBio] = useState(
-    "Passionate developer with 5+ years of experience in React and TypeScript. Love building scalable web applications and contributing to open source projects."
-  );
-  const [interests, setInterests] = useState([
-    "React",
-    "TypeScript",
-    "Node.js",
-    "GraphQL",
-    "Open Source",
-  ]);
-  const [location, setLocation] = useState("San Francisco, CA");
+  const [bio, setBio] = useState("-");
+  const [interests, setInterests] = useState<string[]>([]);
+  const [location, setLocation] = useState("-");
   const [tempBio, setTempBio] = useState(bio);
   const [tempInterests, setTempInterests] = useState(interests.join(", "));
   const [tempLocation, setTempLocation] = useState(location);
 
-  // Mock user data
-  const userData = {
-    username: "tech_enthusiast",
-    fullName: "Alex Johnson",
-    email: "alex.johnson@example.com",
-    avatar: "/api/placeholder/120/120",
-    reputation: 1247,
-    location: location,
-    joinDate: "Mar 2023",
-    stats: {
-      postsCreated: 156,
-      repliesMade: 423,
-      reputation: 1247,
-    },
-    recentPosts: [
-      {
-        title: "Best practices for React hooks",
-        thread: "React Discussion",
-        date: "2 days ago",
-      },
-      {
-        title: "TypeScript vs JavaScript in 2024",
-        thread: "General Discussion",
-        date: "5 days ago",
-      },
-      {
-        title: "How to optimize bundle size",
-        thread: "Performance",
-        date: "1 week ago",
-      },
-      {
-        title: "GraphQL vs REST APIs",
-        thread: "API Design",
-        date: "2 weeks ago",
-      },
-      {
-        title: "State management solutions",
-        thread: "React Discussion",
-        date: "3 weeks ago",
-      },
-    ],
-  };
+  useEffect(() => {
+    if (user) {
+      getRequest(`/api/auth/${user.id}/profile`, (data) => {
+        setUserProfile(data as UserProfile);
+        setBio(data.bio ?? '-');
+        setInterests(data.interests ?? []);
+        setLocation(data.location ?? '-');
+        setTempBio(data.bio ?? '');
+        setTempInterests(data.interests ?? []);
+        setTempLocation(data.location ?? '');
+      }, (error) => {
+        console.error('Error fetching user profile:', error);
+      });
+    }
+  }, [user]);
 
   const handleBioSave = () => {
     setBio(tempBio);
@@ -132,6 +103,13 @@ const UserProfile = () => {
     setIsEditingLocation(false);
   };
 
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
+
   return (
     <div className="w-full mx-auto px-6 space-y-6">
       <Tabs defaultValue="profile">
@@ -156,13 +134,13 @@ const UserProfile = () => {
                   {/* Profile Picture */}
                   <div className="relative group">
                     <Avatar className="w-32 h-32 cursor-pointer border-4 border-white shadow-lg">
-                      <AvatarImage
-                        src={userData.avatar}
-                        alt={userData.fullName}
-                      />
+                      {/* TODO: Add avatar image after fetching*/}
+                      {/* <AvatarImage
+                        src={userProfile?.avatar_url ? fetch(userProfile.avatar_url) : undefined}
+                        alt={userProfile?.display_name}
+                      /> */}
                       <AvatarFallback className="text-2xl font-bold bg-primary text-primary-foreground">
-                        {userData.fullName
-                          .split(" ")
+                        {userProfile?.display_name?.split(" ")
                           .map((n) => n[0])
                           .join("")}
                       </AvatarFallback>
@@ -177,25 +155,25 @@ const UserProfile = () => {
                     <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                       <div>
                         <h1 className="text-3xl font-bold">
-                          {userData.fullName}
+                          {userProfile?.display_name}
                         </h1>
                         <p className="text-lg text-muted-foreground">
-                          @{userData.username}
+                          @{userProfile?.username}
                         </p>
                         <div className="flex items-center gap-2 text-sm text-muted-foreground mt-1">
                           <Mail className="w-4 h-4" />
-                          <span>{userData.email}</span>
+                          <span>{user?.email}</span>
                         </div>
                         <div className="flex items-center gap-2 text-sm text-muted-foreground">
                           <Calendar className="w-4 h-4" />
-                          <span>Joined {userData.joinDate}</span>
+                          <span>Joined {userProfile?.created_at.split('T')[0]}</span>
                         </div>
                       </div>
                       <div className="flex items-center gap-3">
                         <div className="flex items-center gap-2 bg-yellow-50 dark:bg-yellow-900/20 px-3 py-1 rounded-full">
                           <Star className="w-4 h-4 text-yellow-500" />
                           <span className="font-semibold text-yellow-700 dark:text-yellow-400">
-                            {userData.reputation.toLocaleString()}
+                            {userProfile?.reputation.toLocaleString()}
                           </span>
                         </div>
                         <Button size="sm" className="gap-2">
@@ -215,7 +193,7 @@ const UserProfile = () => {
                                 <MessageSquare className="w-4 h-4 text-blue-600 dark:text-blue-400" />
                               </div>
                               <span className="font-medium">
-                                {userData.stats.postsCreated}
+                                {userProfile?.post_count}
                               </span>
                             </div>
                           </TooltipTrigger>
@@ -231,7 +209,7 @@ const UserProfile = () => {
                                 <Reply className="w-4 h-4 text-green-600 dark:text-green-400" />
                               </div>
                               <span className="font-medium">
-                                {userData.stats.repliesMade}
+                                {userProfile?.post_count}
                               </span>
                             </div>
                           </TooltipTrigger>
@@ -342,7 +320,7 @@ const UserProfile = () => {
                   ) : (
                     <div className="flex items-center gap-2 text-sm text-muted-foreground">
                       <MapPin className="w-4 h-4" />
-                      <span>{userData.location}</span>
+                      <span>{userProfile?.location}</span>
                     </div>
                   )}
                 </div>
@@ -419,15 +397,15 @@ const UserProfile = () => {
               </CardHeader>
               <CardContent className="p-0">
                 <div className="divide-y">
-                  {userData.recentPosts.map((post) => (
+                  {userProfile?.recentActivities?.map((activity) => (
                     <div
-                      key={post.title}
+                      key={activity.id}
                       className="p-4 hover:bg-muted/50 transition-colors"
                     >
                       <div className="flex items-start justify-between gap-4">
                         <div className="flex-1 min-w-0">
                           <h4 className="font-medium text-sm truncate">
-                            {post.title}
+                            {activity.activity_type}
                           </h4>
                           <div className="flex items-center gap-2 mt-1 text-xs text-muted-foreground">
                             <span>in</span>
@@ -435,12 +413,12 @@ const UserProfile = () => {
                               variant="outline"
                               className="text-xs px-2 py-0"
                             >
-                              {post.thread}
+                              {activity.activity_data}
                             </Badge>
                           </div>
                         </div>
                         <span className="text-xs text-muted-foreground whitespace-nowrap">
-                          {post.date}
+                          {activity.created_at.split('T')[0]}
                         </span>
                       </div>
                     </div>
@@ -455,4 +433,4 @@ const UserProfile = () => {
   );
 };
 
-export { UserProfile };
+export default UserProfilePage;
