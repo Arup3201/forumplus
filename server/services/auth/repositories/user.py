@@ -2,6 +2,7 @@ from sqlalchemy.orm import Session
 from shared.repository import BaseRepository
 from services.auth.models import User, UserProfile, UserRole
 from services.auth.schemas import UserEntity, UserProfileEntity
+from datetime import datetime, timezone
 from typing import Dict
 
 class UserRepository(BaseRepository):
@@ -56,11 +57,12 @@ class UserRepository(BaseRepository):
             **self._get_base_payload(),
             'user_id': user_id,
             'username': user_data['username'],
-            'display_name': user_data['display_name'],
-            'bio': user_data['bio'],
-            'avatar_url': user_data['avatar_url'],
-            'website': user_data['website'],
-            'location': user_data['location'],
+            'display_name': user_data.get('display_name', ''),
+            'avatar_url': user_data.get('avatar_url', ''),
+            'bio': user_data.get('bio', ''),
+            'website': user_data.get('website', ''),
+            'location': user_data.get('location', ''),
+            'last_seen_at': datetime.now(tz=timezone.utc),
             'role': UserRole.MEMBER
         })
         self.db_session.add(user_profile)

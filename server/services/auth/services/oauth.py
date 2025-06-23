@@ -224,9 +224,9 @@ class OAuthService:
                     # create user
                     user_entity = user_repo.create_user(user_data.model_dump())
                     user_profile_entity = user_repo.create_user_profile(user_entity.id, {
-                        'username': user_data['email'].split('@')[0],
-                        'display_name': user_data['name'],
-                        'avatar_url': user_data['avatar_url'],
+                        'username': user_data.email.split('@')[0],
+                        'display_name': user_data.name,
+                        'avatar_url': user_data.avatar_url,
                     })
                     user_repo.add_user_profile(user_entity.id, user_profile_entity.id)
                     
