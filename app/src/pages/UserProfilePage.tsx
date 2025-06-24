@@ -62,7 +62,7 @@ const UserProfilePage = () => {
           setInterests(data.interests ?? []);
           setLocation(data.location ?? "-");
           setTempBio(data.bio ?? "");
-          setTempInterests(data.interests ?? []);
+          setTempInterests(data.interests?.join(", ") ?? "");
           setTempLocation(data.location ?? "");
         },
         (error) => {
@@ -81,6 +81,7 @@ const UserProfilePage = () => {
       },
       (data) => {
         setBio(data.bio ?? "-");
+        setTempBio(data.bio ?? "");
       },
       (error) => {
         console.error("Error saving bio:", error);
@@ -107,6 +108,7 @@ const UserProfilePage = () => {
       },
       (data) => {
         setInterests(data.interests ?? []);
+        setTempInterests(data.interests?.join(", ") ?? "");
       },
       (error) => {
         console.error("Error saving interests:", error);
@@ -129,6 +131,7 @@ const UserProfilePage = () => {
       },
       (data) => {
         setLocation(data.location ?? "-");
+        setTempLocation(data.location ?? "");
       },
       (error) => {
         console.error("Error saving location:", error);
@@ -354,7 +357,7 @@ const UserProfilePage = () => {
               ) : (
                 <div className="flex items-center gap-2 text-sm text-muted-foreground">
                   <MapPin className="w-4 h-4" />
-                  <span>{userProfile?.location}</span>
+                  <span>{location}</span>
                 </div>
               )}
             </div>
@@ -397,7 +400,7 @@ const UserProfilePage = () => {
                 </div>
               ) : (
                 <div className="flex flex-wrap gap-2">
-                  {interests.map((interest) => (
+                  {interests.length > 0 ? interests.map((interest) => (
                     <Badge
                       key={interest}
                       variant="secondary"
@@ -406,7 +409,7 @@ const UserProfilePage = () => {
                       <Hash className="w-3 h-3 mr-1" />
                       {interest}
                     </Badge>
-                  ))}
+                  )) : <span className="text-sm text-muted-foreground">-</span>}
                 </div>
               )}
             </div>

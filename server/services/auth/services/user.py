@@ -45,7 +45,7 @@ class UserService:
         user_profile_dict = {}
         if 'bio' in profile_data and profile_data['bio'] is not None:
             user_profile_dict['bio'] = profile_data['bio'].strip()
-        if 'interests' in profile_data and len(profile_data['interests']) > 0:
+        if 'interests' in profile_data and profile_data['interests'] is not None:
             user_profile_dict['interests'] = profile_data['interests']
         if 'location' in profile_data and profile_data['location'] is not None:
             user_profile_dict['location'] = profile_data['location'].strip()

@@ -7,7 +7,7 @@ from typing import Optional, List
 class UserProfileUpdate(BaseModel):
     id: str
     bio: Optional[str] = None
-    interests: Optional[List[str]] = []
+    interests: Optional[List[str]] = None
     location: Optional[str] = None
     
     class Config:
