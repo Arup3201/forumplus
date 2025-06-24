@@ -55,17 +55,21 @@ const UserProfilePage = () => {
 
   useEffect(() => {
     if (user) {
-      getRequest(`/api/auth/${user.id}/profile`, (data) => {
-        setUserProfile(data as UserProfile);
-        setBio(data.bio ?? '-');
-        setInterests(data.interests ?? []);
-        setLocation(data.location ?? '-');
-        setTempBio(data.bio ?? '');
-        setTempInterests(data.interests ?? []);
-        setTempLocation(data.location ?? '');
-      }, (error) => {
-        console.error('Error fetching user profile:', error);
-      });
+      getRequest(
+        `/api/auth/${user.id}/profile`,
+        (data) => {
+          setUserProfile(data as UserProfile);
+          setBio(data.bio ?? "-");
+          setInterests(data.interests ?? []);
+          setLocation(data.location ?? "-");
+          setTempBio(data.bio ?? "");
+          setTempInterests(data.interests ?? []);
+          setTempLocation(data.location ?? "");
+        },
+        (error) => {
+          console.error("Error fetching user profile:", error);
+        }
+      );
     }
   }, [user]);
 
@@ -112,323 +116,313 @@ const UserProfilePage = () => {
 
   return (
     <div className="w-full mx-auto px-6 space-y-6">
-      <Tabs defaultValue="profile">
-        <div className="flex items-center justify-between">
-          <TabsList className="grid w-auto grid-cols-3 gap-4">
-            <TabsTrigger value="profile" className="relative">
-              <User className="w-4 h-4 mr-2" />
-              Profile
-            </TabsTrigger>
-          </TabsList>
-          <Button size="sm" className="gap-2">
-            <Plus className="w-4 h-4" />
-            New Thread
-          </Button>
-        </div>
+      <div className="flex items-center justify-end">
+        <Button size="sm" className="gap-2">
+          <Plus className="w-4 h-4" />
+          New Thread
+        </Button>
+      </div>
 
-        <TabsContent value="profile" className="mt-0">
-          <div className="space-y-6">
-            <Card>
-              <CardContent className="p-6">
-                <div className="flex flex-col md:flex-row gap-6 items-start">
-                  {/* Profile Picture */}
-                  <div className="relative group">
-                    <Avatar className="w-32 h-32 cursor-pointer border-4 border-white shadow-lg">
-                      {/* TODO: Add avatar image after fetching*/}
-                      {/* <AvatarImage
+      <div className="space-y-6">
+        <Card>
+          <CardContent className="p-6">
+            <div className="flex flex-col md:flex-row gap-6 items-start">
+              {/* Profile Picture */}
+              <div className="relative group">
+                <Avatar className="w-32 h-32 cursor-pointer border-4 border-white shadow-lg">
+                  {/* TODO: Add avatar image after fetching*/}
+                  {/* <AvatarImage
                         src={userProfile?.avatar_url ? fetch(userProfile.avatar_url) : undefined}
                         alt={userProfile?.display_name}
                       /> */}
-                      <AvatarFallback className="text-2xl font-bold bg-primary text-primary-foreground">
-                        {userProfile?.display_name?.split(" ")
-                          .map((n) => n[0])
-                          .join("")}
-                      </AvatarFallback>
-                    </Avatar>
-                    <div className="absolute inset-0 rounded-full bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center cursor-pointer">
-                      <Camera className="w-8 h-8 text-white" />
+                  <AvatarFallback className="text-2xl font-bold bg-primary text-primary-foreground">
+                    {userProfile?.display_name
+                      ?.split(" ")
+                      .map((n) => n[0])
+                      .join("")}
+                  </AvatarFallback>
+                </Avatar>
+                <div className="absolute inset-0 rounded-full bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center cursor-pointer">
+                  <Camera className="w-8 h-8 text-white" />
+                </div>
+              </div>
+
+              {/* User Info */}
+              <div className="flex-1 space-y-4">
+                <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                  <div>
+                    <h1 className="text-3xl font-bold">
+                      {userProfile?.display_name}
+                    </h1>
+                    <p className="text-lg text-muted-foreground">
+                      @{userProfile?.username}
+                    </p>
+                    <div className="flex items-center gap-2 text-sm text-muted-foreground mt-1">
+                      <Mail className="w-4 h-4" />
+                      <span>{user?.email}</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                      <Calendar className="w-4 h-4" />
+                      <span>
+                        Joined {userProfile?.created_at.split("T")[0]}
+                      </span>
                     </div>
                   </div>
+                  <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-2 bg-yellow-50 dark:bg-yellow-900/20 px-3 py-1 rounded-full">
+                      <Star className="w-4 h-4 text-yellow-500" />
+                      <span className="font-semibold text-yellow-700 dark:text-yellow-400">
+                        {userProfile?.reputation.toLocaleString()}
+                      </span>
+                    </div>
+                    <Button size="sm" className="gap-2">
+                      <Edit3 className="w-4 h-4" />
+                      Edit Profile
+                    </Button>
+                  </div>
+                </div>
 
-                  {/* User Info */}
-                  <div className="flex-1 space-y-4">
-                    <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-                      <div>
-                        <h1 className="text-3xl font-bold">
-                          {userProfile?.display_name}
-                        </h1>
-                        <p className="text-lg text-muted-foreground">
-                          @{userProfile?.username}
-                        </p>
-                        <div className="flex items-center gap-2 text-sm text-muted-foreground mt-1">
-                          <Mail className="w-4 h-4" />
-                          <span>{user?.email}</span>
-                        </div>
-                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                          <Calendar className="w-4 h-4" />
-                          <span>Joined {userProfile?.created_at.split('T')[0]}</span>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-3">
-                        <div className="flex items-center gap-2 bg-yellow-50 dark:bg-yellow-900/20 px-3 py-1 rounded-full">
-                          <Star className="w-4 h-4 text-yellow-500" />
-                          <span className="font-semibold text-yellow-700 dark:text-yellow-400">
-                            {userProfile?.reputation.toLocaleString()}
+                {/* Activity Summary Icons */}
+                <TooltipProvider>
+                  <div className="flex items-center gap-6 pt-2 border-t border-muted/30">
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <div className="flex items-center gap-2 text-sm cursor-help">
+                          <div className="w-8 h-8 bg-blue-100 dark:bg-blue-900/20 rounded-lg flex items-center justify-center">
+                            <MessageSquare className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+                          </div>
+                          <span className="font-medium">
+                            {userProfile?.post_count}
                           </span>
                         </div>
-                        <Button size="sm" className="gap-2">
-                          <Edit3 className="w-4 h-4" />
-                          Edit Profile
-                        </Button>
-                      </div>
-                    </div>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>Posts Created</p>
+                      </TooltipContent>
+                    </Tooltip>
 
-                    {/* Activity Summary Icons */}
-                    <TooltipProvider>
-                      <div className="flex items-center gap-6 pt-2 border-t border-muted/30">
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <div className="flex items-center gap-2 text-sm cursor-help">
-                              <div className="w-8 h-8 bg-blue-100 dark:bg-blue-900/20 rounded-lg flex items-center justify-center">
-                                <MessageSquare className="w-4 h-4 text-blue-600 dark:text-blue-400" />
-                              </div>
-                              <span className="font-medium">
-                                {userProfile?.post_count}
-                              </span>
-                            </div>
-                          </TooltipTrigger>
-                          <TooltipContent>
-                            <p>Posts Created</p>
-                          </TooltipContent>
-                        </Tooltip>
-
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <div className="flex items-center gap-2 text-sm cursor-help">
-                              <div className="w-8 h-8 bg-green-100 dark:bg-green-900/20 rounded-lg flex items-center justify-center">
-                                <Reply className="w-4 h-4 text-green-600 dark:text-green-400" />
-                              </div>
-                              <span className="font-medium">
-                                {userProfile?.post_count}
-                              </span>
-                            </div>
-                          </TooltipTrigger>
-                          <TooltipContent>
-                            <p>Replies Made</p>
-                          </TooltipContent>
-                        </Tooltip>
-                      </div>
-                    </TooltipProvider>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-            {/* Personal Info */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Personal Information</CardTitle>
-                <CardDescription>
-                  Manage your profile details and interests
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                {/* Bio */}
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between">
-                    <Label htmlFor="bio">Bio</Label>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => setIsEditingBio(true)}
-                      className="text-xs"
-                    >
-                      <Edit3 className="w-3 h-3 mr-1" />
-                      Edit
-                    </Button>
-                  </div>
-                  {isEditingBio ? (
-                    <div className="space-y-2">
-                      <Textarea
-                        id="bio"
-                        value={tempBio}
-                        onChange={(e) => setTempBio(e.target.value)}
-                        rows={3}
-                        maxLength={200}
-                        placeholder="Tell us about yourself..."
-                      />
-                      <div className="flex justify-between items-center">
-                        <span className="text-xs text-muted-foreground">
-                          {tempBio.length}/200 characters
-                        </span>
-                        <div className="flex gap-2">
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={handleBioCancel}
-                          >
-                            Cancel
-                          </Button>
-                          <Button size="sm" onClick={handleBioSave}>
-                            Save
-                          </Button>
-                        </div>
-                      </div>
-                    </div>
-                  ) : (
-                    <p className="text-sm text-muted-foreground leading-relaxed">
-                      {bio}
-                    </p>
-                  )}
-                </div>
-
-                {/* Location */}
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between">
-                    <Label htmlFor="location">Location</Label>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => setIsEditingLocation(true)}
-                      className="text-xs"
-                    >
-                      <Edit3 className="w-3 h-3 mr-1" />
-                      Edit
-                    </Button>
-                  </div>
-                  {isEditingLocation ? (
-                    <div className="space-y-2">
-                      <Input
-                        id="location"
-                        type="text"
-                        value={tempLocation}
-                        onChange={(e) => setTempLocation(e.target.value)}
-                        placeholder="Enter your location"
-                      />
-                      <div className="flex justify-end gap-2">
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={handleLocationCancel}
-                        >
-                          Cancel
-                        </Button>
-                        <Button size="sm" onClick={handleLocationSave}>
-                          Save
-                        </Button>
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                      <MapPin className="w-4 h-4" />
-                      <span>{userProfile?.location}</span>
-                    </div>
-                  )}
-                </div>
-
-                {/* Interests */}
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between">
-                    <Label htmlFor="interests">Interests & Topics</Label>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => setIsEditingInterests(true)}
-                      className="text-xs"
-                    >
-                      <Edit3 className="w-3 h-3 mr-1" />
-                      Edit
-                    </Button>
-                  </div>
-                  {isEditingInterests ? (
-                    <div className="space-y-2">
-                      <Input
-                        id="interests"
-                        type="text"
-                        value={tempInterests}
-                        onChange={(e) => setTempInterests(e.target.value)}
-                        placeholder="Enter interests separated by commas"
-                      />
-                      <div className="flex justify-end gap-2">
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={handleInterestsCancel}
-                        >
-                          Cancel
-                        </Button>
-                        <Button size="sm" onClick={handleInterestsSave}>
-                          Save
-                        </Button>
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="flex flex-wrap gap-2">
-                      {interests.map((interest) => (
-                        <Badge
-                          key={interest}
-                          variant="secondary"
-                          className="text-xs"
-                        >
-                          <Hash className="w-3 h-3 mr-1" />
-                          {interest}
-                        </Badge>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Recent Activity */}
-            <Card>
-              <CardHeader>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <CardTitle>Recent Activity</CardTitle>
-                    <CardDescription>
-                      Your latest posts and contributions
-                    </CardDescription>
-                  </div>
-                  <Button variant="outline" size="sm" className="gap-2">
-                    <ExternalLink className="w-4 h-4" />
-                    View All Posts
-                  </Button>
-                </div>
-              </CardHeader>
-              <CardContent className="p-0">
-                <div className="divide-y">
-                  {userProfile?.recentActivities?.map((activity) => (
-                    <div
-                      key={activity.id}
-                      className="p-4 hover:bg-muted/50 transition-colors"
-                    >
-                      <div className="flex items-start justify-between gap-4">
-                        <div className="flex-1 min-w-0">
-                          <h4 className="font-medium text-sm truncate">
-                            {activity.activity_type}
-                          </h4>
-                          <div className="flex items-center gap-2 mt-1 text-xs text-muted-foreground">
-                            <span>in</span>
-                            <Badge
-                              variant="outline"
-                              className="text-xs px-2 py-0"
-                            >
-                              {activity.activity_data}
-                            </Badge>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <div className="flex items-center gap-2 text-sm cursor-help">
+                          <div className="w-8 h-8 bg-green-100 dark:bg-green-900/20 rounded-lg flex items-center justify-center">
+                            <Reply className="w-4 h-4 text-green-600 dark:text-green-400" />
                           </div>
+                          <span className="font-medium">
+                            {userProfile?.post_count}
+                          </span>
                         </div>
-                        <span className="text-xs text-muted-foreground whitespace-nowrap">
-                          {activity.created_at.split('T')[0]}
-                        </span>
-                      </div>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>Replies Made</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </div>
+                </TooltipProvider>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+        {/* Personal Info */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Personal Information</CardTitle>
+            <CardDescription>
+              Manage your profile details and interests
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            {/* Bio */}
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <Label htmlFor="bio">Bio</Label>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setIsEditingBio(true)}
+                  className="text-xs"
+                >
+                  <Edit3 className="w-3 h-3 mr-1" />
+                  Edit
+                </Button>
+              </div>
+              {isEditingBio ? (
+                <div className="space-y-2">
+                  <Textarea
+                    id="bio"
+                    value={tempBio}
+                    onChange={(e) => setTempBio(e.target.value)}
+                    rows={3}
+                    maxLength={200}
+                    placeholder="Tell us about yourself..."
+                  />
+                  <div className="flex justify-between items-center">
+                    <span className="text-xs text-muted-foreground">
+                      {tempBio.length}/200 characters
+                    </span>
+                    <div className="flex gap-2">
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={handleBioCancel}
+                      >
+                        Cancel
+                      </Button>
+                      <Button size="sm" onClick={handleBioSave}>
+                        Save
+                      </Button>
                     </div>
+                  </div>
+                </div>
+              ) : (
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  {bio}
+                </p>
+              )}
+            </div>
+
+            {/* Location */}
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <Label htmlFor="location">Location</Label>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setIsEditingLocation(true)}
+                  className="text-xs"
+                >
+                  <Edit3 className="w-3 h-3 mr-1" />
+                  Edit
+                </Button>
+              </div>
+              {isEditingLocation ? (
+                <div className="space-y-2">
+                  <Input
+                    id="location"
+                    type="text"
+                    value={tempLocation}
+                    onChange={(e) => setTempLocation(e.target.value)}
+                    placeholder="Enter your location"
+                  />
+                  <div className="flex justify-end gap-2">
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={handleLocationCancel}
+                    >
+                      Cancel
+                    </Button>
+                    <Button size="sm" onClick={handleLocationSave}>
+                      Save
+                    </Button>
+                  </div>
+                </div>
+              ) : (
+                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                  <MapPin className="w-4 h-4" />
+                  <span>{userProfile?.location}</span>
+                </div>
+              )}
+            </div>
+
+            {/* Interests */}
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <Label htmlFor="interests">Interests & Topics</Label>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setIsEditingInterests(true)}
+                  className="text-xs"
+                >
+                  <Edit3 className="w-3 h-3 mr-1" />
+                  Edit
+                </Button>
+              </div>
+              {isEditingInterests ? (
+                <div className="space-y-2">
+                  <Input
+                    id="interests"
+                    type="text"
+                    value={tempInterests}
+                    onChange={(e) => setTempInterests(e.target.value)}
+                    placeholder="Enter interests separated by commas"
+                  />
+                  <div className="flex justify-end gap-2">
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={handleInterestsCancel}
+                    >
+                      Cancel
+                    </Button>
+                    <Button size="sm" onClick={handleInterestsSave}>
+                      Save
+                    </Button>
+                  </div>
+                </div>
+              ) : (
+                <div className="flex flex-wrap gap-2">
+                  {interests.map((interest) => (
+                    <Badge
+                      key={interest}
+                      variant="secondary"
+                      className="text-xs"
+                    >
+                      <Hash className="w-3 h-3 mr-1" />
+                      {interest}
+                    </Badge>
                   ))}
                 </div>
-              </CardContent>
-            </Card>
-          </div>
-        </TabsContent>
-      </Tabs>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Recent Activity */}
+        <Card>
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle>Recent Activity</CardTitle>
+                <CardDescription>
+                  Your latest posts and contributions
+                </CardDescription>
+              </div>
+              <Button variant="outline" size="sm" className="gap-2">
+                <ExternalLink className="w-4 h-4" />
+                View All Posts
+              </Button>
+            </div>
+          </CardHeader>
+          <CardContent className="p-0">
+            <div className="divide-y">
+              {userProfile?.recentActivities?.map((activity) => (
+                <div
+                  key={activity.id}
+                  className="p-4 hover:bg-muted/50 transition-colors"
+                >
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="flex-1 min-w-0">
+                      <h4 className="font-medium text-sm truncate">
+                        {activity.activity_type}
+                      </h4>
+                      <div className="flex items-center gap-2 mt-1 text-xs text-muted-foreground">
+                        <span>in</span>
+                        <Badge variant="outline" className="text-xs px-2 py-0">
+                          {activity.activity_data}
+                        </Badge>
+                      </div>
+                    </div>
+                    <span className="text-xs text-muted-foreground whitespace-nowrap">
+                      {activity.created_at.split("T")[0]}
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 };
