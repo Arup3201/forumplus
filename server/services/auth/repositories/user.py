@@ -98,3 +98,13 @@ class UserRepository(BaseRepository):
         if not user_profile:
             return None
         return self._to_user_profile_entity(user_profile)
+    
+    def update_user_profile(self, user_id: str, profile_data: Dict) -> UserProfileEntity:
+        user_profile = self.db_session.query(UserProfile).filter(UserProfile.user_id == user_id).first()
+        if not user_profile:
+            raise ValueError(f"User profile with id {user_id} not found")
+        
+        for key, value in profile_data.items():
+            setattr(user_profile, key, value)
+        self.db_session.flush()
+        return self._to_user_profile_entity(user_profile)

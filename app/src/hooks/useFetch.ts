@@ -57,11 +57,15 @@ const useFetch = (): FetchResponse => {
         await fetchData(url, 'PUT', data, onSuccess, onError);
     }
     
+    const patchRequest = async (url: string, data: any, onSuccess: (data: any) => void, onError: (error: string) => void) => {
+        await fetchData(url, 'PATCH', data, onSuccess, onError);
+    }
+
     const deleteRequest = async (url: string, onSuccess: (data: any) => void, onError: (error: string) => void) => {
         await fetchData(url, 'DELETE', null, onSuccess, onError);
     }
 
-    return { data, loading, error, getRequest, postRequest, putRequest, deleteRequest };
+    return { data, loading, error, getRequest, postRequest, putRequest, patchRequest, deleteRequest };
 }
 
 export default useFetch;

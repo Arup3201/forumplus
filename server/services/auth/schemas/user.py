@@ -1,6 +1,17 @@
 from pydantic import BaseModel
 from datetime import datetime
-from typing import Optional
+from typing import Optional, List
+
+# schemas for api requests
+
+class UserProfileUpdate(BaseModel):
+    id: str
+    bio: Optional[str] = None
+    interests: Optional[List[str]] = []
+    location: Optional[str] = None
+    
+    class Config:
+        extra = "forbid"
 
 ## schemas for database entities
 

@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, Request
 from shared.database import DatabaseManager, get_db_manager
 from services.auth.services.user import UserService
-from services.auth.schemas import UserResponse, UserProfileResponse
+from services.auth.schemas import UserResponse, UserProfileResponse, UserProfileUpdate
 
 router = APIRouter()
 
@@ -19,3 +19,8 @@ def get_user_profile(user_id: str, db_manager: DatabaseManager = Depends(get_db_
     user_profile = user_service.get_user_profile(user_id)
     return UserProfileResponse(**user_profile)
 
+@router.patch('/profile', response_model=UserProfileResponse)
+def update_user_profile(profile_data: UserProfileUpdate, db_manager: DatabaseManager = Depends(get_db_manager)):
+    user_service = UserService(db_manager)
+    user_profile = user_service.update_user_profile(profile_data.id, profile_data.model_dump())
+    return UserProfileResponse(**user_profile)

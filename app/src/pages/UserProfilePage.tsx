@@ -18,7 +18,6 @@ import {
   TooltipTrigger,
   TooltipProvider,
 } from "@/components/ui/tooltip";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import {
   Camera,
   Edit3,
@@ -39,7 +38,7 @@ import type { UserProfile } from "@/types/user";
 
 const UserProfilePage = () => {
   const { user } = useAuth();
-  const { loading, error, getRequest } = useFetch();
+  const { loading, error, getRequest, patchRequest } = useFetch();
 
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [isEditingBio, setIsEditingBio] = useState(false);
@@ -73,8 +72,20 @@ const UserProfilePage = () => {
     }
   }, [user]);
 
-  const handleBioSave = () => {
-    setBio(tempBio);
+  const handleBioSave = async () => {
+    await patchRequest(
+      `/api/auth/profile`,
+      {
+        id: user?.id,
+        bio: tempBio,
+      },
+      (data) => {
+        setBio(data.bio ?? "-");
+      },
+      (error) => {
+        console.error("Error saving bio:", error);
+      }
+    );
     setIsEditingBio(false);
   };
 
@@ -83,12 +94,24 @@ const UserProfilePage = () => {
     setIsEditingBio(false);
   };
 
-  const handleInterestsSave = () => {
+  const handleInterestsSave = async () => {
     const newInterests = tempInterests
       .split(",")
       .map((i) => i.trim())
       .filter((i) => i);
-    setInterests(newInterests);
+    await patchRequest(
+      `/api/auth/profile`,
+      {
+        id: user?.id,
+        interests: newInterests,
+      },
+      (data) => {
+        setInterests(data.interests ?? []);
+      },
+      (error) => {
+        console.error("Error saving interests:", error);
+      }
+    );
     setIsEditingInterests(false);
   };
 
@@ -97,8 +120,20 @@ const UserProfilePage = () => {
     setIsEditingInterests(false);
   };
 
-  const handleLocationSave = () => {
-    setLocation(tempLocation);
+  const handleLocationSave = async () => {
+    await patchRequest(
+      `/api/auth/profile`,
+      {
+        id: user?.id,
+        location: tempLocation,
+      },
+      (data) => {
+        setLocation(data.location ?? "-");
+      },
+      (error) => {
+        console.error("Error saving location:", error);
+      }
+    );
     setIsEditingLocation(false);
   };
 
