@@ -1,5 +1,5 @@
 from sqlalchemy.orm import relationship
-from sqlalchemy import Column, String, DateTime, Text, Integer, Enum, ForeignKey
+from sqlalchemy import Column, String, DateTime, Text, Integer, Enum, ForeignKey, JSON
 from shared.model import Base
 from shared.mixins import TimestampMixin
 import enum
@@ -23,6 +23,7 @@ class UserProfile(Base, TimestampMixin):
     avatar_url = Column(String(500), nullable=True)
     website = Column(String(255), nullable=True)
     location = Column(String(100), nullable=True)
+    interests = Column(JSON, nullable=True)
     
     # Role & Permissions
     role = Column(Enum(UserRole), default=UserRole.MEMBER)

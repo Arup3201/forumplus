@@ -31,6 +31,7 @@ class UserRepository(BaseRepository):
             'avatar_url': user_profile.avatar_url,
             'website': user_profile.website,
             'location': user_profile.location,
+            'interests': user_profile.interests,
             'role': user_profile.role,
             'last_seen_at': user_profile.last_seen_at,
             'post_count': user_profile.post_count,
@@ -62,6 +63,7 @@ class UserRepository(BaseRepository):
             'bio': user_data.get('bio', ''),
             'website': user_data.get('website', ''),
             'location': user_data.get('location', ''),
+            'interests': user_data.get('interests', []),
             'last_seen_at': datetime.now(tz=timezone.utc),
             'role': UserRole.MEMBER
         })

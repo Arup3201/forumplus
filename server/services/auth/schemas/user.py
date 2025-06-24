@@ -33,6 +33,7 @@ class UserProfileEntity(BaseModel):
     avatar_url: Optional[str]
     website: Optional[str]
     location: Optional[str]
+    interests: Optional[List[str]]
     role: str
     last_seen_at: Optional[datetime]
     post_count: int
@@ -59,6 +60,7 @@ class UserProfileResponse(BaseModel):
     bio: Optional[str]
     website: Optional[str]
     location: Optional[str]
+    interests: Optional[List[str]]
     last_seen_at: Optional[datetime]
     post_count: int
     reputation: int
