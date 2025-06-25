@@ -1,38 +1,39 @@
 interface RecentActivity {
     id: string;
-    user_id: string;
-    activity_type: string;
-    activity_data: string;
-    created_at: string;
+    userId: string;
+    activityType: string;
+    activityData: string;
+    createdAt: string;
 }
 
 interface UserProfile {
     id: string;
-    user_id: string;
+    userId: string;
     email: string;
     username: string;
-    display_name: string | null;
+    displayName: string | null;
     bio: string | null;
-    avatar_url: string | null;
+    avatarUrl: string | null;
     website: string | null;
     location: string | null;
     role: string;
-    last_seen_at: string | null;
-    post_count: number;
+    lastSeenAt: string | null;
+    postCount: number;
     reputation: number;
+    interests: string[] | null;
     recentActivities: RecentActivity[] | null;
-    created_at: string;
-    updated_at: string;
+    createdAt: string;
+    updatedAt: string;
 }
 
 interface User {
     id: string;
     email: string;
-    is_active: boolean;
-    is_deleted: boolean;
-    created_at: string;
-    updated_at: string;
-    deleted_at: string | null;
+    isActive: boolean;
+    isDeleted: boolean;
+    createdAt: string;
+    updatedAt: string;
+    deletedAt: string | null;
 }
 
 export type { User, UserProfile };
