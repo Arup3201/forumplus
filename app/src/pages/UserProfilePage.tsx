@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useReducer } from "react";
 import {
   Card,
   CardContent,
@@ -7,6 +7,12 @@ import {
   CardDescription,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
@@ -35,32 +41,88 @@ import {
 import useAuth from "@/hooks/useAuth";
 import useFetch from "@/hooks/useFetch";
 import type { UserProfile } from "@/types/user";
+import type { EditType, UserProfileReducerAction } from "@/types/components/user_profile_page";
+import { USER_PROFILE_ACTION } from "@/types/components/user_profile_page";
+import UserUpdateModal from "@/components/UserUpdateModal";
+
+const userProfileReducer = (state: UserProfile, action: UserProfileReducerAction) => {
+  switch(action.type) {
+    case USER_PROFILE_ACTION.SET:
+      return { 
+        ...action.payload,
+        bio: action.payload.bio ?? "-",
+        interests: action.payload.interests ?? [],
+        location: action.payload.location ?? "-",
+       };
+    case USER_PROFILE_ACTION.UPDATE_DISPLAY_NAME:
+      return {
+        ...state,
+        displayName: action.payload.displayName,
+      };
+    case USER_PROFILE_ACTION.UPDATE_USERNAME:
+      return {
+        ...state,
+        username: action.payload.username,
+      };
+    case USER_PROFILE_ACTION.UPDATE_BIO:
+      return {
+        ...state,
+        bio: action.payload.bio,
+      };
+    case USER_PROFILE_ACTION.UPDATE_LOCATION:
+      return {
+        ...state,
+        location: action.payload.location,
+      };
+    case USER_PROFILE_ACTION.UPDATE_INTERESTS:
+      return {
+        ...state,
+        interests: action.payload.interests,
+      };
+    default:
+      return state;
+  }
+}
 
 const UserProfilePage = () => {
   const { user } = useAuth();
   const { loading, error, getRequest, patchRequest } = useFetch();
 
-  const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
-  const [isEditingBio, setIsEditingBio] = useState(false);
-  const [isEditingInterests, setIsEditingInterests] = useState(false);
-  const [isEditingLocation, setIsEditingLocation] = useState(false);
-  // Remove activeTab state as shadcn tabs manages its own state
-  const [bio, setBio] = useState("-");
-  const [interests, setInterests] = useState<string[]>([]);
-  const [location, setLocation] = useState("-");
-  const [tempBio, setTempBio] = useState(bio);
-  const [tempInterests, setTempInterests] = useState(interests.join(", "));
-  const [tempLocation, setTempLocation] = useState(location);
+  const [userProfileState, userProfileDispatch] = useReducer(userProfileReducer, {} as UserProfile);
+  const [editingProfile, setEditingProfile] = useState<EditType | null>(null);
+
+  // Temporary states for editing
+  const [tempBio, setTempBio] = useState(userProfileState.bio ?? "");
+  const [tempInterests, setTempInterests] = useState(userProfileState.interests?.join(", ") ?? "");
+  const [tempLocation, setTempLocation] = useState(userProfileState.location ?? "");
 
   useEffect(() => {
     if (user) {
       getRequest(
         `/api/auth/${user.id}/profile`,
         (data) => {
-          setUserProfile(data as UserProfile);
-          setBio(data.bio ?? "-");
-          setInterests(data.interests ?? []);
-          setLocation(data.location ?? "-");
+          userProfileDispatch({
+            type: USER_PROFILE_ACTION.SET,
+            payload: {
+              id: data.id,
+              userId: data.user_id,
+              email: data.email,
+              username: data.username,
+              displayName: data.display_name,
+              bio: data.bio,
+              location: data.location,
+              interests: data.interests,
+              avatarUrl: data.avatar_url,
+              website: data.website,
+              role: data.role,
+              lastSeenAt: data.last_seen_at,
+              postCount: data.post_count,
+              reputation: data.reputation,
+              recentActivities: data.recent_activities,
+              createdAt: data.created_at,
+              updatedAt: data.updated_at,
+            },
+          });
           setTempBio(data.bio ?? "");
           setTempInterests(data.interests?.join(", ") ?? "");
           setTempLocation(data.location ?? "");
@@ -80,19 +142,22 @@ const UserProfilePage = () => {
         bio: tempBio,
       },
       (data) => {
-        setBio(data.bio ?? "-");
+        userProfileDispatch({
+          type: USER_PROFILE_ACTION.UPDATE_BIO,
+          payload: data,
+        });
         setTempBio(data.bio ?? "");
       },
       (error) => {
         console.error("Error saving bio:", error);
       }
     );
-    setIsEditingBio(false);
+    setEditingProfile(null);
   };
 
   const handleBioCancel = () => {
-    setTempBio(bio);
-    setIsEditingBio(false);
+    setTempBio(userProfileState.bio ?? "");
+    setEditingProfile(null);
   };
 
   const handleInterestsSave = async () => {
@@ -107,19 +172,22 @@ const UserProfilePage = () => {
         interests: newInterests,
       },
       (data) => {
-        setInterests(data.interests ?? []);
+        userProfileDispatch({
+          type: USER_PROFILE_ACTION.UPDATE_INTERESTS,
+          payload: data,
+        });
         setTempInterests(data.interests?.join(", ") ?? "");
       },
       (error) => {
         console.error("Error saving interests:", error);
       }
     );
-    setIsEditingInterests(false);
+    setEditingProfile(null);
   };
 
   const handleInterestsCancel = () => {
-    setTempInterests(interests.join(", "));
-    setIsEditingInterests(false);
+    setTempInterests(userProfileState.interests?.join(", ") ?? "");
+    setEditingProfile(null);
   };
 
   const handleLocationSave = async () => {
@@ -130,20 +198,75 @@ const UserProfilePage = () => {
         location: tempLocation,
       },
       (data) => {
-        setLocation(data.location ?? "-");
+        userProfileDispatch({
+          type: USER_PROFILE_ACTION.UPDATE_LOCATION,
+          payload: data,
+        });
         setTempLocation(data.location ?? "");
       },
       (error) => {
         console.error("Error saving location:", error);
       }
     );
-    setIsEditingLocation(false);
+    setEditingProfile(null);
   };
 
   const handleLocationCancel = () => {
-    setTempLocation(location);
-    setIsEditingLocation(false);
+    setTempLocation(userProfileState.location ?? "");
+    setEditingProfile(null);
   };
+
+  const handleSave = async (field: EditType, value: string) => {
+    switch (field) {
+      case "display_name":
+        await patchRequest(
+          `/api/auth/profile`,
+          {
+            id: user?.id,
+            display_name: value,
+          },
+          (data) => {
+            userProfileDispatch({
+              type: USER_PROFILE_ACTION.UPDATE_DISPLAY_NAME,
+              payload: {
+                ...userProfileState,
+                displayName: data.display_name,
+              },
+            });
+          },
+          (error) => {
+            console.error("Error saving display name:", error);
+          }
+        );
+        break;
+      case "username":
+        await patchRequest(
+          `/api/auth/profile`,
+          {
+            id: user?.id,
+            username: value,
+          },
+          (data) => {
+            userProfileDispatch({
+              type: USER_PROFILE_ACTION.UPDATE_USERNAME,
+              payload: {
+                ...userProfileState,
+                username: data.username,
+              },
+            });
+          },
+          (error) => {
+            console.error("Error saving username:", error);
+          }
+        );
+        break;
+    }
+    setEditingProfile(null);
+  };
+
+  const handleUpdateCancel = () => {
+    setEditingProfile(null);
+  }
 
   if (loading) {
     return <div>Loading...</div>;
@@ -151,6 +274,8 @@ const UserProfilePage = () => {
   if (error) {
     return <div>Error: {error}</div>;
   }
+
+  const { displayName, username, createdAt, reputation, postCount, recentActivities, bio, location, interests } = userProfileState;
 
   return (
     <div className="w-full mx-auto px-6 space-y-6">
@@ -174,7 +299,7 @@ const UserProfilePage = () => {
                         alt={userProfile?.display_name}
                       /> */}
                   <AvatarFallback className="text-2xl font-bold bg-primary text-primary-foreground">
-                    {userProfile?.display_name
+                    {displayName
                       ?.split(" ")
                       .map((n) => n[0])
                       .join("")}
@@ -190,10 +315,10 @@ const UserProfilePage = () => {
                 <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                   <div>
                     <h1 className="text-3xl font-bold">
-                      {userProfile?.display_name}
+                      {displayName}
                     </h1>
                     <p className="text-lg text-muted-foreground">
-                      @{userProfile?.username}
+                      @{username}
                     </p>
                     <div className="flex items-center gap-2 text-sm text-muted-foreground mt-1">
                       <Mail className="w-4 h-4" />
@@ -202,7 +327,7 @@ const UserProfilePage = () => {
                     <div className="flex items-center gap-2 text-sm text-muted-foreground">
                       <Calendar className="w-4 h-4" />
                       <span>
-                        Joined {userProfile?.created_at.split("T")[0]}
+                        Joined {createdAt?.split("T")[0] ?? "-"}
                       </span>
                     </div>
                   </div>
@@ -210,15 +335,30 @@ const UserProfilePage = () => {
                     <div className="flex items-center gap-2 bg-yellow-50 dark:bg-yellow-900/20 px-3 py-1 rounded-full">
                       <Star className="w-4 h-4 text-yellow-500" />
                       <span className="font-semibold text-yellow-700 dark:text-yellow-400">
-                        {userProfile?.reputation.toLocaleString()}
+                        {reputation?.toLocaleString() ?? "-"}
                       </span>
                     </div>
-                    <Button size="sm" className="gap-2">
-                      <Edit3 className="w-4 h-4" />
-                      Edit Profile
-                    </Button>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button size="sm" className="gap-2">
+                          <Edit3 className="w-4 h-4" />
+                          Edit
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent>
+                        <DropdownMenuItem onClick={() => setEditingProfile("display_name")}>Display Name</DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => setEditingProfile("username")}>Username</DropdownMenuItem>
+                      </DropdownMenuContent>
+                  </DropdownMenu>
                   </div>
                 </div>
+
+                {editingProfile === "display_name" && (
+                  <UserUpdateModal label="Display Name" value={displayName ?? ""} onSave={(value) => handleSave("display_name", value)} onCancel={() => handleUpdateCancel()} />
+                )}
+                {editingProfile === "username" && (
+                  <UserUpdateModal label="Username" value={username ?? ""} onSave={(value) => handleSave("username", value)} onCancel={() => handleUpdateCancel()} />
+                )}
 
                 {/* Activity Summary Icons */}
                 <TooltipProvider>
@@ -230,7 +370,7 @@ const UserProfilePage = () => {
                             <MessageSquare className="w-4 h-4 text-blue-600 dark:text-blue-400" />
                           </div>
                           <span className="font-medium">
-                            {userProfile?.post_count}
+                            {postCount ?? "-"}
                           </span>
                         </div>
                       </TooltipTrigger>
@@ -246,7 +386,7 @@ const UserProfilePage = () => {
                             <Reply className="w-4 h-4 text-green-600 dark:text-green-400" />
                           </div>
                           <span className="font-medium">
-                            {userProfile?.post_count}
+                            {postCount ?? "-"}
                           </span>
                         </div>
                       </TooltipTrigger>
@@ -276,14 +416,14 @@ const UserProfilePage = () => {
                 <Button
                   variant="ghost"
                   size="sm"
-                  onClick={() => setIsEditingBio(true)}
+                  onClick={() => setEditingProfile("bio")}
                   className="text-xs"
                 >
                   <Edit3 className="w-3 h-3 mr-1" />
                   Edit
                 </Button>
               </div>
-              {isEditingBio ? (
+              {editingProfile === "bio" ? (
                 <div className="space-y-2">
                   <Textarea
                     id="bio"
@@ -325,14 +465,14 @@ const UserProfilePage = () => {
                 <Button
                   variant="ghost"
                   size="sm"
-                  onClick={() => setIsEditingLocation(true)}
+                  onClick={() => setEditingProfile("location")}
                   className="text-xs"
                 >
                   <Edit3 className="w-3 h-3 mr-1" />
                   Edit
                 </Button>
               </div>
-              {isEditingLocation ? (
+              {editingProfile === "location" ? (
                 <div className="space-y-2">
                   <Input
                     id="location"
@@ -357,7 +497,7 @@ const UserProfilePage = () => {
               ) : (
                 <div className="flex items-center gap-2 text-sm text-muted-foreground">
                   <MapPin className="w-4 h-4" />
-                  <span>{location}</span>
+                  <span>{location ?? "-"}</span>
                 </div>
               )}
             </div>
@@ -369,14 +509,14 @@ const UserProfilePage = () => {
                 <Button
                   variant="ghost"
                   size="sm"
-                  onClick={() => setIsEditingInterests(true)}
+                  onClick={() => setEditingProfile("interests")}
                   className="text-xs"
                 >
                   <Edit3 className="w-3 h-3 mr-1" />
                   Edit
                 </Button>
               </div>
-              {isEditingInterests ? (
+              {editingProfile === "interests" ? (
                 <div className="space-y-2">
                   <Input
                     id="interests"
@@ -400,14 +540,14 @@ const UserProfilePage = () => {
                 </div>
               ) : (
                 <div className="flex flex-wrap gap-2">
-                  {interests.length > 0 ? interests.map((interest) => (
+                  {interests && interests.length > 0 ? interests.map((interest) => (
                     <Badge
                       key={interest}
                       variant="secondary"
                       className="text-xs"
                     >
                       <Hash className="w-3 h-3 mr-1" />
-                      {interest}
+                      {interest ?? "-"}
                     </Badge>
                   )) : <span className="text-sm text-muted-foreground">-</span>}
                 </div>
@@ -434,7 +574,7 @@ const UserProfilePage = () => {
           </CardHeader>
           <CardContent className="p-0">
             <div className="divide-y">
-              {userProfile?.recentActivities?.map((activity) => (
+              {recentActivities && recentActivities.length > 0 ? recentActivities.map((activity) => (
                 <div
                   key={activity.id}
                   className="p-4 hover:bg-muted/50 transition-colors"
@@ -442,21 +582,21 @@ const UserProfilePage = () => {
                   <div className="flex items-start justify-between gap-4">
                     <div className="flex-1 min-w-0">
                       <h4 className="font-medium text-sm truncate">
-                        {activity.activity_type}
+                        {activity.activityType}
                       </h4>
                       <div className="flex items-center gap-2 mt-1 text-xs text-muted-foreground">
                         <span>in</span>
                         <Badge variant="outline" className="text-xs px-2 py-0">
-                          {activity.activity_data}
+                          {activity.activityData}
                         </Badge>
                       </div>
                     </div>
                     <span className="text-xs text-muted-foreground whitespace-nowrap">
-                      {activity.created_at.split("T")[0]}
+                      {activity.createdAt.split("T")[0]}
                     </span>
                   </div>
                 </div>
-              ))}
+              )) : <div className="text-sm text-center text-muted-foreground">You haven't made any posts yet.</div>}
             </div>
           </CardContent>
         </Card>
