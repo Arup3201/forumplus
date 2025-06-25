@@ -6,6 +6,8 @@ from typing import Optional, List
 
 class UserProfileUpdate(BaseModel):
     id: str
+    display_name: Optional[str] = None
+    username: Optional[str] = None
     bio: Optional[str] = None
     interests: Optional[List[str]] = None
     location: Optional[str] = None

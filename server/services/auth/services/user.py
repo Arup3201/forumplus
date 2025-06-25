@@ -43,6 +43,10 @@ class UserService:
     def update_user_profile(self, user_id: str, profile_data: Dict) -> Dict:
         # Validate and sanitize input
         user_profile_dict = {}
+        if 'display_name' in profile_data and profile_data['display_name'] is not None:
+            user_profile_dict['display_name'] = profile_data['display_name'].strip()
+        if 'username' in profile_data and profile_data['username'] is not None:
+            user_profile_dict['username'] = profile_data['username'].strip()
         if 'bio' in profile_data and profile_data['bio'] is not None:
             user_profile_dict['bio'] = profile_data['bio'].strip()
         if 'interests' in profile_data and profile_data['interests'] is not None:
