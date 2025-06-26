@@ -32,7 +32,7 @@ export const Footer = () => {
                             Join 10,000+ members in the conversation
                         </p>
                         <p className="text-gray-500 italic mb-4">
-                            Powered by curiosity and coffee ☕
+                            Powered by curiosity and chai 🍵
                         </p>
                         <div className="flex space-x-4">
                             <a href="https://twitter.com" className="text-gray-600 hover:text-gray-900">
