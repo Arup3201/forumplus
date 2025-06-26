@@ -48,6 +48,8 @@ class UserProfileEntity(BaseModel):
 class UserResponse(BaseModel):
     id: str
     email: str
+    username: str
+    avatar_url: Optional[str]
     is_active: bool
     is_deleted: bool
     created_at: datetime

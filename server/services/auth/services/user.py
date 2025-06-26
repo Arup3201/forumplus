@@ -1,5 +1,5 @@
 from shared.database import DatabaseManager
-from services.auth.repositories.user import UserRepository
+from services.auth.repositories import UserRepository
 from typing import Dict
 
 class UserService:
@@ -10,9 +10,12 @@ class UserService:
         with self.db_manager.get_session() as db_session:
             user_repo = UserRepository(db_session)
             user = user_repo.get_user(user_id)
+            user_profile = user_repo.get_user_profile(user_id)
             return {
                 'id': user.id,
                 'email': user.email,
+                'username': user_profile.username,
+                'avatar_url': user_profile.avatar_url,
                 'is_active': user.is_active,
                 'is_deleted': user.is_deleted,
                 'created_at': user.created_at,
