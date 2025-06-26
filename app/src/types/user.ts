@@ -29,6 +29,8 @@ interface UserProfile {
 interface User {
     id: string;
     email: string;
+    username: string;
+    avatarUrl: string | null;
     isActive: boolean;
     isDeleted: boolean;
     createdAt: string;

@@ -1,16 +1,16 @@
+import { useNavigate } from "react-router-dom";
 import { BellIcon, SearchIcon } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Avatar } from "@/components/ui/avatar";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import OptimizedAvatar from "@/components/OptimizedAvatar";
 import { useState } from "react";
 import useAuth from "@/hooks/useAuth";
-import { useNavigate } from "react-router-dom";
 
 export const Navbar = () => {
   const navigate = useNavigate();
 
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, user } = useAuth();
 
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -60,13 +60,12 @@ export const Navbar = () => {
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="relative h-8 w-8 rounded-full">
-                  <Avatar>
-                    <img
-                      src="https://github.com/favicon.ico" 
-                      alt="Profile"
-                      className="rounded-full w-8 h-8"
-                    />
-                  </Avatar>
+                  <OptimizedAvatar
+                    src={user?.avatarUrl}
+                    alt={user?.username}
+                    fallbackText={user?.username}
+                    className="w-8 h-8"
+                  />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
