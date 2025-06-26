@@ -28,9 +28,6 @@ export const Footer = () => {
                     {/* Right Section - Community Stats */}
                     <div>
                         <h3 className="text-lg font-semibold mb-4">Join Our Community</h3>
-                        <p className="text-gray-600 mb-2">
-                            Join 10,000+ members in the conversation
-                        </p>
                         <p className="text-gray-500 italic mb-4">
                             Powered by curiosity and chai 🍵
                         </p>
