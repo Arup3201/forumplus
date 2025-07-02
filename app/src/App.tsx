@@ -11,6 +11,7 @@ import { Home } from "./pages/Home";
 import UserProfilePage from "./pages/UserProfilePage";
 import { Contact } from "./pages/Contact";
 import { Help } from "./pages/Help";
+import { About } from "./pages/About";
 
 function App() {
   return (
@@ -50,6 +51,14 @@ function App() {
             element={
               <ProtectedRoute>
                 <Help />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/about"
+            element={
+              <ProtectedRoute>
+                <About />
               </ProtectedRoute>
             }
           />

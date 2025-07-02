@@ -28,10 +28,10 @@ export const Navbar = () => {
         </div>
         
         <nav className="hidden md:flex items-center gap-4">
-          <Button variant="ghost">Home</Button>
+          <Button variant="ghost" onClick={() => navigate("/")}>Home</Button>
           <Button variant="ghost">Discussions</Button>
           <Button variant="ghost">Members</Button>
-          <Button variant="ghost">About</Button>
+          <Button variant="ghost" onClick={() => navigate("/about")}>About</Button>
         </nav>
       </div>
 
