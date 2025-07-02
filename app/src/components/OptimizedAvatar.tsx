@@ -49,10 +49,7 @@ const OptimizedAvatar = ({
           alt={alt || 'User avatar'}
           onError={handleImageError}
           onLoad={handleImageLoad}
-          // Add loading optimization
-          loading="lazy"
-          // Add CORS handling for external images
-        //   crossOrigin="anonymous"
+          referrerPolicy='no-referrer'
           className={cn(
             "transition-opacity duration-200",
             imageLoading ? "opacity-0" : "opacity-100"

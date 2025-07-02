@@ -14,7 +14,17 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   async function checkAuth() {
     await getRequest('/api/auth/me', (data) => {
       setIsAuthenticated(true);
-      setUser(data as User);
+      const userData = {
+        id: data.id,
+        email: data.email,
+        username: data.username,
+        avatarUrl: data.avatar_url,
+        isActive: data.is_active,
+        isDeleted: data.is_deleted,
+        createdAt: data.created_at,
+        updatedAt: data.updated_at,
+      };
+      setUser(userData as User);
     }, (error) => {
       setIsAuthenticated(false);
       console.error('Error in checkAuth:', error);
