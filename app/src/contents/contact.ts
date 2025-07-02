@@ -1,0 +1,140 @@
+export const contactContent = {
+  hero: {
+    title: "Contact Us",
+    subtitle: "Get in touch with the ForumPlus team",
+  },
+  contactMethods: [
+    {
+      title: "General Support",
+      description: "For general questions and platform support",
+      method: "Email",
+      value: "support@forumplus.com",
+      icon: "mail",
+      responseTime: "24-48 hours",
+    },
+    {
+      title: "Technical Issues",
+      description: "Report bugs or technical problems",
+      method: "Email",
+      value: "tech@forumplus.com",
+      icon: "wrench",
+      responseTime: "12-24 hours",
+    },
+    {
+      title: "Community Issues",
+      description: "Report violations or moderation concerns",
+      method: "Email",
+      value: "moderation@forumplus.com",
+      icon: "shield",
+      responseTime: "6-12 hours",
+    },
+    {
+      title: "Business Inquiries",
+      description: "Partnerships, sponsorships, and business matters",
+      method: "Email",
+      value: "business@forumplus.com",
+      icon: "briefcase",
+      responseTime: "2-3 business days",
+    },
+  ],
+  quickHelp: {
+    title: "Need Quick Help?",
+    subtitle: "Try these resources first",
+    resources: [
+      {
+        title: "Help & FAQ",
+        description: "Find answers to common questions",
+        link: "/help",
+        icon: "help-circle",
+      },
+      {
+        title: "Community Guidelines",
+        description: "Learn about our community rules",
+        link: "/guidelines",
+        icon: "book",
+      },
+      {
+        title: "Search Discussions",
+        description: "Your question might already be answered",
+        link: "/",
+        icon: "search",
+      },
+    ],
+  },
+  contactForm: {
+    title: "Send us a Message",
+    subtitle: "Fill out the form below and we'll get back to you",
+    fields: [
+      {
+        name: "name",
+        label: "Full Name",
+        type: "text",
+        required: true,
+        placeholder: "Enter your full name",
+      },
+      {
+        name: "email",
+        label: "Email Address",
+        type: "email",
+        required: true,
+        placeholder: "Enter your email address",
+      },
+      {
+        name: "subject",
+        label: "Subject",
+        type: "select",
+        required: true,
+        options: [
+          { value: "none", label: "Select a topic" },
+          { value: "general", label: "General Support" },
+          { value: "technical", label: "Technical Issue" },
+          { value: "community", label: "Community Issue" },
+          { value: "business", label: "Business Inquiry" },
+          { value: "other", label: "Other" },
+        ],
+      },
+      {
+        name: "message",
+        label: "Message",
+        type: "textarea",
+        required: true,
+        placeholder: "Describe your question or issue in detail...",
+        rows: 5,
+      },
+    ],
+  },
+  officeInfo: {
+    title: "Our Office",
+    address: {
+      street: "123 Tech Street",
+      city: "San Francisco",
+      state: "CA",
+      zip: "94107",
+      country: "United States",
+    },
+    note: "We're a remote-first team, but you can reach us digitally anytime!",
+  },
+  socialMedia: {
+    title: "Follow Us",
+    platforms: [
+      {
+        name: "Twitter",
+        handle: "@forumplus",
+        url: "https://twitter.com/forumplus",
+        icon: "twitter",
+      },
+      {
+        name: "GitHub",
+        handle: "@forumplus",
+        url: "https://github.com/forumplus",
+        icon: "github",
+      },
+      {
+        name: "Discord",
+        handle: "ForumPlus Community",
+        url: "https://discord.gg/forumplus",
+        icon: "discord",
+      },
+    ],
+  },
+};
