@@ -11,7 +11,7 @@ interface UserProfile {
     userId: string;
     email: string;
     username: string;
-    displayName: string | null;
+    displayName: string;
     bio: string | null;
     avatarUrl: string | null;
     website: string | null;
