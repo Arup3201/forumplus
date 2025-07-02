@@ -44,6 +44,7 @@ import type { UserProfile } from "@/types/user";
 import type { EditType, UserProfileReducerAction } from "@/types/components/user_profile_page";
 import { USER_PROFILE_ACTION } from "@/types/components/user_profile_page";
 import UserUpdateModal from "@/components/UserUpdateModal";
+import OptimizedAvatar from "@/components/OptimizedAvatar";
 
 const userProfileReducer = (state: UserProfile, action: UserProfileReducerAction) => {
   switch(action.type) {
@@ -292,19 +293,12 @@ const UserProfilePage = () => {
             <div className="flex flex-col md:flex-row gap-6 items-start">
               {/* Profile Picture */}
               <div className="relative group">
-                <Avatar className="w-32 h-32 cursor-pointer border-4 border-white shadow-lg">
-                  {/* TODO: Add avatar image after fetching*/}
-                  {/* <AvatarImage
-                        src={userProfile?.avatar_url ? fetch(userProfile.avatar_url) : undefined}
-                        alt={userProfile?.display_name}
-                      /> */}
-                  <AvatarFallback className="text-2xl font-bold bg-primary text-primary-foreground">
-                    {displayName
-                      ?.split(" ")
-                      .map((n) => n[0])
-                      .join("")}
-                  </AvatarFallback>
-                </Avatar>
+                <OptimizedAvatar
+                  src={userProfileState.avatarUrl}
+                  alt={userProfileState.displayName}
+                  fallbackText={userProfileState.displayName?.split(" ")[0][0]}
+                  className="w-32 h-32 cursor-pointer border-4 border-white shadow-lg"
+                />
                 <div className="absolute inset-0 rounded-full bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center cursor-pointer">
                   <Camera className="w-8 h-8 text-white" />
                 </div>
