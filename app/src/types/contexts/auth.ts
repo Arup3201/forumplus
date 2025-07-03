@@ -5,6 +5,7 @@ interface AuthContextType {
     user: User | null;
     googleSignIn: () => void;
     githubSignIn: () => void;
+    logout: () => void;
 };
 
 export type { AuthContextType };

@@ -1,5 +1,6 @@
 from shared.database import DatabaseManager
 from services.auth.repositories import UserRepository
+from services.auth.services.session import SessionManager
 from typing import Dict
 
 class UserService:
@@ -21,6 +22,11 @@ class UserService:
                 'created_at': user.created_at,
                 'updated_at': user.updated_at
             }
+
+    def logout(self, user_id: str):
+        with self.db_manager.get_session() as db_session:
+            session_manager = SessionManager(db_session)
+            session_manager.delete_session(user_id)
 
     def get_user_profile(self, user_id: str) -> Dict:
         with self.db_manager.get_session() as db_session:

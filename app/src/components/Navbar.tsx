@@ -2,7 +2,13 @@ import { useNavigate } from "react-router-dom";
 import { BellIcon, SearchIcon } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import OptimizedAvatar from "@/components/OptimizedAvatar";
 import { useState } from "react";
 import useAuth from "@/hooks/useAuth";
@@ -10,7 +16,7 @@ import useAuth from "@/hooks/useAuth";
 export const Navbar = () => {
   const navigate = useNavigate();
 
-  const { isAuthenticated, user } = useAuth();
+  const { user, logout } = useAuth();
 
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -26,20 +32,24 @@ export const Navbar = () => {
         <div className="w-10 h-10 bg-primary rounded flex items-center justify-center">
           <span className="text-white font-bold text-xl">F+</span>
         </div>
-        
+
         <nav className="hidden md:flex items-center gap-4">
-          <Button variant="ghost" onClick={() => navigate("/")}>Home</Button>
+          <Button variant="ghost" onClick={() => navigate("/")}>
+            Home
+          </Button>
           <Button variant="ghost">Discussions</Button>
           <Button variant="ghost">Members</Button>
-          <Button variant="ghost" onClick={() => navigate("/about")}>About</Button>
+          <Button variant="ghost" onClick={() => navigate("/about")}>
+            About
+          </Button>
         </nav>
       </div>
 
       <form onSubmit={handleSearch} className="flex-1 max-w-2xl mx-4">
         <div className="relative">
           <SearchIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-          <Input 
-            placeholder="Search discussions, topics, or members..." 
+          <Input
+            placeholder="Search discussions, topics, or members..."
             className="w-full pl-10 py-2"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
@@ -48,40 +58,35 @@ export const Navbar = () => {
       </form>
 
       <div className="flex items-center gap-4">
-        {isAuthenticated ? (
-          <>
-            <Button variant="ghost" size="icon" className="relative">
-              <BellIcon className="w-5 h-5" />
-              <span className="absolute -top-1 -right-1 w-4 h-4 bg-destructive text-white text-xs rounded-full flex items-center justify-center">
-                2
-              </span>
-            </Button>
+        <Button variant="ghost" size="icon" className="relative">
+          <BellIcon className="w-5 h-5" />
+          <span className="absolute -top-1 -right-1 w-4 h-4 bg-destructive text-white text-xs rounded-full flex items-center justify-center">
+            2
+          </span>
+        </Button>
 
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="relative h-8 w-8 rounded-full">
-                  <OptimizedAvatar
-                    src={user?.avatarUrl}
-                    alt={user?.username}
-                    fallbackText={user?.username}
-                    className="w-8 h-8"
-                  />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem onClick={() => navigate("/profile")}>Profile</DropdownMenuItem>
-                <DropdownMenuItem>Settings</DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={() => console.log("Log out")}>Log out</DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </>
-        ) : (
-          <div className="flex items-center gap-2">
-            <Button variant="ghost" onClick={() => console.log("Log in")}>Log in</Button>
-            <Button>Sign up</Button>
-          </div>
-        )}
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" className="relative h-8 w-8 rounded-full">
+              <OptimizedAvatar
+                src={user?.avatarUrl}
+                alt={user?.username}
+                fallbackText={user?.username}
+                className="w-8 h-8"
+              />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem onClick={() => navigate("/profile")}>
+              Profile
+            </DropdownMenuItem>
+            <DropdownMenuItem>Settings</DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem onClick={() => logout()}>
+              Log out
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
     </header>
   );
