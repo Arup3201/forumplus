@@ -13,6 +13,7 @@ import {
   Clock,
   Plus
 } from "lucide-react";
+import {Icons} from "@/components/icons";
 
 export const Home = () => {
   const { loading, error, getRequest } = useFetch();
@@ -108,9 +109,7 @@ export const Home = () => {
       {/* Site Identity */}
       <div className="text-center space-y-6">
         <div className="flex items-center justify-center gap-4">
-          <div className="w-16 h-16 bg-primary rounded-lg flex items-center justify-center">
-            <span className="text-white font-bold text-3xl">F+</span>
-          </div>
+          <Icons.Logo className="w-10 h-10" />
           <h1 className="text-4xl font-bold">ForumPlus</h1>
         </div>
         <p className="text-muted-foreground text-xl max-w-2xl mx-auto">

@@ -1,7 +1,5 @@
-import React from "react";
 import { aboutUsContent } from "@/contents/about_us";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Heart,
@@ -19,6 +17,7 @@ import {
   Twitter,
   Mail,
 } from "lucide-react";
+import { Icons } from "@/components/icons";
 
 export const About = () => {
   // Community stats (simulated)
@@ -78,9 +77,7 @@ export const About = () => {
       {/* Hero Section */}
       <div className="text-center space-y-6">
         <div className="flex items-center justify-center mb-6">
-          <div className="w-20 h-20 bg-primary rounded-2xl flex items-center justify-center shadow-lg">
-            <span className="text-white font-bold text-4xl">F+</span>
-          </div>
+          <Icons.Logo className="w-10 h-10" />
         </div>
         <h1 className="text-5xl font-bold">{aboutUsContent.hero.title}</h1>
         <p className="text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">

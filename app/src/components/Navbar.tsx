@@ -9,6 +9,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Icons } from "@/components/icons";
 import OptimizedAvatar from "@/components/OptimizedAvatar";
 import { useState } from "react";
 import useAuth from "@/hooks/useAuth";
@@ -29,9 +30,7 @@ export const Navbar = () => {
   return (
     <header className="flex items-center justify-between gap-4 py-3 px-4 bg-white rounded-lg shadow-sm">
       <div className="flex items-center gap-6">
-        <div className="w-10 h-10 bg-primary rounded flex items-center justify-center">
-          <span className="text-white font-bold text-xl">F+</span>
-        </div>
+        <Icons.Logo className="w-10 h-10" />
 
         <nav className="hidden md:flex items-center gap-4">
           <Button variant="ghost" onClick={() => navigate("/")}>
