@@ -1,4 +1,4 @@
-# 🗣️ ForumPlus — A Modern, Developer-Friendly Forum Application
+# <img src="./logo.png" alt="Logo" width="25" /> ForumPlus — A Modern, Developer-Friendly Forum Application
 
 **ForumPlus** is a full-stack web application built with **FastAPI** (Python) and **React (TypeScript)** that brings the classic power of forums into the modern web. Designed for community discussion, developer Q&A, or internal knowledge sharing, ForumPlus offers clean UX, scalable architecture, and extensible features out of the box.
 
@@ -18,18 +18,6 @@ ForumPlus includes the following core features:
 - **Profile Management**: Edit profile information including display name, username, bio, and interests
 - **Session Management**: Secure session handling with HTTP-only cookies
 - **User Activity Tracking**: Recent activity display on user profiles
-
-## 💬 Discussion Platform
-
-- **Thread Creation**: Create new discussion threads with rich text editor (TinyMCE)
-- **Discussion Categories**: Organized categories including General Discussion, Technical Support, Feature Requests, Bug Reports, and Announcements
-- **Thread Management**: View and manage discussion threads
-- **Activity Tracking**: Recent activity display on user profiles
-
-## 🎨 User Interface & Experience
-
-- **Modern Design**: Clean, responsive UI built with React and TypeScript
-- **Component Library**: Custom UI components using shadcn/ui
 
 ## 🏗️ Technical Architecture
 
@@ -94,17 +82,3 @@ Each service follows a standardized 5-layer architecture:
   - **Interface/Protocol**: Defines contract (what methods must exist)
   - **Implementation**: Actual database interaction logic
 - Abstracts database concerns from business logic
-
----
-
-## 📐 Rule of Thumb
-
-| **Use Schemas When**    | **Use Types When**          |
-| ----------------------- | --------------------------- |
-| Data crosses boundaries | Internal code structure     |
-| Need runtime validation | Development-time hints only |
-| API requests/responses  | Function signatures         |
-| Database models         | Protocols and interfaces    |
-| External integrations   | Type aliases and generics   |
-
-**Key principle**: Schemas for **validation**, Types for **organization**.
