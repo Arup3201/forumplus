@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { helpFAQContent } from "@/contents/help_faq";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -118,8 +118,8 @@ export const Help = () => {
           <div>
             <h2 className="text-2xl font-semibold mb-6">Frequently Asked Questions</h2>
             <div className="space-y-6">
-              {filteredFAQs.map((category, categoryIndex) => (
-                <Card key={categoryIndex}>
+              {filteredFAQs.map((category) => (
+                <Card key={category.title}>
                   <CardHeader>
                     <CardTitle className="text-lg flex items-center space-x-2">
                       <Icons.FileText className="w-5 h-5" />
@@ -129,8 +129,8 @@ export const Help = () => {
                   </CardHeader>
                   <CardContent>
                     <Accordion type="single" collapsible className="w-full">
-                      {category.faqs.map((faq, faqIndex) => (
-                        <AccordionItem key={faqIndex} value={`faq-${categoryIndex}-${faqIndex}`}>
+                      {category.faqs.map((faq) => (
+                        <AccordionItem key={faq.question} value={`faq-${category.title}-${faq.question}`}>
                           <AccordionTrigger className="text-left">
                             {faq.question}
                           </AccordionTrigger>
@@ -172,9 +172,9 @@ export const Help = () => {
               <CardTitle>More Help Resources</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              {helpResources.map((resource, index) => (
+              {helpResources.map((resource) => (
                 <div
-                  key={index}
+                  key={resource.title}
                   className="flex items-center space-x-3 p-3 rounded-lg hover:bg-muted transition-colors cursor-pointer"
                 >
                   <div className={`p-2 rounded-lg ${resource.color}`}>
@@ -198,9 +198,9 @@ export const Help = () => {
               <CardTitle>Popular Topics</CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
-              {popularTopics.map((topic, index) => (
+              {popularTopics.map((topic) => (
                 <div
-                  key={index}
+                  key={topic.title}
                   className="flex items-center justify-between p-2 rounded-lg hover:bg-muted transition-colors cursor-pointer"
                 >
                   <span className="text-sm font-medium">{topic.title}</span>

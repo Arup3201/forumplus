@@ -71,8 +71,8 @@ export const About = () => {
 
       {/* Community Stats */}
       <section className="grid grid-cols-2 md:grid-cols-4 gap-6">
-        {communityStats.map((stat, index) => (
-          <Card key={index} className="text-center hover:shadow-md transition-shadow">
+        {communityStats.map((stat) => (
+          <Card key={stat.value} className="text-center hover:shadow-md transition-shadow">
             <CardContent className="p-6">
               <div className={`inline-flex p-3 rounded-lg ${stat.color} mb-3`}>
                 <stat.icon className="w-6 h-6" />
@@ -88,11 +88,11 @@ export const About = () => {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
         {/* Left Column - Mission and Story */}
         <div className="space-y-8">
-          {aboutUsContent.sections.slice(0, 2).map((section, index) => (
-            <Card key={index}>
+          {aboutUsContent.sections.slice(0, 2).map((section) => (
+            <Card key={section.title}>
               <CardHeader>
                 <CardTitle className="flex items-center space-x-2">
-                  {index === 0 ? (
+                  {section.title === aboutUsContent.sections[0].title ? (
                     <Icons.Target className="w-5 h-5 text-primary" />
                   ) : (
                     <Icons.BookOpen className="w-5 h-5 text-primary" />
@@ -118,8 +118,8 @@ export const About = () => {
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
-                {aboutUsContent.sections[2].items?.map((item, index) => (
-                  <div key={index} className="flex items-start space-x-3">
+                {aboutUsContent.sections[2].items?.map((item) => (
+                  <div key={item} className="flex items-start space-x-3">
                     <div className="w-2 h-2 bg-primary rounded-full mt-2 shrink-0"></div>
                     <p className="text-muted-foreground">{item}</p>
                   </div>
@@ -138,8 +138,8 @@ export const About = () => {
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                {features.map((feature, index) => (
-                  <div key={index} className="flex items-start space-x-3">
+                {features.map((feature) => (
+                  <div key={feature.title} className="flex items-start space-x-3">
                     <div className="p-2 bg-secondary rounded-lg">
                       <feature.icon className="w-4 h-4" />
                     </div>
@@ -162,8 +162,8 @@ export const About = () => {
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                {aboutUsContent.team.map((member, index) => (
-                  <div key={index} className="text-center">
+                {aboutUsContent.team.map((member) => (
+                  <div key={member.name} className="text-center">
                     <div className="w-16 h-16 bg-gradient-to-br from-primary to-primary/70 rounded-full mx-auto mb-3 flex items-center justify-center">
                       <Icons.Users className="w-8 h-8 text-white" />
                     </div>

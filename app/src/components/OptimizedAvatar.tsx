@@ -46,7 +46,7 @@ const OptimizedAvatar = ({
       {shouldShowImage && (
         <AvatarImage
           src={src}
-          alt={alt || 'User avatar'}
+          alt={alt ?? 'User avatar'}
           onError={handleImageError}
           onLoad={handleImageLoad}
           referrerPolicy='no-referrer'
@@ -69,10 +69,7 @@ const OptimizedAvatar = ({
             .slice(0, 2)
         ) : (
           <Icons.User className={cn(
-            size === 'sm' ? 'w-4 h-4' :
-            size === 'md' ? 'w-6 h-6' :
-            size === 'lg' ? 'w-8 h-8' :
-            'w-12 h-12'
+            sizeClasses[size]
           )} />
         )}
       </AvatarFallback>

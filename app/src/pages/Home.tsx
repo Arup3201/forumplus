@@ -11,7 +11,11 @@ export const Home = () => {
   const [isCreateThreadOpen, setIsCreateThreadOpen] = useState(false);
 
   useEffect(() => {
-    getRequest("/api/threads/");
+    getRequest("/api/threads/", (data) => {
+      console.log(data);
+    }, (error) => {
+      console.error(error);
+    });
   }, []);
 
   if (loading) {

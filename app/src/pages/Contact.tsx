@@ -69,11 +69,11 @@ export const Contact = () => {
       <section className="space-y-6">
         <h2 className="text-2xl font-semibold text-center">Get in Touch</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {contactContent.contactMethods.map((method, index) => {
+          {contactContent.contactMethods.map((method) => {
             const IconComponent =
               iconMap[method.icon as keyof typeof iconMap] || Icons.Mail;
             return (
-              <Card key={index} className="hover:shadow-md transition-shadow">
+              <Card key={method.title} className="hover:shadow-md transition-shadow">
                 <CardContent className="p-6">
                   <div className="flex flex-col items-center text-center space-y-4">
                     <div className="p-3 bg-primary/10 text-primary rounded-lg">
@@ -114,13 +114,13 @@ export const Contact = () => {
           </p>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {contactContent.quickHelp.resources.map((resource, index) => {
+          {contactContent.quickHelp.resources.map((resource) => {
             const IconComponent =
               iconMap[resource.icon as keyof typeof iconMap] ||
               Icons.HelpCircle;
             return (
               <Card
-                key={index}
+                key={resource.title}
                 className="hover:shadow-md transition-shadow cursor-pointer"
               >
                 <CardContent className="p-6">
@@ -196,8 +196,8 @@ export const Contact = () => {
                     </SelectTrigger>
                     <SelectContent>
                       {contactContent.contactForm.fields[2].options?.map(
-                        (option, index) => (
-                          <SelectItem key={index} value={option.value}>
+                        (option) => (
+                          <SelectItem key={option.value} value={option.value}>
                             {option.label}
                           </SelectItem>
                         )
@@ -269,9 +269,9 @@ export const Contact = () => {
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
-                {contactContent.socialMedia.platforms.map((platform, index) => (
+                {contactContent.socialMedia.platforms.map((platform) => (
                   <a
-                    key={index}
+                    key={platform.name}
                     href={platform.url}
                     target="_blank"
                     rel="noopener noreferrer"
