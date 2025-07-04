@@ -104,8 +104,7 @@ export const Home = () => {
       {/* Site Identity */}
       <div className="text-center space-y-6">
         <div className="flex items-center justify-center gap-4">
-          <Icons.Logo className="w-10 h-10" />
-          <h1 className="text-4xl font-bold">ForumPlus</h1>
+          <img src="/logo-full.svg" alt="Logo" width={200} />
         </div>
         <p className="text-muted-foreground text-xl max-w-2xl mx-auto">
           A vibrant community for developers to share knowledge, get help, and grow together.
