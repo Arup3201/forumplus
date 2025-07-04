@@ -1,5 +1,4 @@
 import { useNavigate } from "react-router-dom";
-import { BellIcon, SearchIcon } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
@@ -46,7 +45,7 @@ export const Navbar = () => {
 
       <form onSubmit={handleSearch} className="flex-1 max-w-2xl mx-4">
         <div className="relative">
-          <SearchIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+          <Icons.Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
           <Input
             placeholder="Search discussions, topics, or members..."
             className="w-full pl-10 py-2"
@@ -58,7 +57,7 @@ export const Navbar = () => {
 
       <div className="flex items-center gap-4">
         <Button variant="ghost" size="icon" className="relative">
-          <BellIcon className="w-5 h-5" />
+          <Icons.Bell className="w-5 h-5" />
           <span className="absolute -top-1 -right-1 w-4 h-4 bg-destructive text-white text-xs rounded-full flex items-center justify-center">
             2
           </span>

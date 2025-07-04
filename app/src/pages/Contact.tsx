@@ -13,32 +13,20 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  Mail,
-  MessageSquare,
-  Shield,
-  Briefcase,
-  HelpCircle,
-  Code,
-  SearchIcon,
-  Clock,
-  MapPin,
-  ExternalLink,
-  Send,
-} from "lucide-react";
+import { Icons } from "@/components/icons";
 
 // Icon mapping for contact methods and quick help
 const iconMap = {
-  mail: Mail,
-  wrench: Code,
-  shield: Shield,
-  briefcase: Briefcase,
-  "help-circle": HelpCircle,
-  book: Code,
-  search: SearchIcon,
-  twitter: ExternalLink,
-  github: ExternalLink,
-  discord: ExternalLink,
+  mail: Icons.Mail,
+  wrench: Icons.Code,
+  shield: Icons.Shield,
+  briefcase: Icons.Briefcase,
+  "help-circle": Icons.HelpCircle,
+  book: Icons.Code,
+  search: Icons.Search,
+  twitter: Icons.ExternalLink,
+  github: Icons.ExternalLink,
+  discord: Icons.ExternalLink,
 };
 
 export const Contact = () => {
@@ -52,13 +40,13 @@ export const Contact = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleInputChange = (field: string, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-    
+
     // Simulate form submission
     setTimeout(() => {
       setIsSubmitting(false);
@@ -82,7 +70,8 @@ export const Contact = () => {
         <h2 className="text-2xl font-semibold text-center">Get in Touch</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {contactContent.contactMethods.map((method, index) => {
-            const IconComponent = iconMap[method.icon as keyof typeof iconMap] || Mail;
+            const IconComponent =
+              iconMap[method.icon as keyof typeof iconMap] || Icons.Mail;
             return (
               <Card key={index} className="hover:shadow-md transition-shadow">
                 <CardContent className="p-6">
@@ -102,7 +91,7 @@ export const Contact = () => {
                         {method.value}
                       </a>
                       <Badge variant="outline" className="mt-2">
-                        <Clock className="w-3 h-3 mr-1" />
+                        <Icons.Clock className="w-3 h-3 mr-1" />
                         {method.responseTime}
                       </Badge>
                     </div>
@@ -117,14 +106,23 @@ export const Contact = () => {
       {/* Quick Help Resources */}
       <section className="space-y-6">
         <div className="text-center space-y-2">
-          <h2 className="text-2xl font-semibold">{contactContent.quickHelp.title}</h2>
-          <p className="text-muted-foreground">{contactContent.quickHelp.subtitle}</p>
+          <h2 className="text-2xl font-semibold">
+            {contactContent.quickHelp.title}
+          </h2>
+          <p className="text-muted-foreground">
+            {contactContent.quickHelp.subtitle}
+          </p>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {contactContent.quickHelp.resources.map((resource, index) => {
-            const IconComponent = iconMap[resource.icon as keyof typeof iconMap] || HelpCircle;
+            const IconComponent =
+              iconMap[resource.icon as keyof typeof iconMap] ||
+              Icons.HelpCircle;
             return (
-              <Card key={index} className="hover:shadow-md transition-shadow cursor-pointer">
+              <Card
+                key={index}
+                className="hover:shadow-md transition-shadow cursor-pointer"
+              >
                 <CardContent className="p-6">
                   <div className="flex items-start space-x-4">
                     <div className="p-2 bg-secondary rounded-lg">
@@ -136,7 +134,8 @@ export const Contact = () => {
                         {resource.description}
                       </p>
                       <Button variant="link" className="p-0 h-auto mt-2">
-                        Learn more <ExternalLink className="w-3 h-3 ml-1" />
+                        Learn more{" "}
+                        <Icons.ExternalLink className="w-3 h-3 ml-1" />
                       </Button>
                     </div>
                   </div>
@@ -151,8 +150,12 @@ export const Contact = () => {
         <section>
           <Card>
             <CardHeader>
-              <CardTitle className="text-xl">{contactContent.contactForm.title}</CardTitle>
-              <p className="text-muted-foreground">{contactContent.contactForm.subtitle}</p>
+              <CardTitle className="text-xl">
+                {contactContent.contactForm.title}
+              </CardTitle>
+              <p className="text-muted-foreground">
+                {contactContent.contactForm.subtitle}
+              </p>
             </CardHeader>
             <CardContent>
               <form onSubmit={handleSubmit} className="space-y-4">
@@ -182,16 +185,23 @@ export const Contact = () => {
 
                 <div className="space-y-2">
                   <Label htmlFor="subject">Subject</Label>
-                  <Select value={formData.subject} onValueChange={(value) => handleInputChange("subject", value)}>
+                  <Select
+                    value={formData.subject}
+                    onValueChange={(value) =>
+                      handleInputChange("subject", value)
+                    }
+                  >
                     <SelectTrigger>
                       <SelectValue placeholder="Select a topic" />
                     </SelectTrigger>
                     <SelectContent>
-                      {contactContent.contactForm.fields[2].options?.map((option, index) => (
-                        <SelectItem key={index} value={option.value}>
-                          {option.label}
-                        </SelectItem>
-                      ))}
+                      {contactContent.contactForm.fields[2].options?.map(
+                        (option, index) => (
+                          <SelectItem key={index} value={option.value}>
+                            {option.label}
+                          </SelectItem>
+                        )
+                      )}
                     </SelectContent>
                   </Select>
                 </div>
@@ -203,17 +213,23 @@ export const Contact = () => {
                     placeholder="Describe your question or issue in detail..."
                     rows={5}
                     value={formData.message}
-                    onChange={(e) => handleInputChange("message", e.target.value)}
+                    onChange={(e) =>
+                      handleInputChange("message", e.target.value)
+                    }
                     required
                   />
                 </div>
 
-                <Button type="submit" className="w-full" disabled={isSubmitting}>
+                <Button
+                  type="submit"
+                  className="w-full"
+                  disabled={isSubmitting}
+                >
                   {isSubmitting ? (
                     "Sending..."
                   ) : (
                     <>
-                      <Send className="w-4 h-4 mr-2" />
+                      <Icons.Send className="w-4 h-4 mr-2" />
                       Send Message
                     </>
                   )}
@@ -227,7 +243,7 @@ export const Contact = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center space-x-2">
-                <MapPin className="w-5 h-5" />
+                <Icons.MapPin className="w-5 h-5" />
                 <span>{contactContent.officeInfo.title}</span>
               </CardTitle>
             </CardHeader>
@@ -235,7 +251,9 @@ export const Contact = () => {
               <div className="text-sm space-y-1">
                 <p>{contactContent.officeInfo.address.street}</p>
                 <p>
-                  {contactContent.officeInfo.address.city}, {contactContent.officeInfo.address.state} {contactContent.officeInfo.address.zip}
+                  {contactContent.officeInfo.address.city},{" "}
+                  {contactContent.officeInfo.address.state}{" "}
+                  {contactContent.officeInfo.address.zip}
                 </p>
                 <p>{contactContent.officeInfo.address.country}</p>
               </div>
@@ -259,10 +277,12 @@ export const Contact = () => {
                     rel="noopener noreferrer"
                     className="flex items-center space-x-3 p-2 rounded-lg hover:bg-muted transition-colors"
                   >
-                    <ExternalLink className="w-4 h-4" />
+                    <Icons.ExternalLink className="w-4 h-4" />
                     <div>
                       <p className="font-medium">{platform.name}</p>
-                      <p className="text-sm text-muted-foreground">{platform.handle}</p>
+                      <p className="text-sm text-muted-foreground">
+                        {platform.handle}
+                      </p>
                     </div>
                   </a>
                 ))}

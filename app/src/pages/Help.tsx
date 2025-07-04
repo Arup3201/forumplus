@@ -10,18 +10,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import {
-  SearchIcon,
-  HelpCircle,
-  MessageSquare,
-  Mail,
-  FileText,
-  Users,
-  ExternalLink,
-  Book,
-  Video,
-  Phone,
-} from "lucide-react";
+import { Icons } from "@/components/icons";
 
 export const Help = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -54,28 +43,28 @@ export const Help = () => {
     {
       title: "Video Tutorials",
       description: "Step-by-step video guides for common tasks",
-      icon: Video,
+      icon: Icons.Video,
       color: "bg-blue-500/10 text-blue-600",
       link: "/tutorials",
     },
     {
       title: "User Guide",
       description: "Comprehensive documentation and guides",
-      icon: Book,
+      icon: Icons.Book,
       color: "bg-green-500/10 text-green-600",
       link: "/guide",
     },
     {
       title: "Community Forum",
       description: "Ask questions and get help from the community",
-      icon: Users,
+      icon: Icons.Users,
       color: "bg-purple-500/10 text-purple-600",
       link: "/",
     },
     {
       title: "Contact Support",
       description: "Get direct help from our support team",
-      icon: Phone,
+      icon: Icons.Phone,
       color: "bg-orange-500/10 text-orange-600",
       link: "/contact",
     },
@@ -96,7 +85,7 @@ export const Help = () => {
       <div className="text-center space-y-6">
         <div className="flex items-center justify-center mb-4">
           <div className="p-4 bg-primary/10 text-primary rounded-full">
-            <HelpCircle className="w-8 h-8" />
+            <Icons.HelpCircle className="w-8 h-8" />
           </div>
         </div>
         <h1 className="text-4xl font-bold">{helpFAQContent.hero.title}</h1>
@@ -108,7 +97,7 @@ export const Help = () => {
       {/* Search Section */}
       <section className="max-w-2xl mx-auto">
         <div className="relative">
-          <SearchIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-5 h-5" />
+          <Icons.Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-5 h-5" />
           <Input
             placeholder="Search for help topics, questions, or keywords..."
             className="w-full pl-10 py-3 text-base"
@@ -133,7 +122,7 @@ export const Help = () => {
                 <Card key={categoryIndex}>
                   <CardHeader>
                     <CardTitle className="text-lg flex items-center space-x-2">
-                      <FileText className="w-5 h-5" />
+                      <Icons.FileText className="w-5 h-5" />
                       <span>{category.title}</span>
                       <Badge variant="secondary">{category.faqs.length}</Badge>
                     </CardTitle>
@@ -161,7 +150,7 @@ export const Help = () => {
             {filteredFAQs.length === 0 && searchQuery && (
               <Card>
                 <CardContent className="text-center py-12">
-                  <SearchIcon className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+                  <Icons.Search className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
                   <h3 className="text-lg font-semibold mb-2">No results found</h3>
                   <p className="text-muted-foreground mb-4">
                     We couldn't find any FAQ matching your search. Try different keywords or browse all categories.
@@ -197,7 +186,7 @@ export const Help = () => {
                       {resource.description}
                     </p>
                   </div>
-                  <ExternalLink className="w-4 h-4 text-muted-foreground" />
+                  <Icons.ExternalLink className="w-4 h-4 text-muted-foreground" />
                 </div>
               ))}
             </CardContent>
@@ -230,11 +219,11 @@ export const Help = () => {
             </CardHeader>
             <CardContent className="space-y-3">
               <Button className="w-full justify-start" variant="outline">
-                <MessageSquare className="w-4 h-4 mr-2" />
+                <Icons.MessageSquare className="w-4 h-4 mr-2" />
                 Ask the Community
               </Button>
               <Button className="w-full justify-start" variant="outline">
-                <Mail className="w-4 h-4 mr-2" />
+                <Icons.Mail className="w-4 h-4 mr-2" />
                 Contact Support
               </Button>
               <div className="pt-2 border-t">

@@ -1,7 +1,7 @@
 import { useState, useCallback } from 'react';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { cn } from '@/lib/utils';
-import { User } from 'lucide-react';
+import { Icons } from '@/components/icons';
 
 interface OptimizedAvatarProps {
   src?: string | null;
@@ -68,7 +68,7 @@ const OptimizedAvatar = ({
             .toUpperCase()
             .slice(0, 2)
         ) : (
-          <User className={cn(
+          <Icons.User className={cn(
             size === 'sm' ? 'w-4 h-4' :
             size === 'md' ? 'w-6 h-6' :
             size === 'lg' ? 'w-8 h-8' :

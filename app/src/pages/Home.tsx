@@ -4,15 +4,6 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import CreateThread from "./CreateThread";
-import { 
-  MessageSquare, 
-  Users,
-  HelpCircle,
-  Lightbulb,
-  Code,
-  Clock,
-  Plus
-} from "lucide-react";
 import {Icons} from "@/components/icons";
 
 export const Home = () => {
@@ -35,28 +26,28 @@ export const Home = () => {
     {
       name: "General Discussion",
       description: "Open forum for all topics and community chat",
-      icon: <MessageSquare className="w-6 h-6" />,
+      icon: <Icons.MessageSquare className="w-6 h-6" />,
       postCount: 1234,
       color: "bg-blue-500/10 text-blue-500"
     },
     {
       name: "Help & Support",
       description: "Get help with technical issues and questions",
-      icon: <HelpCircle className="w-6 h-6" />,
+      icon: <Icons.HelpCircle className="w-6 h-6" />,
       postCount: 856,
       color: "bg-green-500/10 text-green-500"
     },
     {
       name: "Ideas & Feedback",
       description: "Share your ideas and suggestions",
-      icon: <Lightbulb className="w-6 h-6" />,
+      icon: <Icons.Lightbulb className="w-6 h-6" />,
       postCount: 432,
       color: "bg-yellow-500/10 text-yellow-500"
     },
     {
       name: "Development",
       description: "Technical discussions and coding help",
-      icon: <Code className="w-6 h-6" />,
+      icon: <Icons.Code className="w-6 h-6" />,
       postCount: 678,
       color: "bg-purple-500/10 text-purple-500"
     }
@@ -95,7 +86,7 @@ export const Home = () => {
           className="rounded-full shadow-lg hover:shadow-xl transition-shadow"
           onClick={() => setIsCreateThreadOpen(true)}
         >
-          <Plus className="w-5 h-5 mr-2" />
+          <Icons.Plus className="w-5 h-5 mr-2" />
           New Discussion
         </Button>
       </div>
@@ -130,7 +121,7 @@ export const Home = () => {
                   <h3 className="font-semibold text-xl">{category.name}</h3>
                   <p className="text-muted-foreground mt-2">{category.description}</p>
                   <div className="flex items-center gap-2 mt-4 text-muted-foreground">
-                    <Users className="w-5 h-5" />
+                    <Icons.Users className="w-5 h-5" />
                     <span>{category.postCount} posts</span>
                   </div>
                 </div>
@@ -160,7 +151,7 @@ export const Home = () => {
                     <span>{activity.author}</span>
                     <span>•</span>
                     <span className="flex items-center gap-1">
-                      <Clock className="w-3 h-3" />
+                      <Icons.Clock className="w-3 h-3" />
                       {activity.time}
                     </span>
                   </div>

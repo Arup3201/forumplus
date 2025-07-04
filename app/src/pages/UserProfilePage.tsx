@@ -24,20 +24,7 @@ import {
   TooltipTrigger,
   TooltipProvider,
 } from "@/components/ui/tooltip";
-import {
-  Camera,
-  Edit3,
-  MapPin,
-  Calendar,
-  MessageSquare,
-  Reply,
-  Star,
-  Plus,
-  Mail,
-  ExternalLink,
-  User,
-  Hash,
-} from "lucide-react";
+import { Icons } from "@/components/icons";
 import useAuth from "@/hooks/useAuth";
 import useFetch from "@/hooks/useFetch";
 import type { UserProfile } from "@/types/user";
@@ -282,7 +269,7 @@ const UserProfilePage = () => {
     <div className="w-full mx-auto px-6 space-y-6">
       <div className="flex items-center justify-end">
         <Button size="sm" className="gap-2">
-          <Plus className="w-4 h-4" />
+          <Icons.Plus className="w-4 h-4" />
           New Thread
         </Button>
       </div>
@@ -300,7 +287,7 @@ const UserProfilePage = () => {
                   className="w-32 h-32 cursor-pointer border-4 border-white shadow-lg"
                 />
                 <div className="absolute inset-0 rounded-full bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center cursor-pointer">
-                  <Camera className="w-8 h-8 text-white" />
+                  <Icons.Camera className="w-8 h-8 text-white" />
                 </div>
               </div>
 
@@ -315,11 +302,11 @@ const UserProfilePage = () => {
                       @{username}
                     </p>
                     <div className="flex items-center gap-2 text-sm text-muted-foreground mt-1">
-                      <Mail className="w-4 h-4" />
+                      <Icons.Mail className="w-4 h-4" />
                       <span>{user?.email}</span>
                     </div>
                     <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                      <Calendar className="w-4 h-4" />
+                      <Icons.Calendar className="w-4 h-4" />
                       <span>
                         Joined {createdAt?.split("T")[0] ?? "-"}
                       </span>
@@ -327,7 +314,7 @@ const UserProfilePage = () => {
                   </div>
                   <div className="flex items-center gap-3">
                     <div className="flex items-center gap-2 bg-yellow-50 dark:bg-yellow-900/20 px-3 py-1 rounded-full">
-                      <Star className="w-4 h-4 text-yellow-500" />
+                      <Icons.Star className="w-4 h-4 text-yellow-500" />
                       <span className="font-semibold text-yellow-700 dark:text-yellow-400">
                         {reputation?.toLocaleString() ?? "-"}
                       </span>
@@ -335,7 +322,7 @@ const UserProfilePage = () => {
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
                         <Button size="sm" className="gap-2">
-                          <Edit3 className="w-4 h-4" />
+                          <Icons.Edit className="w-4 h-4" />
                           Edit
                         </Button>
                       </DropdownMenuTrigger>
@@ -361,7 +348,7 @@ const UserProfilePage = () => {
                       <TooltipTrigger asChild>
                         <div className="flex items-center gap-2 text-sm cursor-help">
                           <div className="w-8 h-8 bg-blue-100 dark:bg-blue-900/20 rounded-lg flex items-center justify-center">
-                            <MessageSquare className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+                            <Icons.MessageSquare className="w-4 h-4 text-blue-600 dark:text-blue-400" />
                           </div>
                           <span className="font-medium">
                             {postCount ?? "-"}
@@ -377,7 +364,7 @@ const UserProfilePage = () => {
                       <TooltipTrigger asChild>
                         <div className="flex items-center gap-2 text-sm cursor-help">
                           <div className="w-8 h-8 bg-green-100 dark:bg-green-900/20 rounded-lg flex items-center justify-center">
-                            <Reply className="w-4 h-4 text-green-600 dark:text-green-400" />
+                            <Icons.Reply className="w-4 h-4 text-green-600 dark:text-green-400" />
                           </div>
                           <span className="font-medium">
                             {postCount ?? "-"}
@@ -413,7 +400,7 @@ const UserProfilePage = () => {
                   onClick={() => setEditingProfile("bio")}
                   className="text-xs"
                 >
-                  <Edit3 className="w-3 h-3 mr-1" />
+                  <Icons.Edit className="w-3 h-3 mr-1" />
                   Edit
                 </Button>
               </div>
@@ -462,7 +449,7 @@ const UserProfilePage = () => {
                   onClick={() => setEditingProfile("location")}
                   className="text-xs"
                 >
-                  <Edit3 className="w-3 h-3 mr-1" />
+                  <Icons.Edit className="w-3 h-3 mr-1" />
                   Edit
                 </Button>
               </div>
@@ -490,7 +477,7 @@ const UserProfilePage = () => {
                 </div>
               ) : (
                 <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <MapPin className="w-4 h-4" />
+                  <Icons.MapPin className="w-4 h-4" />
                   <span>{location ?? "-"}</span>
                 </div>
               )}
@@ -506,7 +493,7 @@ const UserProfilePage = () => {
                   onClick={() => setEditingProfile("interests")}
                   className="text-xs"
                 >
-                  <Edit3 className="w-3 h-3 mr-1" />
+                  <Icons.Edit className="w-3 h-3 mr-1" />
                   Edit
                 </Button>
               </div>
@@ -540,7 +527,7 @@ const UserProfilePage = () => {
                       variant="secondary"
                       className="text-xs"
                     >
-                      <Hash className="w-3 h-3 mr-1" />
+                      <Icons.Hash className="w-3 h-3 mr-1" />
                       {interest ?? "-"}
                     </Badge>
                   )) : <span className="text-sm text-muted-foreground">-</span>}
@@ -561,7 +548,7 @@ const UserProfilePage = () => {
                 </CardDescription>
               </div>
               <Button variant="outline" size="sm" className="gap-2">
-                <ExternalLink className="w-4 h-4" />
+                <Icons.ExternalLink className="w-4 h-4" />
                 View All Posts
               </Button>
             </div>

@@ -1,47 +1,31 @@
 import { aboutUsContent } from "@/contents/about_us";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import {
-  Heart,
-  Users,
-  Target,
-  BookOpen,
-  Code,
-  MessageSquare,
-  Globe,
-  Lightbulb,
-  Shield,
-  TrendingUp,
-  Coffee,
-  Github,
-  Twitter,
-  Mail,
-} from "lucide-react";
 import { Icons } from "@/components/icons";
 
 export const About = () => {
   // Community stats (simulated)
   const communityStats = [
     {
-      icon: Users,
+      icon: Icons.Users,
       label: "Active Members",
       value: "10,000+",
       color: "bg-blue-500/10 text-blue-600",
     },
     {
-      icon: MessageSquare,
+      icon: Icons.MessageSquare,
       label: "Discussions",
       value: "50,000+",
       color: "bg-green-500/10 text-green-600",
     },
     {
-      icon: Code,
+      icon: Icons.Code,
       label: "Code Snippets",
       value: "25,000+",
       color: "bg-purple-500/10 text-purple-600",
     },
     {
-      icon: Globe,
+      icon: Icons.Globe,
       label: "Countries",
       value: "150+",
       color: "bg-orange-500/10 text-orange-600",
@@ -51,22 +35,22 @@ export const About = () => {
   // Feature highlights
   const features = [
     {
-      icon: Lightbulb,
+      icon: Icons.Lightbulb,
       title: "Knowledge Sharing",
       description: "Share your expertise and learn from others in our collaborative environment.",
     },
     {
-      icon: Shield,
+      icon: Icons.Shield,
       title: "Safe Environment",
       description: "Our community guidelines ensure a respectful and welcoming space for everyone.",
     },
     {
-      icon: TrendingUp,
+      icon: Icons.TrendingUp,
       title: "Career Growth",
       description: "Connect with mentors, find opportunities, and advance your development career.",
     },
     {
-      icon: Coffee,
+      icon: Icons.Coffee,
       title: "Casual Discussions",
       description: "Not just code - chat about tech trends, career advice, and life as a developer.",
     },
@@ -109,9 +93,9 @@ export const About = () => {
               <CardHeader>
                 <CardTitle className="flex items-center space-x-2">
                   {index === 0 ? (
-                    <Target className="w-5 h-5 text-primary" />
+                    <Icons.Target className="w-5 h-5 text-primary" />
                   ) : (
-                    <BookOpen className="w-5 h-5 text-primary" />
+                    <Icons.BookOpen className="w-5 h-5 text-primary" />
                   )}
                   <span>{section.title}</span>
                 </CardTitle>
@@ -128,7 +112,7 @@ export const About = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center space-x-2">
-                <Heart className="w-5 h-5 text-primary" />
+                <Icons.Heart className="w-5 h-5 text-primary" />
                 <span>{aboutUsContent.sections[2].title}</span>
               </CardTitle>
             </CardHeader>
@@ -181,7 +165,7 @@ export const About = () => {
                 {aboutUsContent.team.map((member, index) => (
                   <div key={index} className="text-center">
                     <div className="w-16 h-16 bg-gradient-to-br from-primary to-primary/70 rounded-full mx-auto mb-3 flex items-center justify-center">
-                      <Users className="w-8 h-8 text-white" />
+                      <Icons.Users className="w-8 h-8 text-white" />
                     </div>
                     <h3 className="font-semibold">{member.name}</h3>
                     <p className="text-sm text-muted-foreground">
@@ -208,15 +192,15 @@ export const About = () => {
         </p>
         <div className="flex justify-center space-x-4">
           <Button variant="outline" size="sm">
-            <Github className="w-4 h-4 mr-2" />
+            <Icons.Github className="w-4 h-4 mr-2" />
             GitHub
           </Button>
           <Button variant="outline" size="sm">
-            <Twitter className="w-4 h-4 mr-2" />
+            <Icons.Twitter className="w-4 h-4 mr-2" />
             Twitter
           </Button>
           <Button variant="outline" size="sm">
-            <Mail className="w-4 h-4 mr-2" />
+            <Icons.Mail className="w-4 h-4 mr-2" />
             Email
           </Button>
         </div>
