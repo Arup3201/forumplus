@@ -6,20 +6,19 @@
 
 ---
 
-# 🚀 Current Features
+## 🚀 Current Features
 
 ForumPlus includes the following core features:
 
-## 🔐 Authentication & User Management
+### 🔐 Authentication & User Management
 
 - **OAuth Integration**: Sign in with Google or GitHub accounts
 - **Protected Routes**: Secure access to authenticated areas
 - **User Profiles**: Customizable user profiles with display names, bios, and interests
 - **Profile Management**: Edit profile information including display name, username, bio, and interests
 - **Session Management**: Secure session handling with HTTP-only cookies
-- **User Activity Tracking**: Recent activity display on user profiles
 
-## 🏗️ Technical Architecture
+### 🏗️ Technical Architecture
 
 - **Frontend**: React 18 with TypeScript and Vite
 - **Backend**: FastAPI with Python
@@ -28,57 +27,87 @@ ForumPlus includes the following core features:
 
 ---
 
-# Microservice Architecture Structure
+## How to get started?
 
-The server follows a **microservice architecture** where each folder inside the `server` directory represents an independent service that can operate without dependencies on other services.
+First you need to have the virtual environment inside the server. You can do that by -
 
-## Service Structure
+Change the current directory to `server` by doing `cd server`. Then
 
-Each service follows a standardized 5-layer architecture:
+1. Create the virtual environment `.pyenv`.
+```sh
+python -m venv .pyenv # windows
+python3 -m venv .pyenv # linux
+```
 
-### 🛣️ Routes
+2. Install the libraries.
+```sh
+pip install -r requirements.txt
+```
 
-**Purpose**: API endpoint definitions using FastAPI
+Then you would need `.env` file where you will have all the secret information like the `SECRET_KEY` and some more confidential infos. Following is the structure of the `.env` file.
 
-- Defines HTTP route handlers (`@router.get`, `@router.post`, etc.)
-- Handles dependency injection
-- Specifies request/response models for payload validation
-- Contains minimal logic - delegates to service layer
+```
+SECRET_KEY=
 
-### 🏢 Services
+GOOGLE_CLIENT_SECRET=
+GOOGLE_CLIENT_ID=
 
-**Purpose**: Business logic implementation
+GITHUB_CLIENT_SECRET=
+GITHUB_CLIENT_ID=
 
-- Contains core business rules and workflows
-- Orchestrates repository operations for CRUD functionality
-- Handles cross-cutting concerns (authentication, authorization, caching)
-- Coordinates between multiple repositories when needed
+PG_USER=
+PG_PASSWORD=
+PG_HOST=
+PG_PORT=
+PG_DATABASE=
 
-### 📋 Schemas
+SQL_ECHO= # False/True
+```
 
-**Purpose**: Data validation and serialization contracts
+First you need to create a database for this application where all the tables will be created. I am using PostgreSQL in this project, so you have to create a new database on postgres.
 
-- Defines structure and validation rules using Pydantic
-- Used for data crossing boundaries (API requests/responses, database models, external APIs)
-- Provides runtime type checking and validation
-- Handles serialization/deserialization (JSON ↔ Python objects)
+Then for github and google authentication, you will need to get client ids and secret ids.
 
-### 🏷️ Types
+For more information about how you can do that, follow this steps -
 
-**Purpose**: Static type definitions for development
+- [Google OAuth 2.0 for client side applications](https://developers.google.com/identity/protocols/oauth2/javascript-implicit-flow)
+- [Create Github OAuth app](https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/creating-an-oauth-app) and then you can access the client and secret ids by going inside the OAuth app in Github.
 
-- Provides compile-time type hints for IDEs and type checkers
-- Includes protocols, type aliases, generics, and unions
-- **No runtime validation** - purely for development-time type safety
-- Improves code organization and developer experience
+As for the secret key, you can get one for testing from [here](https://randomkeygen.com/).
 
-### 🗄️ Repositories
+After you are done putting all the values in the `.env`, your backend is done. You only need to run a script which will create all the necessary tables inside your database.
 
-**Purpose**: Data access abstraction layer
+```sh
+python -m scripts.init_db
+```
 
-- Implements database operations using SQLAlchemy ORM
-- Provides CRUD operations and custom queries
-- Uses **Repository Pattern** with:
-  - **Interface/Protocol**: Defines contract (what methods must exist)
-  - **Implementation**: Actual database interaction logic
-- Abstracts database concerns from business logic
+If your database setup and the data inside the `.env` is correct, it should create all the necessary tables.
+
+After this comes the frontend part. For frontend you will need node. If node is not install, please install it from [here](https://nodejs.org/en/download).
+
+Then you have to change directory to `app` by `cd app` if you are inside `forumplus` root directory.
+
+And then you can just install all the libraries by -
+
+```sh
+npm install
+```
+
+For the frontend you will also need `.env` file, which has the following content -
+
+```
+VITE_API_URL=
+VITE_APP_TITLE=
+VITE_TINYMCE_API_KEY=
+```
+
+For now you can keep them as it is. We might change the editory from TinyMCE later.
+
+## Launch `forumplus`
+
+After all the setup is done, you can come to the root directory and run -
+
+```sh
+./start-app.bat # windows
+sh start-app.sh # linux
+```
