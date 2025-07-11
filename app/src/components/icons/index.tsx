@@ -33,12 +33,15 @@ import {
     Video,
     Phone,
     Book,
+    Menu,
+    Home
 } from "lucide-react";
 
 import GoogleIcon from "./custom/Google";
 import LogoIcon from "./custom/Logo";
 
 export const Icons = {
+    Home: Home, 
     Camera: Camera,
     Edit: Edit3,
     MapPin: MapPin,
@@ -73,6 +76,7 @@ export const Icons = {
     FileText: FileText,
     Video: Video,
     Phone: Phone,
+    Menu: Menu,
     Google: GoogleIcon,
     Logo: LogoIcon,
 };

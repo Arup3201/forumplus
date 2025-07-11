@@ -1,91 +1,137 @@
-import { useNavigate } from "react-router-dom";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
+import { Icons } from "./icons";
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Icons } from "@/components/icons";
-import OptimizedAvatar from "@/components/OptimizedAvatar";
-import { useState } from "react";
-import useAuth from "@/hooks/useAuth";
+  NavigationMenu,
+  NavigationMenuList,
+  NavigationMenuLink,
+} from "@/components/ui/navigation-menu";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { Label } from "./ui/label";
+import { Switch } from "./ui/switch";
+import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
+import { Button } from "./ui/button";
+import { Dialog, DialogTrigger, DialogContent } from "@/components/ui/dialog";
+import { Searchbox } from "@/components/search";
+import BadgeIcon from "./badge-icon";
+import useBreakpoint from "@/hooks/useBreakpoint";
+
+const NAVIGATION_ITEMS = [
+  {
+    id: "discussions",
+    link: "/discussions",
+    title: "Discussions",
+  },
+  {
+    id: "tags",
+    link: "/tags",
+    title: "Tags",
+  },
+];
 
 export const Navbar = () => {
-  const navigate = useNavigate();
+  const { isDesktop } = useBreakpoint();
 
-  const { user, logout } = useAuth();
+  const mobileView = (
+    <>
+      <Sheet>
+        <SheetTrigger>
+          <Icons.Menu size={32} />
+        </SheetTrigger>
+        <SheetContent side="left">
+          <NavigationMenu orientation="vertical" className="mx-auto">
+            <NavigationMenuList className="flex-col align-baseline">
+              {NAVIGATION_ITEMS.map((item) => {
+                return (
+                  <NavigationMenuLink asChild>
+                    <a
+                      className="font-medium rounded-md pl-2 pr-2 no-underline outline-hidden select-none focus:shadow-md hover:bg-gray-100"
+                      href={item.link}
+                    >
+                      {item.title}
+                    </a>
+                  </NavigationMenuLink>
+                );
+              })}
+            </NavigationMenuList>
+          </NavigationMenu>
+        </SheetContent>
+      </Sheet>
+      <Icons.Logo size={32} />
+      <Tooltip>
+        <TooltipTrigger>
+          <Switch id="dark-mode" />
+        </TooltipTrigger>
+        <TooltipContent>Dark Mode</TooltipContent>
+      </Tooltip>
+      <div className="fixed bottom-0 left-0 z-50 w-full flex justify-between items-center px-6 py-2 bg-gray-100">
+        <Button variant="ghost">
+          <Icons.Home size={24} />
+        </Button>
+        <Dialog>
+          <DialogTrigger>
+            <Icons.Search size={18} />
+          </DialogTrigger>
+          <DialogContent>
+            <Searchbox size={18} />
+          </DialogContent>
+        </Dialog>
+        <BadgeIcon value="2+" colorClass="bg-indigo-500">
+          <Icons.Calendar size={24} />
+        </BadgeIcon>
+        <BadgeIcon value="4+" colorClass="bg-red-500">
+          <Icons.Bell size={24} />
+        </BadgeIcon>
+        <Button variant="ghost">
+          <Icons.User size={24} />
+        </Button>
+      </div>
+    </>
+  );
 
-  const [searchQuery, setSearchQuery] = useState("");
-
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    // Implement search functionality
-    console.log("Searching for:", searchQuery);
-  };
+  const desktopView = (
+    <>
+      <Icons.Logo size={36} />
+      <div className="hidden md:flex md:gap-10">
+        <NavigationMenu className="gap-2">
+          <NavigationMenuList>
+            {NAVIGATION_ITEMS.map((item) => {
+              return (
+                <NavigationMenuLink asChild>
+                  <a
+                    className="font-medium rounded-md pl-2 pr-2 no-underline outline-hidden select-none focus:shadow-md hover:bg-gray-100"
+                    href={item.link}
+                  >
+                    {item.title}
+                  </a>
+                </NavigationMenuLink>
+              );
+            })}
+          </NavigationMenuList>
+        </NavigationMenu>
+      </div>
+      <Searchbox size={24} className="hidden md:flex" />
+      <div className="hidden md:flex md:items-center md:gap-4 md:text-gray-800">
+        <BadgeIcon value="2+" colorClass="bg-indigo-500">
+          <Icons.Calendar size={24} />
+        </BadgeIcon>
+        <BadgeIcon value="4+" colorClass="bg-red-500">
+          <Icons.Bell size={24} />
+        </BadgeIcon>
+        <Button variant="ghost">
+          <Icons.User size={24} />
+        </Button>
+      </div>
+      <div className="flex items-center space-x-2">
+        <Label htmlFor="dark-mode" className="text-gray-700 md:hidden">
+          Dark Mode
+        </Label>
+        <Switch id="dark-mode" />
+      </div>
+    </>
+  );
 
   return (
-    <header className="flex items-center justify-between gap-4 py-3 px-4 bg-white rounded-lg shadow-sm">
-      <div className="flex items-center gap-6">
-        <Icons.Logo className="w-10 h-10" />
-
-        <nav className="hidden md:flex items-center gap-4">
-          <Button variant="ghost" onClick={() => navigate("/")}>
-            Home
-          </Button>
-          <Button variant="ghost">Discussions</Button>
-          <Button variant="ghost">Members</Button>
-          <Button variant="ghost" onClick={() => navigate("/about")}>
-            About
-          </Button>
-        </nav>
-      </div>
-
-      <form onSubmit={handleSearch} className="flex-1 max-w-2xl mx-4">
-        <div className="relative">
-          <Icons.Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-          <Input
-            placeholder="Search discussions, topics, or members..."
-            className="w-full pl-10 py-2"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
-        </div>
-      </form>
-
-      <div className="flex items-center gap-4">
-        <Button variant="ghost" size="icon" className="relative">
-          <Icons.Bell className="w-5 h-5" />
-          <span className="absolute -top-1 -right-1 w-4 h-4 bg-destructive text-white text-xs rounded-full flex items-center justify-center">
-            2
-          </span>
-        </Button>
-
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="relative h-8 w-8 rounded-full">
-              <OptimizedAvatar
-                src={user?.avatarUrl}
-                alt={user?.username}
-                fallbackText={user?.username}
-                className="w-8 h-8"
-              />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuItem onClick={() => navigate("/profile")}>
-              Profile
-            </DropdownMenuItem>
-            <DropdownMenuItem>Settings</DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => logout()}>
-              Log out
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </div>
+    <header className="w-full border-b p-2 flex justify-between items-center">
+      {isDesktop ? desktopView : mobileView}
     </header>
   );
 };
