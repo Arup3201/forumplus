@@ -3,7 +3,7 @@ import useAuth from '@/hooks/useAuth';
 import useFetch from '@/hooks/useFetch';
 import { Navbar } from './Navbar';
 import { Footer } from './Footer';
-import type { ProtectedRouteProps } from '@/types/components/protected_component';
+import type { ProtectedRouteProps } from '@/types/components/protected-route';
 
 export const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
   const { isAuthenticated } = useAuth();

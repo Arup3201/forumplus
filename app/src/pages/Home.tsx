@@ -84,7 +84,7 @@ export const Home = () => {
   return (
     <div className="w-full mx-auto px-6 space-y-6 relative">
       {/* Floating Action Button */}
-      <div className="fixed bottom-1 right-8 z-50">
+      {/* <div className="fixed bottom-1 right-8 z-50">
         <Button 
           size="lg" 
           className="rounded-full shadow-lg hover:shadow-xl transition-shadow"
@@ -93,7 +93,7 @@ export const Home = () => {
           <Icons.Plus className="w-5 h-5 mr-2" />
           New Discussion
         </Button>
-      </div>
+      </div> */}
 
       {/* CreateThread Modal */}
       <CreateThread 

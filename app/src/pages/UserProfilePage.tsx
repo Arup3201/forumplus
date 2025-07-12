@@ -27,8 +27,8 @@ import { Icons } from "@/components/icons";
 import useAuth from "@/hooks/useAuth";
 import useFetch from "@/hooks/useFetch";
 import type { UserProfile } from "@/types/user";
-import type { EditType, UserProfileReducerAction } from "@/types/components/user_profile_page";
-import { USER_PROFILE_ACTION } from "@/types/components/user_profile_page";
+import type { EditType, UserProfileReducerAction } from "@/types/components/user-profile";
+import { USER_PROFILE_ACTION } from "@/types/components/user-profile";
 import UserUpdateModal from "@/components/UserUpdateModal";
 import OptimizedAvatar from "@/components/OptimizedAvatar";
 

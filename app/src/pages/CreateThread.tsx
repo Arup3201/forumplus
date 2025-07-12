@@ -29,7 +29,7 @@ import {
 } from "@/components/ui/select";
 import { Editor } from "@tinymce/tinymce-react";
 import useFetch from "@/hooks/useFetch";
-import type { CreateThreadProps } from "@/types/components/create_thread";
+import type { CreateThreadProps } from "@/types/components/create-thread";
 
 const categories = [
   "General Discussion",
