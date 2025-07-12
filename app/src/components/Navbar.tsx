@@ -97,7 +97,7 @@ export const Navbar = () => {
               return (
                 <NavigationMenuLink asChild>
                   <a
-                    className="font-medium rounded-md pl-2 pr-2 no-underline outline-hidden select-none focus:shadow-md hover:bg-gray-100"
+                    className="font-medium text-gray-700 rounded-md pl-2 pr-2 no-underline outline-hidden select-none focus:shadow-md hover:bg-gray-100"
                     href={item.link}
                   >
                     {item.title}
@@ -119,12 +119,12 @@ export const Navbar = () => {
         <Button variant="ghost">
           <Icons.User size={24} />
         </Button>
-      </div>
-      <div className="flex items-center space-x-2">
-        <Label htmlFor="dark-mode" className="text-gray-700 md:hidden">
-          Dark Mode
-        </Label>
-        <Switch id="dark-mode" />
+        <div className="flex items-center space-x-2">
+          <Label htmlFor="dark-mode" className="text-gray-700 md:hidden">
+            Dark Mode
+          </Label>
+          <Switch id="dark-mode" />
+        </div>
       </div>
     </>
   );
