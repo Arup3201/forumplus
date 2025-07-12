@@ -50,6 +50,7 @@ class UserResponse(BaseModel):
     email: str
     username: str
     avatar_url: Optional[str]
+    display_name: str
     is_active: bool
     is_deleted: bool
     created_at: datetime
