@@ -34,7 +34,9 @@ import {
     Phone,
     Book,
     Menu,
-    Home
+    Home,
+    UserCircleIcon,
+    LogOutIcon
 } from "lucide-react";
 
 import GoogleIcon from "./custom/google";
@@ -54,6 +56,7 @@ export const Icons = {
     Bell: Bell,
     ExternalLink: ExternalLink,
     User: User,
+    UserCircle: UserCircleIcon,
     Hash: Hash,
     Users: Users,
     HelpCircle: HelpCircle,
@@ -77,6 +80,7 @@ export const Icons = {
     Video: Video,
     Phone: Phone,
     Menu: Menu,
+    Logout: LogOutIcon, 
     Google: GoogleIcon,
     Logo: LogoIcon,
 };

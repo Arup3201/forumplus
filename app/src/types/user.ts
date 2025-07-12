@@ -31,6 +31,7 @@ interface User {
     email: string;
     username: string;
     avatarUrl: string | null;
+    displayName: string;
     isActive: boolean;
     isDeleted: boolean;
     createdAt: string;

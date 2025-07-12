@@ -19,6 +19,7 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         email: data.email,
         username: data.username,
         avatarUrl: data.avatar_url,
+        displayName: data.display_name, 
         isActive: data.is_active,
         isDeleted: data.is_deleted,
         createdAt: data.created_at,
