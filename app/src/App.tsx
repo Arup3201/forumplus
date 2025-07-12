@@ -4,14 +4,14 @@ import {
   Route,
   Navigate,
 } from "react-router-dom";
-import AuthProvider from "@/contexts/AuthContext";
-import { ProtectedRoute } from "./components/ProtectedRoute";
-import { Login } from "./pages/Login";
-import { Home } from "./pages/Home";
-import UserProfilePage from "./pages/UserProfilePage";
-import { Contact } from "./pages/Contact";
-import { Help } from "./pages/Help";
-import { About } from "./pages/About";
+import AuthProvider from "@/contexts/auth";
+import { ProtectedRoute } from "./components/protected-route";
+import { Login } from "./pages/login";
+import { Home } from "./pages/home";
+import UserProfilePage from "./pages/user-profile";
+import { Contact } from "./pages/contact";
+import { Help } from "./pages/help";
+import { About } from "./pages/about";
 
 function App() {
   return (

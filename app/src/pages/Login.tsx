@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button';
-import useAuth from '@/hooks/useAuth';
+import useAuth from '@/hooks/auth';
 import { Icons } from '@/components/icons';
 
 export const Login = () => {

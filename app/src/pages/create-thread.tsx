@@ -28,7 +28,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Editor } from "@tinymce/tinymce-react";
-import useFetch from "@/hooks/useFetch";
+import useFetch from "@/hooks/fetch";
 import type { CreateThreadProps } from "@/types/components/create-thread";
 
 const categories = [

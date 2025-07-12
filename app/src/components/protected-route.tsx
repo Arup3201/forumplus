@@ -1,8 +1,8 @@
 import { Navigate } from 'react-router-dom';
-import useAuth from '@/hooks/useAuth';
-import useFetch from '@/hooks/useFetch';
-import { Navbar } from './Navbar';
-import { Footer } from './Footer';
+import useAuth from '@/hooks/auth';
+import useFetch from '@/hooks/fetch';
+import { Navbar } from './navbar';
+import { Footer } from './footer';
 import type { ProtectedRouteProps } from '@/types/components/protected-route';
 
 export const ProtectedRoute = ({ children }: ProtectedRouteProps) => {

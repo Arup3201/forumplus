@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
-import useFetch from "@/hooks/useFetch";
+import useFetch from "@/hooks/fetch";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import CreateThread from "./CreateThread";
+import CreateThread from "./create-thread";
 import {Icons} from "@/components/icons";
 
 export const Home = () => {

@@ -24,13 +24,13 @@ import {
   TooltipProvider,
 } from "@/components/ui/tooltip";
 import { Icons } from "@/components/icons";
-import useAuth from "@/hooks/useAuth";
-import useFetch from "@/hooks/useFetch";
+import useAuth from "@/hooks/auth";
+import useFetch from "@/hooks/fetch";
 import type { UserProfile } from "@/types/user";
 import type { EditType, UserProfileReducerAction } from "@/types/components/user-profile";
 import { USER_PROFILE_ACTION } from "@/types/components/user-profile";
-import UserUpdateModal from "@/components/UserUpdateModal";
-import OptimizedAvatar from "@/components/OptimizedAvatar";
+import UserUpdateModal from "@/components/user-update-modal";
+import OptimizedAvatar from "@/components/optimized-avatar";
 
 const userProfileReducer = (state: UserProfile, action: UserProfileReducerAction) => {
   switch(action.type) {

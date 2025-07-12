@@ -37,8 +37,8 @@ import {
     Home
 } from "lucide-react";
 
-import GoogleIcon from "./custom/Google";
-import LogoIcon from "./custom/Logo";
+import GoogleIcon from "./custom/google";
+import LogoIcon from "./custom/logo";
 
 export const Icons = {
     Home: Home, 

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { helpFAQContent } from "@/contents/help_faq";
+import { helpFAQContent } from "@/contents/help-faq";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";

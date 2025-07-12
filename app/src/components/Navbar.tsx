@@ -12,7 +12,7 @@ import { Button } from "./ui/button";
 import { Dialog, DialogTrigger, DialogContent } from "@/components/ui/dialog";
 import { Searchbox } from "@/components/search";
 import BadgeIcon from "./badge-icon";
-import useBreakpoint from "@/hooks/useBreakpoint";
+import useBreakpoint from "@/hooks/breakpoint";
 
 const NAVIGATION_ITEMS = [
   {

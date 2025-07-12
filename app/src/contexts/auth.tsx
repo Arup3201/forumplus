@@ -1,4 +1,4 @@
-import useFetch from "@/hooks/useFetch";
+import useFetch from "@/hooks/fetch";
 import { createContext, useEffect, useMemo, useState } from "react";
 import type { AuthContextType } from "@/types/contexts/auth";
 import type { User } from "@/types/user";
