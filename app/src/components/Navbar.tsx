@@ -79,7 +79,7 @@ export const Navbar = () => {
         </TooltipTrigger>
         <TooltipContent>Dark Mode</TooltipContent>
       </Tooltip>
-      <div className="fixed bottom-0 left-0 z-50 w-full flex justify-between items-center px-6 py-2 bg-gray-100">
+      <div className="fixed bottom-0 left-0 right-0 z-50 w-full flex justify-between items-center px-6 py-2 bg-gray-100">
         <Button variant="ghost" className="ps-0 pe-0 p-0">
           <Icons.Home size={24} />
         </Button>

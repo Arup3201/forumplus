@@ -36,7 +36,10 @@ import {
     Menu,
     Home,
     UserCircleIcon,
-    LogOutIcon
+    LogOutIcon,
+    TagIcon,
+    ArrowUpDownIcon,
+    SlidersHorizontal,
 } from "lucide-react";
 
 import GoogleIcon from "./custom/google";
@@ -81,6 +84,9 @@ export const Icons = {
     Phone: Phone,
     Menu: Menu,
     Logout: LogOutIcon, 
+    Tag: TagIcon, 
+    Sort: ArrowUpDownIcon, 
+    Filter: SlidersHorizontal, 
     Google: GoogleIcon,
     Logo: LogoIcon,
 };
