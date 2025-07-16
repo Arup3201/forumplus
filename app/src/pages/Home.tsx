@@ -1,10 +1,12 @@
 import { useEffect } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import useBreakpoint from "@/hooks/breakpoint";
 import useFetch from "@/hooks/fetch";
 import { Icons } from "@/components/icons";
 
 export const Home = () => {
+  const { isDesktop } = useBreakpoint();
   const { loading, error, getRequest } = useFetch();
 
   useEffect(() => {
@@ -27,7 +29,8 @@ export const Home = () => {
     return <div>Error: {error}</div>;
   }
 
-  const filterClass = "flex gap-1 items-center text-sm bg-gray-100 border-1 border-gray-800 rounded-lg px-4 py-1"
+  const filterClass =
+    "flex gap-1 items-center text-sm bg-gray-100 border-1 border-gray-800 rounded-lg px-4 py-1";
 
   return (
     <main className="flex flex-col gap-2">
@@ -44,26 +47,21 @@ export const Home = () => {
         <div className="flex gap-2 justify-end items-center">
           <Dialog>
             <DialogTrigger className={filterClass}>
-              <Icons.Tag  size={12} />
+              <Icons.Tag size={12} />
               Tags
             </DialogTrigger>
-            <DialogContent>
-              All possible tags will appear here...
-            </DialogContent>
+            <DialogContent>All possible tags will appear here...</DialogContent>
           </Dialog>
           <Dialog>
             <DialogTrigger className={filterClass}>
               <Icons.Sort size={12} />
               Sort
             </DialogTrigger>
-            <DialogContent>
-              Ascending
-              Descending
-            </DialogContent>
+            <DialogContent>Ascending Descending</DialogContent>
           </Dialog>
           <Dialog>
             <DialogTrigger className={filterClass}>
-              <Icons.Filter  size={12} />
+              <Icons.Filter size={12} />
               Filter
             </DialogTrigger>
             <DialogContent>

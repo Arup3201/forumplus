@@ -190,6 +190,10 @@ export const Navbar = () => {
         </NavigationMenu>
       </div>
       <Searchbox size={24} className="hidden md:flex" />
+      <Button className="rounded-xl has-[>svg]:px-4 has-[>svg]:py-2 bg-blue-900 items-center">
+        <Icons.Plus size={24} />
+        Start Discussion
+      </Button>
       <div className="hidden md:flex md:items-center md:gap-4 md:text-gray-800">
         <BadgeIcon value="2+" colorClass="bg-indigo-500">
           <Icons.Calendar size={24} />
