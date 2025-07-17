@@ -40,6 +40,10 @@ import {
     TagIcon,
     ArrowUpDownIcon,
     SlidersHorizontal,
+    MessageCircleQuestion, 
+    Activity,
+    Bookmark,
+    SquarePen
 } from "lucide-react";
 
 import GoogleIcon from "./custom/google";
@@ -87,6 +91,10 @@ export const Icons = {
     Tag: TagIcon, 
     Sort: ArrowUpDownIcon, 
     Filter: SlidersHorizontal, 
+    Question: MessageCircleQuestion, 
+    Acitvity: Activity, 
+    Bookmark: Bookmark, 
+    Draft: SquarePen, 
     Google: GoogleIcon,
     Logo: LogoIcon,
 };

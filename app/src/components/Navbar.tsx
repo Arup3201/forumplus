@@ -1,10 +1,7 @@
+import type { SidebarItemType, MobileSidebarProps } from "@/types/components/navbar";
+
+import { useState } from "react";
 import { Icons } from "./icons";
-import {
-  NavigationMenu,
-  NavigationMenuList,
-  NavigationMenuLink,
-} from "@/components/ui/navigation-menu";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Label } from "./ui/label";
 import { Switch } from "./ui/switch";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
@@ -19,57 +16,84 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Sheet, SheetTrigger, SheetContent } from "@/components/ui/sheet";
 import { Searchbox } from "@/components/search";
 import OptimizedAvatar from "./optimized-avatar";
 import BadgeIcon from "./badge-icon";
 import useAuth from "@/hooks/auth";
 import useBreakpoint from "@/hooks/breakpoint";
+import { cn } from "@/lib/utils";
 
-const NAVIGATION_ITEMS = [
-  {
-    id: "discussions",
-    link: "/discussions",
-    title: "Discussions",
-  },
-  {
-    id: "tags",
-    link: "/tags",
-    title: "Tags",
-  },
-];
+const MobileSidebar = ({ items = [], selected, onMenuSelect }: MobileSidebarProps) => {
+  return (
+    <ul className="flex flex-col gap-1 bg-white mt-10 pl-2">
+      {items.map((item) => {
+        const isSelected = selected===item.id;
+        return (
+          <li
+            key={item.id}
+            className={cn("min-w-[200px] flex gap-2 px-4 py-2 items-center rounded-md font-normal text-gray-800 hover:text-gray-900 hover:bg-gray-100", isSelected ? 'text-gray-100 bg-gray-900' : "")}
+            onClick={() => onMenuSelect(item.id)}
+          >
+            <item.Icon
+              size={18}
+              className={isSelected ? 'bg-gray-900 text-gray-100' : 'text-gray-900'}
+            />
+            <span>{item.name}</span>
+          </li>
+        );
+      })}
+    </ul>
+  );
+};
+
+const SIDEBAR_ITEMS: SidebarItemType[] = [
+    {
+      id: "questions",
+      name: "Questions",
+      Icon: Icons.Question,
+      api: "",
+    },
+    {
+      id: "tags",
+      name: "Tags",
+      Icon: Icons.Tag,
+      api: "",
+    },
+    {
+      id: "activities",
+      name: "My Activities",
+      Icon: Icons.Acitvity,
+      api: "",
+    },
+    {
+      id: "bookmarks",
+      name: "Bookmarks",
+      Icon: Icons.Bookmark,
+      api: "",
+    },
+    {
+      id: "drafts",
+      name: "Drafts",
+      Icon: Icons.Draft,
+      api: "",
+    },
+  ];
 
 export const Navbar = () => {
   const { user } = useAuth();
   const { isDesktop } = useBreakpoint();
-
-  // Weekly digest and notifications
-  //       <BadgeIcon value="4+" colorClass="bg-red-500">
-  //         <Icons.Bell size={24} />
-  //       </BadgeIcon>
+  
+  const [selectedMenu, setSelectedMenu] = useState(SIDEBAR_ITEMS[0].id);
 
   const mobileView = (
     <>
       <Sheet>
         <SheetTrigger>
-          <Icons.Menu size={32} />
+          <Icons.Menu size={24} />
         </SheetTrigger>
         <SheetContent side="left">
-          <NavigationMenu orientation="vertical" className="mx-auto">
-            <NavigationMenuList className="flex-col align-baseline">
-              {NAVIGATION_ITEMS.map((item) => {
-                return (
-                  <NavigationMenuLink asChild>
-                    <a
-                      className="font-medium rounded-md pl-2 pr-2 no-underline outline-hidden select-none focus:shadow-md hover:bg-gray-100"
-                      href={item.link}
-                    >
-                      {item.title}
-                    </a>
-                  </NavigationMenuLink>
-                );
-              })}
-            </NavigationMenuList>
-          </NavigationMenu>
+          <MobileSidebar items={SIDEBAR_ITEMS} selected={selectedMenu} onMenuSelect={(id) => setSelectedMenu(id)} />
         </SheetContent>
       </Sheet>
       <Icons.Logo size={32} />
@@ -171,29 +195,8 @@ export const Navbar = () => {
   const desktopView = (
     <>
       <Icons.Logo size={36} />
-      <div className="hidden md:flex md:gap-10">
-        <NavigationMenu className="gap-2">
-          <NavigationMenuList>
-            {NAVIGATION_ITEMS.map((item) => {
-              return (
-                <NavigationMenuLink asChild>
-                  <a
-                    className="font-medium text-gray-700 rounded-md pl-2 pr-2 no-underline outline-hidden select-none focus:shadow-md hover:bg-gray-100"
-                    href={item.link}
-                  >
-                    {item.title}
-                  </a>
-                </NavigationMenuLink>
-              );
-            })}
-          </NavigationMenuList>
-        </NavigationMenu>
-      </div>
+      <div className="hidden md:flex md:gap-10"></div>
       <Searchbox size={24} className="hidden md:flex" />
-      <Button className="rounded-xl has-[>svg]:px-4 has-[>svg]:py-2 bg-blue-900 items-center">
-        <Icons.Plus size={24} />
-        Start Discussion
-      </Button>
       <div className="hidden md:flex md:items-center md:gap-4 md:text-gray-800">
         <BadgeIcon value="2+" colorClass="bg-indigo-500">
           <Icons.Calendar size={24} />
