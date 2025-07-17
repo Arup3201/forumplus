@@ -1,10 +1,9 @@
-import type { SidebarItemType, MobileSidebarProps } from "@/types/components/navbar";
+import type { SidebarItemType } from "@/types/components/sidebar";
 
 import { useState } from "react";
-import { Icons } from "./icons";
-import { Label } from "./ui/label";
-import { Switch } from "./ui/switch";
-import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
+import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { Button } from "./ui/button";
 import { Dialog, DialogTrigger, DialogContent } from "@/components/ui/dialog";
 import {
@@ -17,73 +16,52 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Sheet, SheetTrigger, SheetContent } from "@/components/ui/sheet";
-import { Searchbox } from "@/components/search";
+
+import { Icons } from "./icons";
+import Searchbox from "./search-box";
 import OptimizedAvatar from "./optimized-avatar";
 import BadgeIcon from "./badge-icon";
+import Sidebar from "./sidebar";
 import useAuth from "@/hooks/auth";
 import useBreakpoint from "@/hooks/breakpoint";
-import { cn } from "@/lib/utils";
-
-const MobileSidebar = ({ items = [], selected, onMenuSelect }: MobileSidebarProps) => {
-  return (
-    <ul className="flex flex-col gap-1 bg-white mt-10 pl-2">
-      {items.map((item) => {
-        const isSelected = selected===item.id;
-        return (
-          <li
-            key={item.id}
-            className={cn("min-w-[200px] flex gap-2 px-4 py-2 items-center rounded-md font-normal text-gray-800 hover:text-gray-900 hover:bg-gray-100", isSelected ? 'text-gray-100 bg-gray-900' : "")}
-            onClick={() => onMenuSelect(item.id)}
-          >
-            <item.Icon
-              size={18}
-              className={isSelected ? 'bg-gray-900 text-gray-100' : 'text-gray-900'}
-            />
-            <span>{item.name}</span>
-          </li>
-        );
-      })}
-    </ul>
-  );
-};
 
 const SIDEBAR_ITEMS: SidebarItemType[] = [
-    {
-      id: "questions",
-      name: "Questions",
-      Icon: Icons.Question,
-      api: "",
-    },
-    {
-      id: "tags",
-      name: "Tags",
-      Icon: Icons.Tag,
-      api: "",
-    },
-    {
-      id: "activities",
-      name: "My Activities",
-      Icon: Icons.Acitvity,
-      api: "",
-    },
-    {
-      id: "bookmarks",
-      name: "Bookmarks",
-      Icon: Icons.Bookmark,
-      api: "",
-    },
-    {
-      id: "drafts",
-      name: "Drafts",
-      Icon: Icons.Draft,
-      api: "",
-    },
-  ];
+  {
+    id: "questions",
+    name: "Questions",
+    Icon: Icons.Question,
+    api: "",
+  },
+  {
+    id: "tags",
+    name: "Tags",
+    Icon: Icons.Tag,
+    api: "",
+  },
+  {
+    id: "activities",
+    name: "My Activities",
+    Icon: Icons.Acitvity,
+    api: "",
+  },
+  {
+    id: "bookmarks",
+    name: "Bookmarks",
+    Icon: Icons.Bookmark,
+    api: "",
+  },
+  {
+    id: "drafts",
+    name: "Drafts",
+    Icon: Icons.Draft,
+    api: "",
+  },
+];
 
 export const Navbar = () => {
   const { user } = useAuth();
   const { isDesktop } = useBreakpoint();
-  
+
   const [selectedMenu, setSelectedMenu] = useState(SIDEBAR_ITEMS[0].id);
 
   const mobileView = (
@@ -93,7 +71,11 @@ export const Navbar = () => {
           <Icons.Menu size={24} />
         </SheetTrigger>
         <SheetContent side="left">
-          <MobileSidebar items={SIDEBAR_ITEMS} selected={selectedMenu} onMenuSelect={(id) => setSelectedMenu(id)} />
+          <Sidebar
+            items={SIDEBAR_ITEMS}
+            selected={selectedMenu}
+            onMenuSelect={(id) => setSelectedMenu(id)}
+          />
         </SheetContent>
       </Sheet>
       <Icons.Logo size={32} />

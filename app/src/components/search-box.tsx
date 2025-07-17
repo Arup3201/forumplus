@@ -15,4 +15,4 @@ const Searchbox = ({
     </div>
 }
 
-export { Searchbox };
+export default Searchbox;
