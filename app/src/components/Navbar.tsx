@@ -36,7 +36,7 @@ export const Navbar = () => {
         <SheetTrigger>
           <Icons.Menu size={24} />
         </SheetTrigger>
-        <SheetContent side="left">
+        <SheetContent side="left" className="pt-10">
           <Sidebar />
         </SheetContent>
       </Sheet>
