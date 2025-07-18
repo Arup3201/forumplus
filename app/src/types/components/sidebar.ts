@@ -7,10 +7,4 @@ type SidebarItemType = {
   api: string;
 };
 
-interface SidebarProps {
-    items: SidebarItemType[], 
-    selected: string, 
-    onMenuSelect: (id: string) => void
-}
-
-export type {SidebarItemType, SidebarProps};
+export type { SidebarItemType };

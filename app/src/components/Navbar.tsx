@@ -1,9 +1,10 @@
-import type { SidebarItemType } from "@/types/components/sidebar";
-
-import { useState } from "react";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { Button } from "./ui/button";
 import { Dialog, DialogTrigger, DialogContent } from "@/components/ui/dialog";
 import {
@@ -25,44 +26,9 @@ import Sidebar from "./sidebar";
 import useAuth from "@/hooks/auth";
 import useBreakpoint from "@/hooks/breakpoint";
 
-const SIDEBAR_ITEMS: SidebarItemType[] = [
-  {
-    id: "questions",
-    name: "Questions",
-    Icon: Icons.Question,
-    api: "",
-  },
-  {
-    id: "tags",
-    name: "Tags",
-    Icon: Icons.Tag,
-    api: "",
-  },
-  {
-    id: "activities",
-    name: "My Activities",
-    Icon: Icons.Acitvity,
-    api: "",
-  },
-  {
-    id: "bookmarks",
-    name: "Bookmarks",
-    Icon: Icons.Bookmark,
-    api: "",
-  },
-  {
-    id: "drafts",
-    name: "Drafts",
-    Icon: Icons.Draft,
-    api: "",
-  },
-];
-
 export const Navbar = () => {
   const { user } = useAuth();
   const { isDesktop } = useBreakpoint();
-
-  const [selectedMenu, setSelectedMenu] = useState(SIDEBAR_ITEMS[0].id);
 
   const mobileView = (
     <>
@@ -71,11 +37,7 @@ export const Navbar = () => {
           <Icons.Menu size={24} />
         </SheetTrigger>
         <SheetContent side="left">
-          <Sidebar
-            items={SIDEBAR_ITEMS}
-            selected={selectedMenu}
-            onMenuSelect={(id) => setSelectedMenu(id)}
-          />
+          <Sidebar />
         </SheetContent>
       </Sheet>
       <Icons.Logo size={32} />
