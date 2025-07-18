@@ -43,23 +43,20 @@ const Sidebar = () => {
   const [selectedMenu, setSelectedMenu] = useState(SIDEBAR_ITEMS[0].id);
 
   return (
-    <ul className="flex flex-col gap-1 bg-white mt-10 pl-2">
+    <ul className="flex flex-col gap-1 bg-transparent">
       {SIDEBAR_ITEMS.map((item) => {
         const isSelected = selectedMenu === item.id;
         return (
           <li
             key={item.id}
             className={cn(
-              "min-w-[200px] flex gap-2 px-4 py-2 items-center rounded-md font-normal text-gray-800 hover:text-gray-900 hover:bg-gray-100",
-              isSelected ? "text-gray-100 bg-gray-900" : ""
+              "min-w-[200px] flex gap-2 px-4 py-2 items-center rounded-md text-gray-800 hover:bg-gray-300 cursor-pointer",
+              isSelected ? "bg-gray-300" : ""
             )}
             onClick={() => setSelectedMenu(item.id)}
           >
             <item.Icon
               size={18}
-              className={
-                isSelected ? "bg-gray-900 text-gray-100" : "text-gray-900"
-              }
             />
             <span>{item.name}</span>
           </li>
