@@ -43,7 +43,8 @@ import {
     MessageCircleQuestion, 
     Activity,
     Bookmark,
-    SquarePen
+    SquarePen,
+    ChevronDown
 } from "lucide-react";
 
 import GoogleIcon from "./custom/google";
@@ -95,6 +96,7 @@ export const Icons = {
     Acitvity: Activity, 
     Bookmark: Bookmark, 
     Draft: SquarePen, 
+    Dropdown: ChevronDown, 
     Google: GoogleIcon,
     Logo: LogoIcon,
 };
