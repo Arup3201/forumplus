@@ -139,8 +139,7 @@ export const Navbar = () => {
   const desktopView = (
     <>
       <Icons.Logo size={36} />
-      <div className="hidden md:flex md:gap-10"></div>
-      <Searchbox size={24} className="hidden md:flex" />
+      <Searchbox size={24} />
       <div className="hidden md:flex md:items-center md:gap-4 md:text-gray-800">
         <BadgeIcon value="2+" colorClass="bg-indigo-500">
           <Icons.Calendar size={24} />
