@@ -210,7 +210,7 @@ export const Navbar = () => {
   );
 
   return (
-    <header className="flex justify-between items-center p-2 border-b w-full">
+    <header className="flex justify-between items-center gap-3 p-2 border-b w-full">
       {isDesktop ? desktopView : mobileView}
     </header>
   );
