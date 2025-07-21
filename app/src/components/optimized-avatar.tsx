@@ -57,7 +57,7 @@ const OptimizedAvatar = ({
         />
       )}
       <AvatarFallback className={cn(
-        "bg-gradient-to-br from-blue-500 to-purple-600 text-white font-semibold",
+        "bg-gradient-to-br from-blue-500 to-purple-600 font-semibold text-white",
         imageLoading && shouldShowImage ? "opacity-50" : "opacity-100"
       )}>
         {fallbackText ? (

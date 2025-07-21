@@ -50,7 +50,7 @@ const Sidebar = () => {
           <li
             key={item.id}
             className={cn(
-              "min-w-[200px] flex gap-2 px-4 py-2 items-center rounded-md text-gray-800 hover:bg-gray-300 cursor-pointer",
+              "flex items-center gap-2 hover:bg-gray-300 px-4 py-2 rounded-md min-w-[200px] text-gray-800 cursor-pointer",
               isSelected ? "bg-gray-300" : ""
             )}
             onClick={() => setSelectedMenu(item.id)}

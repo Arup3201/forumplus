@@ -20,7 +20,7 @@ const FilterButton = () => {
 
   return (
     <Button
-      className="flex gap-1 items-center border-1 bg-white border-blue-800 text-blue-800 rounded-md hover:bg-blue-100 cursor-pointer"
+      className="flex items-center gap-1 bg-white hover:bg-blue-100 border-1 border-blue-800 rounded-md text-blue-800 cursor-pointer"
       onClick={() => setOpenFilters(true)}
     >
       <Icons.Filter size={12} />
@@ -89,18 +89,18 @@ export const Home = () => {
   return (
     <main className="flex justify-between">
       {isDesktop && (
-        <div className="border-0 pr-2 border-r-2 border-gray-100 block">
+        <div className="block pr-2 border-0 border-gray-100 border-r-2">
           <Sidebar />
         </div>
       )}
       <div className="flex flex-col gap-1 w-full">
-        <div className="flex gap-2 justify-end">
+        <div className="flex justify-end gap-2">
           <Tabs value={selectedOption}>
-            <TabsList className="flex gap-1 items-center border border-gray-300">
+            <TabsList className="flex items-center gap-1 border border-gray-300">
               {visibleTabOptions.map((option) => (
                 <TabsTrigger
                   onClick={() => setSelectedOption(option.id)}
-                  className="data-[state=active]:bg-gray-300 data-[state=active]:border-gray-300 data-[state=active]:text-gray-900 border border-transparent text-gray-800 hover:border-gray-100 hover:bg-gray-100 cursor-pointer"
+                  className="data-[state=active]:bg-gray-300 hover:bg-gray-100 border data-[state=active]:border-gray-300 hover:border-gray-100 border-transparent text-gray-800 data-[state=active]:text-gray-900 cursor-pointer"
                   value={option.id}
                 >
                   {option.name}
@@ -111,7 +111,7 @@ export const Home = () => {
                   <Button
                     size="sm"
                     className={cn(
-                      "bg-transparent text-gray-800 shadow-none outline-none hover:border-gray-100 hover:bg-gray-100 cursor-pointer",
+                      "bg-transparent hover:bg-gray-100 shadow-none hover:border-gray-100 outline-none text-gray-800 cursor-pointer",
                       moreTabOptions.findIndex(
                         (opt) => opt.id === selectedOption
                       ) > -1
@@ -127,7 +127,7 @@ export const Home = () => {
                   {moreTabOptions.map((opt) => (
                     <DropdownMenuItem
                       className={cn(
-                        "text-sm text-gray-800",
+                        "text-gray-800 text-sm",
                         opt.id === selectedOption
                           ? "bg-gray-300 border-gray-300"
                           : ""

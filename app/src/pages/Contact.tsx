@@ -56,42 +56,42 @@ export const Contact = () => {
   };
 
   return (
-    <div className="w-full mx-auto px-6 space-y-12 pb-12">
+    <div className="space-y-12 mx-auto px-6 pb-12 w-full">
       {/* Hero Section */}
-      <div className="text-center space-y-4">
-        <h1 className="text-4xl font-bold">{contactContent.hero.title}</h1>
-        <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+      <div className="space-y-4 text-center">
+        <h1 className="font-bold text-4xl">{contactContent.hero.title}</h1>
+        <p className="mx-auto max-w-2xl text-muted-foreground text-xl">
           {contactContent.hero.subtitle}
         </p>
       </div>
 
       {/* Contact Methods */}
       <section className="space-y-6">
-        <h2 className="text-2xl font-semibold text-center">Get in Touch</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <h2 className="font-semibold text-2xl text-center">Get in Touch</h2>
+        <div className="gap-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
           {contactContent.contactMethods.map((method) => {
             const IconComponent =
               iconMap[method.icon as keyof typeof iconMap] || Icons.Mail;
             return (
               <Card key={method.title} className="hover:shadow-md transition-shadow">
                 <CardContent className="p-6">
-                  <div className="flex flex-col items-center text-center space-y-4">
-                    <div className="p-3 bg-primary/10 text-primary rounded-lg">
+                  <div className="flex flex-col items-center space-y-4 text-center">
+                    <div className="bg-primary/10 p-3 rounded-lg text-primary">
                       <IconComponent className="w-6 h-6" />
                     </div>
                     <div>
                       <h3 className="font-semibold text-lg">{method.title}</h3>
-                      <p className="text-sm text-muted-foreground mt-1">
+                      <p className="mt-1 text-muted-foreground text-sm">
                         {method.description}
                       </p>
                       <a
                         href={`mailto:${method.value}`}
-                        className="text-primary hover:underline font-medium mt-2 block"
+                        className="block mt-2 font-medium text-primary hover:underline"
                       >
                         {method.value}
                       </a>
                       <Badge variant="outline" className="mt-2">
-                        <Icons.Clock className="w-3 h-3 mr-1" />
+                        <Icons.Clock className="mr-1 w-3 h-3" />
                         {method.responseTime}
                       </Badge>
                     </div>
@@ -105,15 +105,15 @@ export const Contact = () => {
 
       {/* Quick Help Resources */}
       <section className="space-y-6">
-        <div className="text-center space-y-2">
-          <h2 className="text-2xl font-semibold">
+        <div className="space-y-2 text-center">
+          <h2 className="font-semibold text-2xl">
             {contactContent.quickHelp.title}
           </h2>
           <p className="text-muted-foreground">
             {contactContent.quickHelp.subtitle}
           </p>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="gap-6 grid grid-cols-1 md:grid-cols-3">
           {contactContent.quickHelp.resources.map((resource) => {
             const IconComponent =
               iconMap[resource.icon as keyof typeof iconMap] ||
@@ -125,17 +125,17 @@ export const Contact = () => {
               >
                 <CardContent className="p-6">
                   <div className="flex items-start space-x-4">
-                    <div className="p-2 bg-secondary rounded-lg">
+                    <div className="bg-secondary p-2 rounded-lg">
                       <IconComponent className="w-5 h-5" />
                     </div>
                     <div className="flex-1">
                       <h3 className="font-semibold">{resource.title}</h3>
-                      <p className="text-sm text-muted-foreground mt-1">
+                      <p className="mt-1 text-muted-foreground text-sm">
                         {resource.description}
                       </p>
-                      <Button variant="link" className="p-0 h-auto mt-2">
+                      <Button variant="link" className="mt-2 p-0 h-auto">
                         Learn more{" "}
-                        <Icons.ExternalLink className="w-3 h-3 ml-1" />
+                        <Icons.ExternalLink className="ml-1 w-3 h-3" />
                       </Button>
                     </div>
                   </div>
@@ -146,7 +146,7 @@ export const Contact = () => {
         </div>
       </section>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+      <div className="gap-12 grid grid-cols-1 lg:grid-cols-2">
         <section>
           <Card>
             <CardHeader>
@@ -229,7 +229,7 @@ export const Contact = () => {
                     "Sending..."
                   ) : (
                     <>
-                      <Icons.Send className="w-4 h-4 mr-2" />
+                      <Icons.Send className="mr-2 w-4 h-4" />
                       Send Message
                     </>
                   )}
@@ -248,7 +248,7 @@ export const Contact = () => {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
-              <div className="text-sm space-y-1">
+              <div className="space-y-1 text-sm">
                 <p>{contactContent.officeInfo.address.street}</p>
                 <p>
                   {contactContent.officeInfo.address.city},{" "}
@@ -275,12 +275,12 @@ export const Contact = () => {
                     href={platform.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center space-x-3 p-2 rounded-lg hover:bg-muted transition-colors"
+                    className="flex items-center space-x-3 hover:bg-muted p-2 rounded-lg transition-colors"
                   >
                     <Icons.ExternalLink className="w-4 h-4" />
                     <div>
                       <p className="font-medium">{platform.name}</p>
-                      <p className="text-sm text-muted-foreground">
+                      <p className="text-muted-foreground text-sm">
                         {platform.handle}
                       </p>
                     </div>

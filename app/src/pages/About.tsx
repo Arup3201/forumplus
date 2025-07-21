@@ -57,35 +57,35 @@ export const About = () => {
   ];
 
   return (
-    <div className="w-full mx-auto px-6 space-y-16 pb-12">
+    <div className="space-y-16 mx-auto px-6 pb-12 w-full">
       {/* Hero Section */}
-      <div className="text-center space-y-6">
-        <div className="flex items-center justify-center mb-6">
+      <div className="space-y-6 text-center">
+        <div className="flex justify-center items-center mb-6">
           <Icons.Logo className="w-10 h-10" />
         </div>
-        <h1 className="text-5xl font-bold">{aboutUsContent.hero.title}</h1>
-        <p className="text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
+        <h1 className="font-bold text-5xl">{aboutUsContent.hero.title}</h1>
+        <p className="mx-auto max-w-3xl text-muted-foreground text-xl leading-relaxed">
           {aboutUsContent.hero.subtitle}
         </p>
       </div>
 
       {/* Community Stats */}
-      <section className="grid grid-cols-2 md:grid-cols-4 gap-6">
+      <section className="gap-6 grid grid-cols-2 md:grid-cols-4">
         {communityStats.map((stat) => (
-          <Card key={stat.value} className="text-center hover:shadow-md transition-shadow">
+          <Card key={stat.value} className="hover:shadow-md text-center transition-shadow">
             <CardContent className="p-6">
               <div className={`inline-flex p-3 rounded-lg ${stat.color} mb-3`}>
                 <stat.icon className="w-6 h-6" />
               </div>
-              <div className="text-2xl font-bold">{stat.value}</div>
-              <div className="text-sm text-muted-foreground">{stat.label}</div>
+              <div className="font-bold text-2xl">{stat.value}</div>
+              <div className="text-muted-foreground text-sm">{stat.label}</div>
             </CardContent>
           </Card>
         ))}
       </section>
 
       {/* Main Content Sections */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+      <div className="gap-12 grid grid-cols-1 lg:grid-cols-2">
         {/* Left Column - Mission and Story */}
         <div className="space-y-8">
           {aboutUsContent.sections.slice(0, 2).map((section) => (
@@ -120,7 +120,7 @@ export const About = () => {
               <div className="space-y-3">
                 {aboutUsContent.sections[2].items?.map((item) => (
                   <div key={item} className="flex items-start space-x-3">
-                    <div className="w-2 h-2 bg-primary rounded-full mt-2 shrink-0"></div>
+                    <div className="bg-primary mt-2 rounded-full w-2 h-2 shrink-0"></div>
                     <p className="text-muted-foreground">{item}</p>
                   </div>
                 ))}
@@ -140,12 +140,12 @@ export const About = () => {
               <div className="space-y-4">
                 {features.map((feature) => (
                   <div key={feature.title} className="flex items-start space-x-3">
-                    <div className="p-2 bg-secondary rounded-lg">
+                    <div className="bg-secondary p-2 rounded-lg">
                       <feature.icon className="w-4 h-4" />
                     </div>
                     <div>
                       <h4 className="font-semibold text-sm">{feature.title}</h4>
-                      <p className="text-xs text-muted-foreground mt-1">
+                      <p className="mt-1 text-muted-foreground text-xs">
                         {feature.description}
                       </p>
                     </div>
@@ -164,18 +164,18 @@ export const About = () => {
               <div className="space-y-4">
                 {aboutUsContent.team.map((member) => (
                   <div key={member.name} className="text-center">
-                    <div className="w-16 h-16 bg-gradient-to-br from-primary to-primary/70 rounded-full mx-auto mb-3 flex items-center justify-center">
+                    <div className="flex justify-center items-center bg-gradient-to-br from-primary to-primary/70 mx-auto mb-3 rounded-full w-16 h-16">
                       <Icons.Users className="w-8 h-8 text-white" />
                     </div>
                     <h3 className="font-semibold">{member.name}</h3>
-                    <p className="text-sm text-muted-foreground">
+                    <p className="text-muted-foreground text-sm">
                       {member.description}
                     </p>
                   </div>
                 ))}
               </div>
               <div className="mt-6 pt-4 border-t text-center">
-                <p className="text-sm text-muted-foreground">
+                <p className="text-muted-foreground text-sm">
                   We're always looking for passionate developers to join our community!
                 </p>
               </div>
@@ -185,22 +185,22 @@ export const About = () => {
       </div>
 
       {/* Connect With Us */}
-      <section className="text-center space-y-6">
-        <h2 className="text-2xl font-semibold">Connect With Us</h2>
-        <p className="text-muted-foreground max-w-2xl mx-auto">
+      <section className="space-y-6 text-center">
+        <h2 className="font-semibold text-2xl">Connect With Us</h2>
+        <p className="mx-auto max-w-2xl text-muted-foreground">
           Follow our journey and stay updated with the latest community news and features.
         </p>
         <div className="flex justify-center space-x-4">
           <Button variant="outline" size="sm">
-            <Icons.Github className="w-4 h-4 mr-2" />
+            <Icons.Github className="mr-2 w-4 h-4" />
             GitHub
           </Button>
           <Button variant="outline" size="sm">
-            <Icons.Twitter className="w-4 h-4 mr-2" />
+            <Icons.Twitter className="mr-2 w-4 h-4" />
             Twitter
           </Button>
           <Button variant="outline" size="sm">
-            <Icons.Mail className="w-4 h-4 mr-2" />
+            <Icons.Mail className="mr-2 w-4 h-4" />
             Email
           </Button>
         </div>

@@ -80,48 +80,48 @@ export const Help = () => {
   ];
 
   return (
-    <div className="w-full mx-auto px-6 space-y-12 pb-12">
+    <div className="space-y-12 mx-auto px-6 pb-12 w-full">
       {/* Hero Section */}
-      <div className="text-center space-y-6">
-        <div className="flex items-center justify-center mb-4">
-          <div className="p-4 bg-primary/10 text-primary rounded-full">
+      <div className="space-y-6 text-center">
+        <div className="flex justify-center items-center mb-4">
+          <div className="bg-primary/10 p-4 rounded-full text-primary">
             <Icons.HelpCircle className="w-8 h-8" />
           </div>
         </div>
-        <h1 className="text-4xl font-bold">{helpFAQContent.hero.title}</h1>
-        <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+        <h1 className="font-bold text-4xl">{helpFAQContent.hero.title}</h1>
+        <p className="mx-auto max-w-2xl text-muted-foreground text-xl">
           {helpFAQContent.hero.subtitle}
         </p>
       </div>
 
       {/* Search Section */}
-      <section className="max-w-2xl mx-auto">
+      <section className="mx-auto max-w-2xl">
         <div className="relative">
-          <Icons.Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-5 h-5" />
+          <Icons.Search className="top-1/2 left-3 absolute w-5 h-5 text-muted-foreground -translate-y-1/2 transform" />
           <Input
             placeholder="Search for help topics, questions, or keywords..."
-            className="w-full pl-10 py-3 text-base"
+            className="py-3 pl-10 w-full text-base"
             value={searchQuery}
             onChange={(e) => handleSearch(e.target.value)}
           />
         </div>
         {searchQuery && (
-          <p className="text-sm text-muted-foreground mt-2">
+          <p className="mt-2 text-muted-foreground text-sm">
             {filteredFAQs.reduce((total, cat) => total + cat.faqs.length, 0)} results found for "{searchQuery}"
           </p>
         )}
       </section>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
+      <div className="gap-12 grid grid-cols-1 lg:grid-cols-3">
         {/* Main FAQ Section */}
-        <section className="lg:col-span-2 space-y-8">
+        <section className="space-y-8 lg:col-span-2">
           <div>
-            <h2 className="text-2xl font-semibold mb-6">Frequently Asked Questions</h2>
+            <h2 className="mb-6 font-semibold text-2xl">Frequently Asked Questions</h2>
             <div className="space-y-6">
               {filteredFAQs.map((category) => (
                 <Card key={category.title}>
                   <CardHeader>
-                    <CardTitle className="text-lg flex items-center space-x-2">
+                    <CardTitle className="flex items-center space-x-2 text-lg">
                       <Icons.FileText className="w-5 h-5" />
                       <span>{category.title}</span>
                       <Badge variant="secondary">{category.faqs.length}</Badge>
@@ -149,10 +149,10 @@ export const Help = () => {
             
             {filteredFAQs.length === 0 && searchQuery && (
               <Card>
-                <CardContent className="text-center py-12">
-                  <Icons.Search className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-                  <h3 className="text-lg font-semibold mb-2">No results found</h3>
-                  <p className="text-muted-foreground mb-4">
+                <CardContent className="py-12 text-center">
+                  <Icons.Search className="mx-auto mb-4 w-12 h-12 text-muted-foreground" />
+                  <h3 className="mb-2 font-semibold text-lg">No results found</h3>
+                  <p className="mb-4 text-muted-foreground">
                     We couldn't find any FAQ matching your search. Try different keywords or browse all categories.
                   </p>
                   <Button onClick={() => handleSearch("")} variant="outline">
@@ -175,14 +175,14 @@ export const Help = () => {
               {helpResources.map((resource) => (
                 <div
                   key={resource.title}
-                  className="flex items-center space-x-3 p-3 rounded-lg hover:bg-muted transition-colors cursor-pointer"
+                  className="flex items-center space-x-3 hover:bg-muted p-3 rounded-lg transition-colors cursor-pointer"
                 >
                   <div className={`p-2 rounded-lg ${resource.color}`}>
                     <resource.icon className="w-4 h-4" />
                   </div>
                   <div className="flex-1">
                     <h4 className="font-medium text-sm">{resource.title}</h4>
-                    <p className="text-xs text-muted-foreground">
+                    <p className="text-muted-foreground text-xs">
                       {resource.description}
                     </p>
                   </div>
@@ -201,9 +201,9 @@ export const Help = () => {
               {popularTopics.map((topic) => (
                 <div
                   key={topic.title}
-                  className="flex items-center justify-between p-2 rounded-lg hover:bg-muted transition-colors cursor-pointer"
+                  className="flex justify-between items-center hover:bg-muted p-2 rounded-lg transition-colors cursor-pointer"
                 >
-                  <span className="text-sm font-medium">{topic.title}</span>
+                  <span className="font-medium text-sm">{topic.title}</span>
                   <Badge variant="outline" className="text-xs">
                     {topic.count} FAQs
                   </Badge>
@@ -218,16 +218,16 @@ export const Help = () => {
               <CardTitle>Need More Help?</CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
-              <Button className="w-full justify-start" variant="outline">
-                <Icons.MessageSquare className="w-4 h-4 mr-2" />
+              <Button className="justify-start w-full" variant="outline">
+                <Icons.MessageSquare className="mr-2 w-4 h-4" />
                 Ask the Community
               </Button>
-              <Button className="w-full justify-start" variant="outline">
-                <Icons.Mail className="w-4 h-4 mr-2" />
+              <Button className="justify-start w-full" variant="outline">
+                <Icons.Mail className="mr-2 w-4 h-4" />
                 Contact Support
               </Button>
               <div className="pt-2 border-t">
-                <p className="text-xs text-muted-foreground">
+                <p className="text-muted-foreground text-xs">
                   Can't find what you're looking for? Our support team is here to help!
                 </p>
               </div>

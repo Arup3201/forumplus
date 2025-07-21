@@ -9,9 +9,9 @@ const Searchbox = ({
     className = "",
     onChange = () => {}
 }: SeachboxProps) => {
-    return <div className={cn("flex gap-1 items-center px-2 py-0 border-2 border-gray-200 rounded-4xl", className)}>
+    return <div className={cn("flex items-center gap-1 px-2 py-0 border-2 border-gray-200 rounded-4xl", className)}>
         <Icons.Search size={size} className="text-gray-400" />
-        <Input className="w-full bg-transparent border-0 shadow-none focus-visible:ring-0 focus-visible:ring-offset-0" placeholder={placeholder} onChange={onChange} />
+        <Input className="bg-transparent shadow-none border-0 focus-visible:ring-0 focus-visible:ring-offset-0 w-full" placeholder={placeholder} onChange={onChange} />
     </div>
 }
 

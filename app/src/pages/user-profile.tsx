@@ -265,8 +265,8 @@ const UserProfilePage = () => {
   const { displayName, username, createdAt, reputation, postCount, recentActivities, bio, location, interests } = userProfileState;
 
   return (
-    <div className="w-full mx-auto px-6 space-y-6">
-      <div className="flex items-center justify-end">
+    <div className="space-y-6 mx-auto px-6 w-full">
+      <div className="flex justify-end items-center">
         <Button size="sm" className="gap-2">
           <Icons.Plus className="w-4 h-4" />
           New Thread
@@ -276,35 +276,35 @@ const UserProfilePage = () => {
       <div className="space-y-6">
         <Card>
           <CardContent className="p-6">
-            <div className="flex flex-col md:flex-row gap-6 items-start">
+            <div className="flex md:flex-row flex-col items-start gap-6">
               {/* Profile Picture */}
-              <div className="relative group">
+              <div className="group relative">
                 <OptimizedAvatar
                   src={userProfileState.avatarUrl}
                   alt={userProfileState.displayName}
                   fallbackText={userProfileState.displayName?.split(" ")[0][0]}
-                  className="w-32 h-32 cursor-pointer border-4 border-white shadow-lg"
+                  className="shadow-lg border-4 border-white w-32 h-32 cursor-pointer"
                 />
-                <div className="absolute inset-0 rounded-full bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center cursor-pointer">
+                <div className="absolute inset-0 flex justify-center items-center bg-black/40 opacity-0 group-hover:opacity-100 rounded-full transition-opacity cursor-pointer">
                   <Icons.Camera className="w-8 h-8 text-white" />
                 </div>
               </div>
 
               {/* User Info */}
               <div className="flex-1 space-y-4">
-                <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                <div className="flex md:flex-row flex-col md:justify-between md:items-center gap-4">
                   <div>
-                    <h1 className="text-3xl font-bold">
+                    <h1 className="font-bold text-3xl">
                       {displayName}
                     </h1>
-                    <p className="text-lg text-muted-foreground">
+                    <p className="text-muted-foreground text-lg">
                       @{username}
                     </p>
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground mt-1">
+                    <div className="flex items-center gap-2 mt-1 text-muted-foreground text-sm">
                       <Icons.Mail className="w-4 h-4" />
                       <span>{user?.email}</span>
                     </div>
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                    <div className="flex items-center gap-2 text-muted-foreground text-sm">
                       <Icons.Calendar className="w-4 h-4" />
                       <span>
                         Joined {createdAt?.split("T")[0] ?? "-"}
@@ -342,11 +342,11 @@ const UserProfilePage = () => {
 
                 {/* Activity Summary Icons */}
                 <TooltipProvider>
-                  <div className="flex items-center gap-6 pt-2 border-t border-muted/30">
+                  <div className="flex items-center gap-6 pt-2 border-muted/30 border-t">
                     <Tooltip>
                       <TooltipTrigger asChild>
                         <div className="flex items-center gap-2 text-sm cursor-help">
-                          <div className="w-8 h-8 bg-blue-100 dark:bg-blue-900/20 rounded-lg flex items-center justify-center">
+                          <div className="flex justify-center items-center bg-blue-100 dark:bg-blue-900/20 rounded-lg w-8 h-8">
                             <Icons.MessageSquare className="w-4 h-4 text-blue-600 dark:text-blue-400" />
                           </div>
                           <span className="font-medium">
@@ -362,7 +362,7 @@ const UserProfilePage = () => {
                     <Tooltip>
                       <TooltipTrigger asChild>
                         <div className="flex items-center gap-2 text-sm cursor-help">
-                          <div className="w-8 h-8 bg-green-100 dark:bg-green-900/20 rounded-lg flex items-center justify-center">
+                          <div className="flex justify-center items-center bg-green-100 dark:bg-green-900/20 rounded-lg w-8 h-8">
                             <Icons.Reply className="w-4 h-4 text-green-600 dark:text-green-400" />
                           </div>
                           <span className="font-medium">
@@ -391,7 +391,7 @@ const UserProfilePage = () => {
           <CardContent className="space-y-6">
             {/* Bio */}
             <div className="space-y-2">
-              <div className="flex items-center justify-between">
+              <div className="flex justify-between items-center">
                 <Label htmlFor="bio">Bio</Label>
                 <Button
                   variant="ghost"
@@ -399,7 +399,7 @@ const UserProfilePage = () => {
                   onClick={() => setEditingProfile("bio")}
                   className="text-xs"
                 >
-                  <Icons.Edit className="w-3 h-3 mr-1" />
+                  <Icons.Edit className="mr-1 w-3 h-3" />
                   Edit
                 </Button>
               </div>
@@ -414,7 +414,7 @@ const UserProfilePage = () => {
                     placeholder="Tell us about yourself..."
                   />
                   <div className="flex justify-between items-center">
-                    <span className="text-xs text-muted-foreground">
+                    <span className="text-muted-foreground text-xs">
                       {tempBio.length}/200 characters
                     </span>
                     <div className="flex gap-2">
@@ -432,7 +432,7 @@ const UserProfilePage = () => {
                   </div>
                 </div>
               ) : (
-                <p className="text-sm text-muted-foreground leading-relaxed">
+                <p className="text-muted-foreground text-sm leading-relaxed">
                   {bio}
                 </p>
               )}
@@ -440,7 +440,7 @@ const UserProfilePage = () => {
 
             {/* Location */}
             <div className="space-y-2">
-              <div className="flex items-center justify-between">
+              <div className="flex justify-between items-center">
                 <Label htmlFor="location">Location</Label>
                 <Button
                   variant="ghost"
@@ -448,7 +448,7 @@ const UserProfilePage = () => {
                   onClick={() => setEditingProfile("location")}
                   className="text-xs"
                 >
-                  <Icons.Edit className="w-3 h-3 mr-1" />
+                  <Icons.Edit className="mr-1 w-3 h-3" />
                   Edit
                 </Button>
               </div>
@@ -475,7 +475,7 @@ const UserProfilePage = () => {
                   </div>
                 </div>
               ) : (
-                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <div className="flex items-center gap-2 text-muted-foreground text-sm">
                   <Icons.MapPin className="w-4 h-4" />
                   <span>{location ?? "-"}</span>
                 </div>
@@ -484,7 +484,7 @@ const UserProfilePage = () => {
 
             {/* Interests */}
             <div className="space-y-2">
-              <div className="flex items-center justify-between">
+              <div className="flex justify-between items-center">
                 <Label htmlFor="interests">Interests & Topics</Label>
                 <Button
                   variant="ghost"
@@ -492,7 +492,7 @@ const UserProfilePage = () => {
                   onClick={() => setEditingProfile("interests")}
                   className="text-xs"
                 >
-                  <Icons.Edit className="w-3 h-3 mr-1" />
+                  <Icons.Edit className="mr-1 w-3 h-3" />
                   Edit
                 </Button>
               </div>
@@ -526,10 +526,10 @@ const UserProfilePage = () => {
                       variant="secondary"
                       className="text-xs"
                     >
-                      <Icons.Hash className="w-3 h-3 mr-1" />
+                      <Icons.Hash className="mr-1 w-3 h-3" />
                       {interest ?? "-"}
                     </Badge>
-                  )) : <span className="text-sm text-muted-foreground">-</span>}
+                  )) : <span className="text-muted-foreground text-sm">-</span>}
                 </div>
               )}
             </div>
@@ -539,7 +539,7 @@ const UserProfilePage = () => {
         {/* Recent Activity */}
         <Card>
           <CardHeader>
-            <div className="flex items-center justify-between">
+            <div className="flex justify-between items-center">
               <div>
                 <CardTitle>Recent Activity</CardTitle>
                 <CardDescription>
@@ -557,26 +557,26 @@ const UserProfilePage = () => {
               {recentActivities && recentActivities.length > 0 ? recentActivities.map((activity) => (
                 <div
                   key={activity.id}
-                  className="p-4 hover:bg-muted/50 transition-colors"
+                  className="hover:bg-muted/50 p-4 transition-colors"
                 >
-                  <div className="flex items-start justify-between gap-4">
+                  <div className="flex justify-between items-start gap-4">
                     <div className="flex-1 min-w-0">
                       <h4 className="font-medium text-sm truncate">
                         {activity.activityType}
                       </h4>
-                      <div className="flex items-center gap-2 mt-1 text-xs text-muted-foreground">
+                      <div className="flex items-center gap-2 mt-1 text-muted-foreground text-xs">
                         <span>in</span>
-                        <Badge variant="outline" className="text-xs px-2 py-0">
+                        <Badge variant="outline" className="px-2 py-0 text-xs">
                           {activity.activityData}
                         </Badge>
                       </div>
                     </div>
-                    <span className="text-xs text-muted-foreground whitespace-nowrap">
+                    <span className="text-muted-foreground text-xs whitespace-nowrap">
                       {activity.createdAt.split("T")[0]}
                     </span>
                   </div>
                 </div>
-              )) : <div className="text-sm text-center text-muted-foreground">You haven't made any posts yet.</div>}
+              )) : <div className="text-muted-foreground text-sm text-center">You haven't made any posts yet.</div>}
             </div>
           </CardContent>
         </Card>

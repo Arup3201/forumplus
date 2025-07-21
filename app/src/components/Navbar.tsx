@@ -47,8 +47,8 @@ export const Navbar = () => {
         </TooltipTrigger>
         <TooltipContent>Dark Mode</TooltipContent>
       </Tooltip>
-      <div className="fixed bottom-0 left-0 right-0 z-50 w-full flex justify-between items-center px-6 py-2 bg-gray-100">
-        <Button variant="ghost" className="ps-0 pe-0 p-0">
+      <div className="right-0 bottom-0 left-0 z-50 fixed flex justify-between items-center bg-gray-100 px-6 py-2 w-full">
+        <Button variant="ghost" className="p-0 ps-0 pe-0">
           <Icons.Home size={24} />
         </Button>
         <Dialog>
@@ -61,7 +61,7 @@ export const Navbar = () => {
         </Dialog>
         <Tooltip>
           <TooltipTrigger>
-            <Button className="w-12 h-12 rounded-4xl bg-indigo-500">
+            <Button className="bg-indigo-500 rounded-4xl w-12 h-12">
               <Icons.Plus className="stroke-3" />
             </Button>
           </TooltipTrigger>
@@ -87,7 +87,7 @@ export const Navbar = () => {
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" sideOffset={20}>
             <DropdownMenuLabel className="p-0 font-normal">
-              <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
+              <div className="flex items-center gap-2 px-1 py-1.5 text-sm text-left">
                 {user ? (
                   <OptimizedAvatar
                     src={user.avatarUrl}
@@ -98,11 +98,11 @@ export const Navbar = () => {
                 ) : (
                   <Icons.User size={24} />
                 )}
-                <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-medium">
+                <div className="flex-1 grid text-sm text-left leading-tight">
+                  <span className="font-medium truncate">
                     {user?.displayName}
                   </span>
-                  <span className="text-muted-foreground truncate text-xs">
+                  <span className="text-muted-foreground text-xs truncate">
                     {user?.email}
                   </span>
                 </div>
@@ -165,7 +165,7 @@ export const Navbar = () => {
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" sideOffset={20}>
             <DropdownMenuLabel className="p-0 font-normal">
-              <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
+              <div className="flex items-center gap-2 px-1 py-1.5 text-sm text-left">
                 {user ? (
                   <OptimizedAvatar
                     src={user.avatarUrl}
@@ -176,11 +176,11 @@ export const Navbar = () => {
                 ) : (
                   <Icons.User size={24} />
                 )}
-                <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-medium">
+                <div className="flex-1 grid text-sm text-left leading-tight">
+                  <span className="font-medium truncate">
                     {user?.displayName}
                   </span>
-                  <span className="text-muted-foreground truncate text-xs">
+                  <span className="text-muted-foreground text-xs truncate">
                     {user?.email}
                   </span>
                 </div>
@@ -201,7 +201,7 @@ export const Navbar = () => {
           </DropdownMenuContent>
         </DropdownMenu>
         <div className="flex items-center space-x-2">
-          <Label htmlFor="dark-mode" className="text-gray-700 md:hidden">
+          <Label htmlFor="dark-mode" className="md:hidden text-gray-700">
             Dark Mode
           </Label>
           <Switch id="dark-mode" />
@@ -211,7 +211,7 @@ export const Navbar = () => {
   );
 
   return (
-    <header className="w-full border-b p-2 flex justify-between items-center">
+    <header className="flex justify-between items-center p-2 border-b w-full">
       {isDesktop ? desktopView : mobileView}
     </header>
   );

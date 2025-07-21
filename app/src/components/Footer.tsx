@@ -5,20 +5,20 @@ export const Footer = () => {
   const navigate = useNavigate();
   return (
     <footer className="bg-gray-100 py-8">
-      <div className="max-w-7xl mx-auto px-4">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div className="mx-auto px-4 max-w-7xl">
+        <div className="gap-8 grid grid-cols-1 md:grid-cols-3">
           {/* Left Section - Branding */}
           <div>
-            <h3 className="text-xl font-bold mb-2">ForumPlus</h3>
-            <p className="text-gray-600 mb-2">
+            <h3 className="mb-2 font-bold text-xl">ForumPlus</h3>
+            <p className="mb-2 text-gray-600">
               Where developers connect, share, and grow together
             </p>
-            <p className="text-sm text-gray-500">© 2025 ForumPlus</p>
+            <p className="text-gray-500 text-sm">© 2025 ForumPlus</p>
           </div>
 
           {/* Center Section - Quick Links */}
           <div>
-            <h3 className="text-lg font-semibold mb-4">Quick Links</h3>
+            <h3 className="mb-4 font-semibold text-lg">Quick Links</h3>
             <ul className="flex flex-col">
               <li>
                 <Button variant="ghost" onClick={() => navigate("/")} className="text-gray-600 hover:text-gray-900 cursor-pointer">
@@ -45,8 +45,8 @@ export const Footer = () => {
 
           {/* Right Section - Community Stats */}
           <div>
-            <h3 className="text-lg font-semibold mb-4">Join Our Community</h3>
-            <p className="text-gray-500 italic mb-4">
+            <h3 className="mb-4 font-semibold text-lg">Join Our Community</h3>
+            <p className="mb-4 text-gray-500 italic">
               Powered by curiosity and chai 🍵
             </p>
             <div className="flex space-x-4">
@@ -56,7 +56,7 @@ export const Footer = () => {
               >
                 <span className="sr-only">Twitter</span>
                 <svg
-                  className="h-6 w-6"
+                  className="w-6 h-6"
                   fill="currentColor"
                   viewBox="0 0 24 24"
                 >
@@ -69,7 +69,7 @@ export const Footer = () => {
               >
                 <span className="sr-only">GitHub</span>
                 <svg
-                  className="h-6 w-6"
+                  className="w-6 h-6"
                   fill="currentColor"
                   viewBox="0 0 24 24"
                 >
@@ -86,7 +86,7 @@ export const Footer = () => {
               >
                 <span className="sr-only">LinkedIn</span>
                 <svg
-                  className="h-6 w-6"
+                  className="w-6 h-6"
                   fill="currentColor"
                   viewBox="0 0 24 24"
                 >

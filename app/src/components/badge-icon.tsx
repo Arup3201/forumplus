@@ -15,7 +15,7 @@ const BadgeIcon = ({
       {value && (
         <Badge
           className={cn(
-            "absolute -top-2 -right-2 min-w-5 h-5 flex items-center justify-center p-1 text-xs",
+            "-top-2 -right-2 absolute flex justify-center items-center p-1 min-w-5 h-5 text-xs",
             colorClass
           )}
         >
