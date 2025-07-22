@@ -109,7 +109,7 @@ const FilterBody: React.FC<FilterBodyProps> = ({ show }) => {
           show ? "flex" : "hidden",
         )}
       >
-        <div className="flex justify-between items-baseline px-2 py-4 border-b-1 border-b-gray-300">
+        <div className="flex md:flex-row flex-col justify-between items-baseline gap-4 px-2 py-4 border-b-1 border-b-gray-300">
           {filterContent.map((content) => {
             return (
               <FormField
