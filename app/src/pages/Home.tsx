@@ -81,7 +81,7 @@ export const Home = () => {
           <Sidebar />
         </div>
       )}
-      <div className="flex flex-col gap-1 w-full">
+      <div className="flex flex-col gap-1 pl-2 w-full">
         <div className="flex justify-end gap-2">
           <Tabs value={selectedOption}>
             <TabsList className="flex items-center gap-1 border border-gray-300">
