@@ -14,20 +14,7 @@ import useBreakpoint from "@/hooks/breakpoint";
 import { cn } from "@/lib/utils";
 
 import Sidebar from "../components/sidebar";
-
-const FilterButton = () => {
-  const [openFilters, setOpenFilters] = useState(false);
-
-  return (
-    <Button
-      className="flex items-center gap-1 bg-white hover:bg-blue-100 border-1 border-blue-800 rounded-md text-blue-800 cursor-pointer"
-      onClick={() => setOpenFilters(true)}
-    >
-      <Icons.Filter size={12} />
-      Filter
-    </Button>
-  );
-};
+import { FilterButton, FilterBody } from "../components/filter";
 
 const TAB_OPTIONS: TabOptionType[] = [
   {
@@ -79,6 +66,7 @@ const VISIBLE_TABS_IN_DESKTOP = 4;
 export const Home = () => {
   const { isDesktop } = useBreakpoint();
   const [selectedOption, setSelectedOption] = useState(TAB_OPTIONS[0].id);
+  const [openFilter, setOpenFilter] = useState(false);
 
   const numVisibleTabs = isDesktop
     ? VISIBLE_TABS_IN_DESKTOP
@@ -113,10 +101,10 @@ export const Home = () => {
                     className={cn(
                       "bg-transparent hover:bg-gray-100 shadow-none hover:border-gray-100 outline-none text-gray-800 cursor-pointer",
                       moreTabOptions.findIndex(
-                        (opt) => opt.id === selectedOption
+                        (opt) => opt.id === selectedOption,
                       ) > -1
                         ? "bg-gray-300 border-gray-300"
-                        : ""
+                        : "",
                     )}
                   >
                     More
@@ -130,7 +118,7 @@ export const Home = () => {
                         "text-gray-800 text-sm",
                         opt.id === selectedOption
                           ? "bg-gray-300 border-gray-300"
-                          : ""
+                          : "",
                       )}
                       onClick={() => setSelectedOption(opt.id)}
                     >
@@ -141,8 +129,12 @@ export const Home = () => {
               </DropdownMenu>
             </TabsList>
           </Tabs>
-          <FilterButton />
+          <FilterButton
+            open={openFilter}
+            onFilter={() => setOpenFilter((snapshot) => !snapshot)}
+          />
         </div>
+        <FilterBody show={openFilter} />
       </div>
     </main>
   );
