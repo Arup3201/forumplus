@@ -77,11 +77,11 @@ export const Home = () => {
   return (
     <main className="flex justify-between">
       {isDesktop && (
-        <div className="block pr-2 border-0 border-gray-100 border-r-2">
+        <div className="block px-2 py-4 border-0 border-gray-100 border-r-2">
           <Sidebar />
         </div>
       )}
-      <div className="flex flex-col gap-1 pl-2 w-full">
+      <div className="flex flex-col gap-1 pt-4 pl-2 w-full">
         <div className="flex justify-end gap-2">
           <Tabs value={selectedOption}>
             <TabsList className="flex items-center gap-1 border border-gray-300">
