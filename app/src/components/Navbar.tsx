@@ -24,30 +24,28 @@ import OptimizedAvatar from "./optimized-avatar";
 import BadgeIcon from "./badge-icon";
 import Sidebar from "./sidebar";
 import useAuth from "@/hooks/auth";
-import useBreakpoint from "@/hooks/breakpoint";
 
 export const Navbar = () => {
   const { user } = useAuth();
-  const { isDesktop } = useBreakpoint();
 
-  const mobileView = (
+  const MobileNavbar = () => (
     <>
       <Sheet>
-        <SheetTrigger>
+        <SheetTrigger className="md:hidden">
           <Icons.Menu size={24} />
         </SheetTrigger>
         <SheetContent side="left" className="pt-10">
           <Sidebar />
         </SheetContent>
       </Sheet>
-      <Icons.Logo size={32} />
+      <Icons.Logo size={32} className="md:hidden" />
       <Tooltip>
         <TooltipTrigger>
-          <Switch id="dark-mode" />
+          <Switch id="dark-mode" className="md:hidden" />
         </TooltipTrigger>
         <TooltipContent>Dark Mode</TooltipContent>
       </Tooltip>
-      <div className="right-0 bottom-0 left-0 z-50 fixed flex justify-between items-center bg-gray-100 px-6 py-2 w-full">
+      <div className="md:hidden right-0 bottom-0 left-0 z-50 fixed flex justify-between items-center bg-gray-100 px-6 py-2 w-full">
         <Button variant="ghost" className="p-0 ps-0 pe-0">
           <Icons.Home size={24} />
         </Button>
@@ -136,10 +134,10 @@ export const Navbar = () => {
     </>
   );
 
-  const desktopView = (
+  const DesktopNavbar = () => (
     <>
-      <Icons.Logo size={36} />
-      <Searchbox size={24} />
+      <Icons.Logo size={36} className="hidden md:inline-flex" />
+      <Searchbox size={24} className="hidden md:flex" />
       <div className="hidden md:flex md:items-center md:gap-4 md:text-gray-800">
         <BadgeIcon value="2+" colorClass="bg-indigo-500">
           <Icons.Calendar size={24} />
@@ -211,7 +209,8 @@ export const Navbar = () => {
 
   return (
     <header className="flex justify-between items-center gap-3 p-2 border-b w-full">
-      {isDesktop ? desktopView : mobileView}
+      <DesktopNavbar />
+      <MobileNavbar />
     </header>
   );
 };
