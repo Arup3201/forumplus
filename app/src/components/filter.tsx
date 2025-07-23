@@ -147,8 +147,18 @@ const FilterBody: React.FC<FilterBodyProps> = ({ show }) => {
           })}
         </div>
         <div className="flex gap-2 p-2">
-          <Button type="submit">Apply Filters</Button>
-          <Button variant="secondary">Cancel</Button>
+          <Button
+            type="submit"
+            className="bg-blue-500 hover:bg-blue-600 cursor-pointer"
+          >
+            Apply Filters
+          </Button>
+          <Button
+            variant="secondary"
+            className="hover:bg-gray-200 shadow-none border-1 border-gray-500 outline-none text-gray-700 cursor-pointer"
+          >
+            Cancel
+          </Button>
         </div>
       </form>
     </Form>
