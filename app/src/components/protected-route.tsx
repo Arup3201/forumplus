@@ -18,7 +18,7 @@ export const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
   }
 
   return (
-    <div className="flex flex-col bg-gray-50 p-4 md:p-8 min-h-screen">
+    <div className="flex flex-col bg-gray-50 px-2 md:px-4 py-1 min-h-screen">
       <Navbar />
       {children}
       <Footer />
