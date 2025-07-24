@@ -147,7 +147,7 @@ export const Navbar = () => {
         </BadgeIcon>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost">
+            <Button variant="ghost" size="icon">
               {user ? (
                 <OptimizedAvatar
                   src={user.avatarUrl}
