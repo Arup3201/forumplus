@@ -26,7 +26,7 @@ import Sidebar from "./sidebar";
 import useAuth from "@/hooks/auth";
 
 export const Navbar = () => {
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
 
   const MobileNavbar = () => (
     <>
@@ -124,7 +124,7 @@ export const Navbar = () => {
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
+            <DropdownMenuItem onClick={() => logout()}>
               <Icons.Logout />
               Log out
             </DropdownMenuItem>
@@ -191,7 +191,7 @@ export const Navbar = () => {
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
+            <DropdownMenuItem onClick={() => logout()}>
               <Icons.Logout />
               Log out
             </DropdownMenuItem>
