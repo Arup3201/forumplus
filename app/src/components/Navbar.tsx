@@ -1,3 +1,5 @@
+import { useNavigate } from "react-router";
+
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import {
@@ -27,6 +29,7 @@ import useAuth from "@/hooks/auth";
 
 export const Navbar = () => {
   const { user, logout } = useAuth();
+  const navigate = useNavigate();
 
   const MobileNavbar = () => (
     <>
@@ -108,7 +111,7 @@ export const Navbar = () => {
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem>
+              <DropdownMenuItem onClick={() => navigate('/profile')}>
                 <Icons.UserCircle />
                 Account
               </DropdownMenuItem>
@@ -185,7 +188,7 @@ export const Navbar = () => {
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem>
+              <DropdownMenuItem onClick={() => navigate('/profile')}>
                 <Icons.UserCircle />
                 Account
               </DropdownMenuItem>
