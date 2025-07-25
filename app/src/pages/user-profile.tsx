@@ -12,35 +12,38 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+} from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-  TooltipProvider,
-} from "@/components/ui/tooltip";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Icons } from "@/components/icons";
 import useAuth from "@/hooks/auth";
 import useFetch from "@/hooks/fetch";
 import type { UserProfile } from "@/types/user";
-import type { EditType, UserProfileReducerAction } from "@/types/components/user-profile";
+import type {
+  EditType,
+  UserProfileReducerAction,
+} from "@/types/components/user-profile";
 import { USER_PROFILE_ACTION } from "@/types/components/user-profile";
 import UserUpdateModal from "@/components/user-update-modal";
 import OptimizedAvatar from "@/components/optimized-avatar";
+import Sidebar from "@/components/sidebar";
+import type { TabOptionType } from "@/types/components/home";
 
-const userProfileReducer = (state: UserProfile, action: UserProfileReducerAction) => {
-  switch(action.type) {
+const userProfileReducer = (
+  state: UserProfile,
+  action: UserProfileReducerAction,
+) => {
+  switch (action.type) {
     case USER_PROFILE_ACTION.SET:
-      return { 
+      return {
         ...action.payload,
         bio: action.payload.bio ?? "-",
         interests: action.payload.interests ?? [],
         location: action.payload.location ?? "-",
-       };
+      };
     case USER_PROFILE_ACTION.UPDATE_DISPLAY_NAME:
       return {
         ...state,
@@ -69,19 +72,355 @@ const userProfileReducer = (state: UserProfile, action: UserProfileReducerAction
     default:
       return state;
   }
-}
+};
 
 const UserProfilePage = () => {
   const { user } = useAuth();
   const { loading, error, getRequest, patchRequest } = useFetch();
 
-  const [userProfileState, userProfileDispatch] = useReducer(userProfileReducer, {} as UserProfile);
+  const [userProfileState, userProfileDispatch] = useReducer(
+    userProfileReducer,
+    {} as UserProfile,
+  );
   const [editingProfile, setEditingProfile] = useState<EditType | null>(null);
 
   // Temporary states for editing
   const [tempBio, setTempBio] = useState(userProfileState.bio ?? "");
-  const [tempInterests, setTempInterests] = useState(userProfileState.interests?.join(", ") ?? "");
-  const [tempLocation, setTempLocation] = useState(userProfileState.location ?? "");
+  const [tempInterests, setTempInterests] = useState(
+    userProfileState.interests?.join(", ") ?? "",
+  );
+  const [tempLocation, setTempLocation] = useState(
+    userProfileState.location ?? "",
+  );
+
+  const handleBioSave = async () => {
+    await patchRequest(
+      `/api/auth/profile`,
+      {
+        id: user?.id,
+        bio: tempBio,
+      },
+      (data) => {
+        userProfileDispatch({
+          type: USER_PROFILE_ACTION.UPDATE_BIO,
+          payload: data,
+        });
+        setTempBio(data.bio ?? "");
+      },
+      (error) => {
+        console.error("Error saving bio:", error);
+      },
+    );
+    setEditingProfile(null);
+  };
+
+  const handleBioCancel = () => {
+    setTempBio(userProfileState.bio ?? "");
+    setEditingProfile(null);
+  };
+
+  const handleInterestsSave = async () => {
+    const newInterests = tempInterests
+      .split(",")
+      .map((i) => i.trim())
+      .filter((i) => i);
+    await patchRequest(
+      `/api/auth/profile`,
+      {
+        id: user?.id,
+        interests: newInterests,
+      },
+      (data) => {
+        userProfileDispatch({
+          type: USER_PROFILE_ACTION.UPDATE_INTERESTS,
+          payload: data,
+        });
+        setTempInterests(data.interests?.join(", ") ?? "");
+      },
+      (error) => {
+        console.error("Error saving interests:", error);
+      },
+    );
+    setEditingProfile(null);
+  };
+
+  const handleInterestsCancel = () => {
+    setTempInterests(userProfileState.interests?.join(", ") ?? "");
+    setEditingProfile(null);
+  };
+
+  const handleLocationSave = async () => {
+    await patchRequest(
+      `/api/auth/profile`,
+      {
+        id: user?.id,
+        location: tempLocation,
+      },
+      (data) => {
+        userProfileDispatch({
+          type: USER_PROFILE_ACTION.UPDATE_LOCATION,
+          payload: data,
+        });
+        setTempLocation(data.location ?? "");
+      },
+      (error) => {
+        console.error("Error saving location:", error);
+      },
+    );
+    setEditingProfile(null);
+  };
+
+  const handleLocationCancel = () => {
+    setTempLocation(userProfileState.location ?? "");
+    setEditingProfile(null);
+  };
+
+  const handleSave = async (field: EditType, value: string) => {
+    switch (field) {
+      case "display_name":
+        await patchRequest(
+          `/api/auth/profile`,
+          {
+            id: user?.id,
+            display_name: value,
+          },
+          (data) => {
+            userProfileDispatch({
+              type: USER_PROFILE_ACTION.UPDATE_DISPLAY_NAME,
+              payload: {
+                ...userProfileState,
+                displayName: data.display_name,
+              },
+            });
+          },
+          (error) => {
+            console.error("Error saving display name:", error);
+          },
+        );
+        break;
+      case "username":
+        await patchRequest(
+          `/api/auth/profile`,
+          {
+            id: user?.id,
+            username: value,
+          },
+          (data) => {
+            userProfileDispatch({
+              type: USER_PROFILE_ACTION.UPDATE_USERNAME,
+              payload: {
+                ...userProfileState,
+                username: data.username,
+              },
+            });
+          },
+          (error) => {
+            console.error("Error saving username:", error);
+          },
+        );
+        break;
+    }
+    setEditingProfile(null);
+  };
+
+  const handleUpdateCancel = () => {
+    setEditingProfile(null);
+  };
+
+  const user_tabs: TabOptionType[] = [
+    {
+      id: "personal",
+      name: "Personal",
+      title: "Personal Information",
+      description: "Personal information about the user",
+      Content: () => {
+        return (
+          <Card>
+            <CardHeader>
+              <CardTitle>Personal Information</CardTitle>
+              <CardDescription>
+                Manage your profile details and interests
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              {/* Bio */}
+              <div className="space-y-2">
+                <div className="flex justify-between items-center">
+                  <Label htmlFor="bio">Bio</Label>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setEditingProfile("bio")}
+                    className="text-xs"
+                  >
+                    <Icons.Edit className="mr-1 w-3 h-3" />
+                    Edit
+                  </Button>
+                </div>
+                {editingProfile === "bio" ? (
+                  <div className="space-y-2">
+                    <Textarea
+                      id="bio"
+                      value={tempBio}
+                      onChange={(e) => setTempBio(e.target.value)}
+                      rows={3}
+                      maxLength={200}
+                      placeholder="Tell us about yourself..."
+                    />
+                    <div className="flex justify-between items-center">
+                      <span className="text-muted-foreground text-xs">
+                        {tempBio.length}/200 characters
+                      </span>
+                      <div className="flex gap-2">
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={handleBioCancel}
+                        >
+                          Cancel
+                        </Button>
+                        <Button size="sm" onClick={handleBioSave}>
+                          Save
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <p className="text-muted-foreground text-sm leading-relaxed">
+                    {bio}
+                  </p>
+                )}
+              </div>
+
+              {/* Location */}
+              <div className="space-y-2">
+                <div className="flex justify-between items-center">
+                  <Label htmlFor="location">Location</Label>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setEditingProfile("location")}
+                    className="text-xs"
+                  >
+                    <Icons.Edit className="mr-1 w-3 h-3" />
+                    Edit
+                  </Button>
+                </div>
+                {editingProfile === "location" ? (
+                  <div className="space-y-2">
+                    <Input
+                      id="location"
+                      type="text"
+                      value={tempLocation}
+                      onChange={(e) => setTempLocation(e.target.value)}
+                      placeholder="Enter your location"
+                    />
+                    <div className="flex justify-end gap-2">
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={handleLocationCancel}
+                      >
+                        Cancel
+                      </Button>
+                      <Button size="sm" onClick={handleLocationSave}>
+                        Save
+                      </Button>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-2 text-muted-foreground text-sm">
+                    <Icons.MapPin className="w-4 h-4" />
+                    <span>{location ?? "-"}</span>
+                  </div>
+                )}
+              </div>
+
+              {/* Interests */}
+              <div className="space-y-2">
+                <div className="flex justify-between items-center">
+                  <Label htmlFor="interests">Interests & Topics</Label>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setEditingProfile("interests")}
+                    className="text-xs"
+                  >
+                    <Icons.Edit className="mr-1 w-3 h-3" />
+                    Edit
+                  </Button>
+                </div>
+                {editingProfile === "interests" ? (
+                  <div className="space-y-2">
+                    <Input
+                      id="interests"
+                      type="text"
+                      value={tempInterests}
+                      onChange={(e) => setTempInterests(e.target.value)}
+                      placeholder="Enter interests separated by commas"
+                    />
+                    <div className="flex justify-end gap-2">
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={handleInterestsCancel}
+                      >
+                        Cancel
+                      </Button>
+                      <Button size="sm" onClick={handleInterestsSave}>
+                        Save
+                      </Button>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="flex flex-wrap gap-2">
+                    {interests && interests.length > 0 ? (
+                      interests.map((interest) => (
+                        <Badge
+                          key={interest}
+                          variant="secondary"
+                          className="text-xs"
+                        >
+                          <Icons.Hash className="mr-1 w-3 h-3" />
+                          {interest ?? "-"}
+                        </Badge>
+                      ))
+                    ) : (
+                      <span className="text-muted-foreground text-sm">-</span>
+                    )}
+                  </div>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+        );
+      },
+    },
+    {
+      id: "questions",
+      name: "Questions",
+      title: "Questions You Posted",
+      description: "Questions posted by the user till now",
+      Content: () => {
+        return <p>
+          This is questions tab.
+        </p>
+      }
+    },
+    {
+      id: "answers",
+      name: "Answers",
+      title: "Answers You Provided",
+      description: "Answers the user has given till now",
+      Content: () => {
+        return <p>
+          This is answers tab.
+        </p>
+      }
+    },
+  ];
+
+  const [selectedTab, setSelectedTab] = useState(user_tabs[0].id);
 
   useEffect(() => {
     if (user) {
@@ -116,144 +455,10 @@ const UserProfilePage = () => {
         },
         (error) => {
           console.error("Error fetching user profile:", error);
-        }
+        },
       );
     }
   }, [user]);
-
-  const handleBioSave = async () => {
-    await patchRequest(
-      `/api/auth/profile`,
-      {
-        id: user?.id,
-        bio: tempBio,
-      },
-      (data) => {
-        userProfileDispatch({
-          type: USER_PROFILE_ACTION.UPDATE_BIO,
-          payload: data,
-        });
-        setTempBio(data.bio ?? "");
-      },
-      (error) => {
-        console.error("Error saving bio:", error);
-      }
-    );
-    setEditingProfile(null);
-  };
-
-  const handleBioCancel = () => {
-    setTempBio(userProfileState.bio ?? "");
-    setEditingProfile(null);
-  };
-
-  const handleInterestsSave = async () => {
-    const newInterests = tempInterests
-      .split(",")
-      .map((i) => i.trim())
-      .filter((i) => i);
-    await patchRequest(
-      `/api/auth/profile`,
-      {
-        id: user?.id,
-        interests: newInterests,
-      },
-      (data) => {
-        userProfileDispatch({
-          type: USER_PROFILE_ACTION.UPDATE_INTERESTS,
-          payload: data,
-        });
-        setTempInterests(data.interests?.join(", ") ?? "");
-      },
-      (error) => {
-        console.error("Error saving interests:", error);
-      }
-    );
-    setEditingProfile(null);
-  };
-
-  const handleInterestsCancel = () => {
-    setTempInterests(userProfileState.interests?.join(", ") ?? "");
-    setEditingProfile(null);
-  };
-
-  const handleLocationSave = async () => {
-    await patchRequest(
-      `/api/auth/profile`,
-      {
-        id: user?.id,
-        location: tempLocation,
-      },
-      (data) => {
-        userProfileDispatch({
-          type: USER_PROFILE_ACTION.UPDATE_LOCATION,
-          payload: data,
-        });
-        setTempLocation(data.location ?? "");
-      },
-      (error) => {
-        console.error("Error saving location:", error);
-      }
-    );
-    setEditingProfile(null);
-  };
-
-  const handleLocationCancel = () => {
-    setTempLocation(userProfileState.location ?? "");
-    setEditingProfile(null);
-  };
-
-  const handleSave = async (field: EditType, value: string) => {
-    switch (field) {
-      case "display_name":
-        await patchRequest(
-          `/api/auth/profile`,
-          {
-            id: user?.id,
-            display_name: value,
-          },
-          (data) => {
-            userProfileDispatch({
-              type: USER_PROFILE_ACTION.UPDATE_DISPLAY_NAME,
-              payload: {
-                ...userProfileState,
-                displayName: data.display_name,
-              },
-            });
-          },
-          (error) => {
-            console.error("Error saving display name:", error);
-          }
-        );
-        break;
-      case "username":
-        await patchRequest(
-          `/api/auth/profile`,
-          {
-            id: user?.id,
-            username: value,
-          },
-          (data) => {
-            userProfileDispatch({
-              type: USER_PROFILE_ACTION.UPDATE_USERNAME,
-              payload: {
-                ...userProfileState,
-                username: data.username,
-              },
-            });
-          },
-          (error) => {
-            console.error("Error saving username:", error);
-          }
-        );
-        break;
-    }
-    setEditingProfile(null);
-  };
-
-  const handleUpdateCancel = () => {
-    setEditingProfile(null);
-  }
 
   if (loading) {
     return <div>Loading...</div>;
@@ -262,18 +467,13 @@ const UserProfilePage = () => {
     return <div>Error: {error}</div>;
   }
 
-  const { displayName, username, createdAt, reputation, postCount, recentActivities, bio, location, interests } = userProfileState;
+  const { displayName, username, createdAt, bio, location, interests } =
+    userProfileState;
 
   return (
-    <div className="space-y-6 mx-auto px-6 w-full">
-      <div className="flex justify-end items-center">
-        <Button size="sm" className="gap-2">
-          <Icons.Plus className="w-4 h-4" />
-          New Thread
-        </Button>
-      </div>
-
-      <div className="space-y-6">
+    <div className="flex">
+      <Sidebar />
+      <div className="flex flex-col gap-2 py-2 pl-2 w-full">
         <Card>
           <CardContent className="p-6">
             <div className="flex md:flex-row flex-col items-start gap-6">
@@ -294,30 +494,18 @@ const UserProfilePage = () => {
               <div className="flex-1 space-y-4">
                 <div className="flex md:flex-row flex-col md:justify-between md:items-center gap-4">
                   <div>
-                    <h1 className="font-bold text-3xl">
-                      {displayName}
-                    </h1>
-                    <p className="text-muted-foreground text-lg">
-                      @{username}
-                    </p>
+                    <h1 className="font-bold text-3xl">{displayName}</h1>
+                    <p className="text-muted-foreground text-lg">@{username}</p>
                     <div className="flex items-center gap-2 mt-1 text-muted-foreground text-sm">
                       <Icons.Mail className="w-4 h-4" />
                       <span>{user?.email}</span>
                     </div>
                     <div className="flex items-center gap-2 text-muted-foreground text-sm">
                       <Icons.Calendar className="w-4 h-4" />
-                      <span>
-                        Joined {createdAt?.split("T")[0] ?? "-"}
-                      </span>
+                      <span>Joined {createdAt?.split("T")[0] ?? "-"}</span>
                     </div>
                   </div>
                   <div className="flex items-center gap-3">
-                    <div className="flex items-center gap-2 bg-yellow-50 dark:bg-yellow-900/20 px-3 py-1 rounded-full">
-                      <Icons.Star className="w-4 h-4 text-yellow-500" />
-                      <span className="font-semibold text-yellow-700 dark:text-yellow-400">
-                        {reputation?.toLocaleString() ?? "-"}
-                      </span>
-                    </div>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
                         <Button size="sm" className="gap-2">
@@ -326,260 +514,65 @@ const UserProfilePage = () => {
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent>
-                        <DropdownMenuItem onClick={() => setEditingProfile("display_name")}>Display Name</DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => setEditingProfile("username")}>Username</DropdownMenuItem>
+                        <DropdownMenuItem
+                          onClick={() => setEditingProfile("display_name")}
+                        >
+                          Display Name
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          onClick={() => setEditingProfile("username")}
+                        >
+                          Username
+                        </DropdownMenuItem>
                       </DropdownMenuContent>
-                  </DropdownMenu>
+                    </DropdownMenu>
                   </div>
                 </div>
 
                 {editingProfile === "display_name" && (
-                  <UserUpdateModal label="Display Name" value={displayName ?? ""} onSave={(value) => handleSave("display_name", value)} onCancel={() => handleUpdateCancel()} />
+                  <UserUpdateModal
+                    label="Display Name"
+                    value={displayName ?? ""}
+                    onSave={(value) => handleSave("display_name", value)}
+                    onCancel={() => handleUpdateCancel()}
+                  />
                 )}
                 {editingProfile === "username" && (
-                  <UserUpdateModal label="Username" value={username ?? ""} onSave={(value) => handleSave("username", value)} onCancel={() => handleUpdateCancel()} />
+                  <UserUpdateModal
+                    label="Username"
+                    value={username ?? ""}
+                    onSave={(value) => handleSave("username", value)}
+                    onCancel={() => handleUpdateCancel()}
+                  />
                 )}
-
-                {/* Activity Summary Icons */}
-                <TooltipProvider>
-                  <div className="flex items-center gap-6 pt-2 border-muted/30 border-t">
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <div className="flex items-center gap-2 text-sm cursor-help">
-                          <div className="flex justify-center items-center bg-blue-100 dark:bg-blue-900/20 rounded-lg w-8 h-8">
-                            <Icons.MessageSquare className="w-4 h-4 text-blue-600 dark:text-blue-400" />
-                          </div>
-                          <span className="font-medium">
-                            {postCount ?? "-"}
-                          </span>
-                        </div>
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        <p>Posts Created</p>
-                      </TooltipContent>
-                    </Tooltip>
-
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <div className="flex items-center gap-2 text-sm cursor-help">
-                          <div className="flex justify-center items-center bg-green-100 dark:bg-green-900/20 rounded-lg w-8 h-8">
-                            <Icons.Reply className="w-4 h-4 text-green-600 dark:text-green-400" />
-                          </div>
-                          <span className="font-medium">
-                            {postCount ?? "-"}
-                          </span>
-                        </div>
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        <p>Replies Made</p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </div>
-                </TooltipProvider>
               </div>
             </div>
           </CardContent>
         </Card>
-        {/* Personal Info */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Personal Information</CardTitle>
-            <CardDescription>
-              Manage your profile details and interests
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            {/* Bio */}
-            <div className="space-y-2">
-              <div className="flex justify-between items-center">
-                <Label htmlFor="bio">Bio</Label>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setEditingProfile("bio")}
-                  className="text-xs"
-                >
-                  <Icons.Edit className="mr-1 w-3 h-3" />
-                  Edit
-                </Button>
-              </div>
-              {editingProfile === "bio" ? (
-                <div className="space-y-2">
-                  <Textarea
-                    id="bio"
-                    value={tempBio}
-                    onChange={(e) => setTempBio(e.target.value)}
-                    rows={3}
-                    maxLength={200}
-                    placeholder="Tell us about yourself..."
-                  />
-                  <div className="flex justify-between items-center">
-                    <span className="text-muted-foreground text-xs">
-                      {tempBio.length}/200 characters
-                    </span>
-                    <div className="flex gap-2">
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={handleBioCancel}
-                      >
-                        Cancel
-                      </Button>
-                      <Button size="sm" onClick={handleBioSave}>
-                        Save
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-              ) : (
-                <p className="text-muted-foreground text-sm leading-relaxed">
-                  {bio}
-                </p>
-              )}
-            </div>
 
-            {/* Location */}
-            <div className="space-y-2">
-              <div className="flex justify-between items-center">
-                <Label htmlFor="location">Location</Label>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setEditingProfile("location")}
-                  className="text-xs"
+        <Tabs value={selectedTab}>
+          <TabsList className="flex items-center gap-1 border border-gray-300">
+            {user_tabs.map((tab) => {
+              return (
+                <TabsTrigger
+                  value={tab.id}
+                  className="data-[state=active]:bg-gray-300 hover:bg-gray-100 border data-[state=active]:border-gray-300 hover:border-gray-100 border-transparent text-gray-800 data-[state=active]:text-gray-900 cursor-pointer"
+                  onClick={() => setSelectedTab(tab.id)}
                 >
-                  <Icons.Edit className="mr-1 w-3 h-3" />
-                  Edit
-                </Button>
-              </div>
-              {editingProfile === "location" ? (
-                <div className="space-y-2">
-                  <Input
-                    id="location"
-                    type="text"
-                    value={tempLocation}
-                    onChange={(e) => setTempLocation(e.target.value)}
-                    placeholder="Enter your location"
-                  />
-                  <div className="flex justify-end gap-2">
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={handleLocationCancel}
-                    >
-                      Cancel
-                    </Button>
-                    <Button size="sm" onClick={handleLocationSave}>
-                      Save
-                    </Button>
-                  </div>
-                </div>
-              ) : (
-                <div className="flex items-center gap-2 text-muted-foreground text-sm">
-                  <Icons.MapPin className="w-4 h-4" />
-                  <span>{location ?? "-"}</span>
-                </div>
-              )}
-            </div>
+                  {tab.name}
+                </TabsTrigger>
+              );
+            })}
+          </TabsList>
 
-            {/* Interests */}
-            <div className="space-y-2">
-              <div className="flex justify-between items-center">
-                <Label htmlFor="interests">Interests & Topics</Label>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setEditingProfile("interests")}
-                  className="text-xs"
-                >
-                  <Icons.Edit className="mr-1 w-3 h-3" />
-                  Edit
-                </Button>
-              </div>
-              {editingProfile === "interests" ? (
-                <div className="space-y-2">
-                  <Input
-                    id="interests"
-                    type="text"
-                    value={tempInterests}
-                    onChange={(e) => setTempInterests(e.target.value)}
-                    placeholder="Enter interests separated by commas"
-                  />
-                  <div className="flex justify-end gap-2">
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={handleInterestsCancel}
-                    >
-                      Cancel
-                    </Button>
-                    <Button size="sm" onClick={handleInterestsSave}>
-                      Save
-                    </Button>
-                  </div>
-                </div>
-              ) : (
-                <div className="flex flex-wrap gap-2">
-                  {interests && interests.length > 0 ? interests.map((interest) => (
-                    <Badge
-                      key={interest}
-                      variant="secondary"
-                      className="text-xs"
-                    >
-                      <Icons.Hash className="mr-1 w-3 h-3" />
-                      {interest ?? "-"}
-                    </Badge>
-                  )) : <span className="text-muted-foreground text-sm">-</span>}
-                </div>
-              )}
-            </div>
-          </CardContent>
-        </Card>
+          {user_tabs.map(tab => {
+            if(!tab.Content) return;
 
-        {/* Recent Activity */}
-        <Card>
-          <CardHeader>
-            <div className="flex justify-between items-center">
-              <div>
-                <CardTitle>Recent Activity</CardTitle>
-                <CardDescription>
-                  Your latest posts and contributions
-                </CardDescription>
-              </div>
-              <Button variant="outline" size="sm" className="gap-2">
-                <Icons.ExternalLink className="w-4 h-4" />
-                View All Posts
-              </Button>
-            </div>
-          </CardHeader>
-          <CardContent className="p-0">
-            <div className="divide-y">
-              {recentActivities && recentActivities.length > 0 ? recentActivities.map((activity) => (
-                <div
-                  key={activity.id}
-                  className="hover:bg-muted/50 p-4 transition-colors"
-                >
-                  <div className="flex justify-between items-start gap-4">
-                    <div className="flex-1 min-w-0">
-                      <h4 className="font-medium text-sm truncate">
-                        {activity.activityType}
-                      </h4>
-                      <div className="flex items-center gap-2 mt-1 text-muted-foreground text-xs">
-                        <span>in</span>
-                        <Badge variant="outline" className="px-2 py-0 text-xs">
-                          {activity.activityData}
-                        </Badge>
-                      </div>
-                    </div>
-                    <span className="text-muted-foreground text-xs whitespace-nowrap">
-                      {activity.createdAt.split("T")[0]}
-                    </span>
-                  </div>
-                </div>
-              )) : <div className="text-muted-foreground text-sm text-center">You haven't made any posts yet.</div>}
-            </div>
-          </CardContent>
-        </Card>
+            return <TabsContent value={tab.id}>
+              <tab.Content />
+            </TabsContent>
+          })}
+        </Tabs>
       </div>
     </div>
   );
